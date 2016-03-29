@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+   "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+   "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!-- <constant name="struts.devMode" value="false" /> -->
+	<package name="EHRProject" extends="struts-default">
+		<result-types>
+            <result-type name="json" class="org.apache.struts2.json.JSONResult"/>
+        </result-types>
+        <interceptors>
+            <interceptor name="json" class="org.apache.struts2.json.JSONInterceptor"/>
+        </interceptors>
+		<action name="login" class="com.um.ehr.action.LoginAction" method="login">
+			<result name="success">/welcome.jsp</result>
+			<result name="error">/index.jsp</result>
+		</action>
+		<action name="logout" class="com.um.ehr.action.LoginAction" method="logout">
+			<result name="success">/index.jsp</result>
+		</action>
+      
+		<!-- <action name="predict" class="com.um.ehr.action.PredictAciton" method="excuteAjax">
+        将返回类型设置为json
+        	<result type="json">
+            	<param name="root">resultresult是action中设置的变量名，也是页面需要返回的数据，该变量必须有setter和getter方法</param>
+            </result>
+      	</action> -->
+      	
+      	<!-- query record information by patient's name -->
+      	<action name="querybyname" class="com.um.ehr.action.QueryAction" method="queryRecordByPatientName">
+        <!-- return value type: json -->
+        	<result type="json">
+            	<param name="root">result<!-- result is action return value，and need setter and getter method --></param>
+            </result>
+      	</action>
+      
+      
+      
+      
+   </package>
+</struts>
