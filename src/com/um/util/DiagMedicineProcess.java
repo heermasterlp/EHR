@@ -1,5 +1,6 @@
 package com.um.util;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -539,6 +540,7 @@ public class DiagMedicineProcess {
 		}
 		
 		// 3. 计算数值
+		DecimalFormat df = new DecimalFormat("#.##");
 		if(names.length > 1){
 			// 3.1 多味中药，需要计算交集和并集
 			
@@ -568,9 +570,9 @@ public class DiagMedicineProcess {
 				//3.1.2 交集运算
 				int mix = EhealthRecordMath.getMix(nStrings, allRecrods);
 
-				double unionPercent = 1.0 * union / allRecrods.size();
-				double mixPercent   = 1.0 * mix   / allRecrods.size();
-				resultMap.put(combiname, union+"|"+unionPercent+"%"+mix +"|" +mixPercent);
+				double unionPercent = 100.0 * union / allRecrods.size();
+				double mixPercent   = 100.0 * mix   / allRecrods.size();
+				resultMap.put(combiname, union+"|"+df.format(unionPercent)+"%"+mix +"|" +df.format(mixPercent));
 			}
 		}else{
 			// 单味中药，只要计算出现概率就可以
@@ -595,9 +597,9 @@ public class DiagMedicineProcess {
 			}
 			
 			int count = results.size();
-			double percent = 1.0 * count / allRecrods.size();
+			double percent = 100.0 * count / allRecrods.size();
 //			System.out.println("[all record]: " + allRecrods.size());
-			resultMap.put(names[0], count + "|" + percent);
+			resultMap.put(names[0], count + "|" + df.format(percent));
 			
 		}
 		return resultMap;

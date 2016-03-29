@@ -85,7 +85,7 @@
                     </div>
                 </div>
                 <div class="col-sm-12">
-			    	<form action="recordquery" method="get" role="form">
+			    	<form action="" method="get" role="form">
 			    		<div class="form-group">
 		                    <label>年度：</label>&nbsp;&nbsp;
 		                    	<select id="batch" name="batch">

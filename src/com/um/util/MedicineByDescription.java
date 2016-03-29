@@ -400,9 +400,13 @@ public class MedicineByDescription {
 		List<EHealthRecord> eHealthRecordsByBatch = new ArrayList<EHealthRecord>();
 		// built the conditions structure of batch
 		List<EHealthRecord> allList = getAllRecords();
-		for (EHealthRecord eRecord : allList) {
-			if (eRecord.getBatchString().equals(batch.substring(0, 4))) {
-				eHealthRecordsByBatch.add(eRecord);
+		if (batch.equals("null")) {
+			eHealthRecordsByBatch = allList;
+		}else{
+			for (EHealthRecord eRecord : allList) {
+				if (eRecord.getBatchString().equals(batch.substring(0, 4))) {
+					eHealthRecordsByBatch.add(eRecord);
+				}
 			}
 		}
 		return eHealthRecordsByBatch;
