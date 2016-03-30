@@ -9,10 +9,18 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.interceptor.ServletRequestAware;
+import org.bson.Document;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.MongoClient;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.opensymphony.xwork2.ActionSupport;
+import com.um.ehr.setting.DataBaseSetting;
 import com.um.model.ChineseMedicine;
 import com.um.model.EHealthRecord;
+import com.um.mongodb.converter.EhealthRecordConverter;
 import com.um.util.EhealthUtil;
 import com.um.util.MedicineByDescription;
 
@@ -31,7 +39,17 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 	
 	private String result;
 	
+	private EHealthRecord targetRecord;
 	
+	
+	public EHealthRecord getTargetRecord() {
+		return targetRecord;
+	}
+
+	public void setTargetRecord(EHealthRecord targetRecord) {
+		this.targetRecord = targetRecord;
+	}
+
 	/**
 	 *  Action: query records by patient name
 	 *  
@@ -192,6 +210,44 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 		return SUCCESS;
 	}
 	
+	/**
+	 * Query record detail information
+	 * @return
+	 */
+	public String detailRecord(){
+		logger.info("query record detail start");
+		// 1. get request parameters
+		String ehealthregno = request.getParameter("ehealthregno");
+		
+		// 2. query record by condition
+		BasicDBObject condition = new BasicDBObject("ehealthrecord.registrationno",ehealthregno);
+		
+		MongoClient client = new MongoClient(DataBaseSetting.host,DataBaseSetting.port);
+		MongoDatabase db = client.getDatabase(DataBaseSetting.database);
+		MongoCollection<Document> ehealthRecordCollection = db.getCollection(DataBaseSetting.ehealthcollection);
+		
+		FindIterable<Document> iterable = ehealthRecordCollection.find(condition);
+		if (iterable == null || iterable.first() == null) {
+			
+			client.close();
+			return SUCCESS;
+		}
+		
+		// 3. format result
+		Document targetRecordDoc = iterable.first();
+		
+		targetRecord = EhealthRecordConverter.toEHealthRecord(targetRecordDoc);
+		
+//		Map<String, Object> map = new HashMap<>();
+//		map.put("resultMap", targetRecordDoc);
+//		
+//		JSONObject json = JSONObject.fromObject(map);
+		
+		client.close();
+		logger.info("query record detail end");
+		return SUCCESS;
+	}
+	
 	
 
 	@Override
@@ -223,6 +279,7 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 	public void setResult(String result) {
 		this.result = result;
 	}
+
 
 
 

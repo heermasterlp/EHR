@@ -10,6 +10,8 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.bson.Document;
+
+import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
@@ -426,6 +428,38 @@ public class MedicineByDescription {
 		
 		// List of ehealth record
 		FindIterable<Document> iterable = ehealthRecordCollection.find();
+		
+		iterable.forEach(new Block<Document>() {
+
+			@Override
+			public void apply(Document document) {
+				// TODO Auto-generated method stub
+				EHealthRecord eHealthRecord = EhealthRecordConverter.toEHealthRecord(document);
+	        	
+	        	if(eHealthRecord != null){
+	        		eHealthRecords.add(eHealthRecord);
+	        	}
+			}
+		});
+		
+		client.close();
+		return eHealthRecords;
+	}
+	
+	/**
+	 * Query records by condition
+	 * @param condition
+	 * @return
+	 */
+	public static List<EHealthRecord> getRecordsByCondition(BasicDBObject condition){
+		
+		final List<EHealthRecord> eHealthRecords = new ArrayList<EHealthRecord>();
+		
+		MongoClient client = new MongoClient(DataBaseSetting.host,DataBaseSetting.port);
+		MongoDatabase db = client.getDatabase(DataBaseSetting.database);
+		MongoCollection<Document> ehealthRecordCollection = db.getCollection(DataBaseSetting.ehealthcollection);
+		
+		FindIterable<Document> iterable = ehealthRecordCollection.find(condition);
 		
 		iterable.forEach(new Block<Document>() {
 

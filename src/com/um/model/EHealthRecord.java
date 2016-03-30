@@ -200,6 +200,26 @@ public class EHealthRecord {
 		return result;
 	}
 	
+	public String getChineseMedicineToString(){
+		String string = "";
+		if (chineseMedicines != null && chineseMedicines.size() != 0) {
+			for (ChineseMedicine chineseMedicine : chineseMedicines) {
+				string += chineseMedicine.getNameString() + ",";
+			}
+		}
+		return string;
+	}
+	
+	public String getWesternMedicineToString(){
+		String string = "";
+		if (westernMedicines != null && westernMedicines.size() > 0) {
+			for (WesternMedicine westernMedicine : westernMedicines) {
+				string += westernMedicine.getNameString() + ",";
+			}
+		}
+		return string;
+	}
+	
 	public String getId(){
             return this.id;
         }

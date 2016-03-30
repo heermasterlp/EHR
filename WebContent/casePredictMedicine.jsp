@@ -62,9 +62,9 @@
                     <li>
                         <a href="statisticsByCM.jsp"><i class="fa fa-fw fa-bar-chart-o"></i> 统计中药处方</a>
                     </li>
-                    <li>
+                    <!-- <li>
                         <a href="statisticsByCNDiagnose.jsp"><i class="fa fa-fw fa-bar-chart-o"></i> 基于中医诊断的统计</a>
-                    </li>
+                    </li> -->
                     <li>
                         <a href="statisticsByCWClassify.jsp"><i class="fa fa-fw fa-bar-chart-o"></i> 中医诊断统计</a>
                     </li>
@@ -107,9 +107,7 @@
 	    	</div>
 	    </div>
 	</div>
-	<div id="loading" style="position: fixed; top:0; left:0; width:100%; height: 100%; center center #efefef">
-		<img src="img/progress.gif" style="margin-top: 15%;margin-left: 15%;"/>
-	</div>
+	
 
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.js" type="text/javascript"></script>
@@ -158,7 +156,9 @@
             btn_query();//点击提交，执行ajax
         });
 	</script>
-	
+	<div id="loading" style="position: fixed; top:0; left:0; width:100%; height: 100%; center center #efefef">
+		<img src="img/progress.gif" style="margin-top: 15%;margin-left: 15%;"/>
+	</div>
 </body>
 
 </html>

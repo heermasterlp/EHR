@@ -62,9 +62,9 @@
                     <li>
                         <a href="statisticsByCM.jsp"><i class="fa fa-fw fa-bar-chart-o"></i> 统计中药处方</a>
                     </li>
-                    <li>
+                    <!-- <li>
                         <a href="statisticsByCNDiagnose.jsp"><i class="fa fa-fw fa-bar-chart-o"></i> 基于中医诊断的统计</a>
-                    </li>
+                    </li> -->
                     <li>
                         <a href="statisticsByCWClassify.jsp"><i class="fa fa-fw fa-bar-chart-o"></i> 中医诊断统计</a>
                     </li>
@@ -405,7 +405,7 @@
         </div>
     </div>
     <div id="right">
-    	<div id="result">
+    	<div id="contents">
     	</div>
         
     
@@ -413,9 +413,7 @@
     </div>
 	    	</div>
 		    </div>
-	<div id="loading" style="position: fixed; top:0; left:0; width:100%; height: 100%; center center #efefef">
-		<img src="img/progress.gif" style="margin-top: 15%;margin-left: 15%;"/>
-	</div>
+	
 	
 	<!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.js" type="text/javascript"></script>
@@ -476,8 +474,15 @@
                     dataType:"json",//设置需要返回的数据类型
                     success:function(data){
                     	$('#loading').hide(); 
-                       	// resut 
-                        $('#result').html(data);
+                    	var jsonObject = jQuery.parseJSON(data);
+	                	var infos = "<table class='table table-bordered'><thead><tr class='info'><td>No.</td><td>Info</td><td>Detail</td></tr></thead><tbody>";
+	                	var index = 1;
+	                	$.each(jsonObject.infoMap, function(key, value){
+	                		infos += "<tr><td>" + index + "</td><td>" + value + "</td><td><a href='detailRecord?ehealthregno=" + key + "'>详细信息</a></td></tr>";
+	                		index++;
+                    	});
+	                	infos += "</tbody></table>";
+	                	$('#contents').html(infos);
                          
                     },
                     error:function(){
@@ -493,6 +498,8 @@
             btn();//点击提交，执行ajax
         });
 	</script>
-
+	<div id="loading" style="position: fixed; top:0; left:0; width:100%; height: 100%; center center #efefef">
+		<img src="img/progress.gif" style="margin-top: 15%;margin-left: 15%;"/>
+	</div>
 </body>
 </html>

@@ -50,6 +50,15 @@
             </result>
       	</action>
       	
+      	<!-- query record detail information -->
+      	<action name="detailRecord" class="com.um.ehr.action.QueryAction" method="detailRecord">
+        <!-- return value type: json -->
+        	<!-- <result type="json">
+            	<param name="root">resultresult is action return value，and need setter and getter method</param>
+            </result> -->
+            <result name="success">/detail.jsp</result>
+      	</action>
+      	
       	<!-- statistics  component relations of medicines  -->
       	<action name="staticCompRelationByMedicines" class="com.um.ehr.action.StatisticsAction" method="cnmedicineProba">
         <!-- return value type: json -->
