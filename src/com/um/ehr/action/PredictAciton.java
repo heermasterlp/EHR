@@ -1,5 +1,6 @@
 package com.um.ehr.action;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,6 +17,7 @@ import org.apache.struts2.interceptor.ServletRequestAware;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.um.data.DiagClassifyData;
+import com.um.model.ChineseMedicine;
 import com.um.model.EHealthRecord;
 import com.um.util.BasedOnRulePredict;
 import com.um.util.DiagMedicineProcess;
@@ -50,7 +52,7 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
      * Predict medicines
      * @return SUCCESS
      */
-    public String excuteAjax(){
+    public String predictByInput(){
         try {
             //获取数据
             
@@ -249,6 +251,117 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
             e.printStackTrace();
         }
         return SUCCESS;
+    }
+    
+    /**
+     *  Predict by case
+     * @return
+     */
+    public String predictByCase(){
+    	
+    	logger.info("predict by case start!");
+    	
+    	// 1. get the input parameters
+    	String countString = request.getParameter("count"); // the order number of records
+    			
+    	int count = 0; // record order number
+    	double threshold = Double.valueOf(request.getParameter("threshold").trim()); // threshold of machine learning
+    	// 2. find all records with batch 2012
+    	List<EHealthRecord> allList = MedicineByDescription.getRecordsByBatch("2012");
+    	if ("".equals(countString)) {
+    		return SUCCESS;
+    	}
+    	// 3. find the target record based on the conditions
+    	EHealthRecord targetRecord = null;
+    			
+    	if( countString.length() > 4 ){
+    		// the input info is the register number of record
+    		for( EHealthRecord e : allList ){
+    			if( e.getRegistrationno().equals(countString) ){
+    				targetRecord = e;
+    				break;
+    			}
+    			count++;
+    		}
+    	}else{
+    		// the input info is the order number of all records
+    		count = Integer.valueOf(countString); // order number
+    		count--;
+    		targetRecord = allList.get( count );
+    				
+    	}
+    			
+    	if(targetRecord == null){
+    		return SUCCESS;
+    	}
+    	//4. the diagnose and description info of target record
+    	String diag = targetRecord.getChinesediagnostics();
+    	String description = targetRecord.getConditionsdescribed();
+    	String diagnose = "";
+    	String[] diagKeywords = DiagClassifyData.diagKeywords;
+    	for( String k : diagKeywords ){
+    		if(diag.matches(".*" + k + ".*")){
+    			diagnose += k + " ";
+    		}
+    	}
+    	// format the description of target record
+    	String formattedDescription = MedicineByDescription.formattedDescriptionByCount(description);
+    	// 5. the origin medicines in target record            
+    	List<String> orignMedicines = new ArrayList<String>();
+    	if( targetRecord.getChineseMedicines() != null && targetRecord.getChineseMedicines().size() > 0 ){
+    		for(ChineseMedicine c : targetRecord.getChineseMedicines()){
+    			orignMedicines.add(c.getNameString());
+    		}
+    	}
+    			
+    	// 6. sort the origin medicines with a fix order
+    	List<String> sortedList = new ArrayList<String>();
+    			
+    	for( String s : DiagClassifyData.machineMedicine ){
+    		for( String o : orignMedicines ){
+    			if( s == o || s.equals(o) ){
+    				sortedList.add(s);
+    			}
+    		}
+    	}
+    			
+    	// 7. predict medicines with machine learning 
+    	//  7.1 initial input parameters of machine learning
+    	List<String> inputcode = MachineLearningPredict.parseDiagAndDescByEhealthRecords(targetRecord);
+    			
+    	//  7.2 predict medicines with machine learning
+    	List<String> medicineListByMachine = MachineLearningPredict.predict(inputcode, threshold); // the result of machine learning
+    			
+    	// 8. calculate the accuracy
+    	double statisticsPercent = 0.0; // the accuracy of case-based
+    	double mechineLearningPercent = 0.0;  // the accuracy of machine learning
+    			
+    	int index = 0;
+    			
+    	statisticsPercent = 100.0 * orignMedicines.size() / orignMedicines.size(); //accuracy of case-based
+    	index = 0;
+    			
+    	for( String s : medicineListByMachine ){
+    		if( orignMedicines.contains(s) ){
+    			index++;
+    		}
+    	}
+    	mechineLearningPercent = 100.0 * index / orignMedicines.size(); // the accuracy of machine learning
+    	DecimalFormat df = new DecimalFormat("#.##");
+    	
+    	// 9. format result
+    	Map<String, Object> map = new HashMap<String, Object>();
+    	map.put("orignMedicines", orignMedicines);
+    	map.put("medicineListByMachine", medicineListByMachine);
+    	map.put("statisticsPercent", df.format(statisticsPercent));
+    	map.put("mechineLearningPercent", df.format(mechineLearningPercent));
+    	
+    	JSONObject json = JSONObject.fromObject(map);
+    	result = json.toString();
+    	
+    	logger.info("predict by case end!");
+    	
+    	return SUCCESS;
     }
 	
 	

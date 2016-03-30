@@ -83,20 +83,20 @@
 		                <div class="col-lg-12">
 		                	<h1 class="page-header"> 基于案例预测处方</h1>
 		                </div>
-			            <form name="form1" method="post" action='predicetByCase'>
+			            <form id="myForm" name="myForm" method='' action=''>
 			                <div id="left_rigth">
 			                    <p class="text-danger">
 			                        <label>请入病例序号(1-1130) 或挂号号</label>
 			                    </p>
 			                    <p>
-			                        <input type="text" name="count" />
+			                        <input id="count" type="text" name="count" />
 			                    </p>
 			                    <p class="text-danger">
 			                        机器学习阈值(0~1):<br>
-			                        <input type="text" name="threshold" value="0.3" />
+			                        <input id="threshold" type="text" name="threshold" value="0.3" />
 			                    </p>
 			                    <p>
-			                        <input name="sub" type="submit" class="btn btn-success btn-xs" value="根据病例预测处方"  />
+			                        <input name="sub" type="button" class="btn btn-success btn-xs" value="根据病例预测处方"  />
 			                    </p>
 			                </div>
 			            </form>
@@ -107,6 +107,58 @@
 	    	</div>
 	    </div>
 	</div>
+	<div id="loading" style="position: fixed; top:0; left:0; width:100%; height: 100%; center center #efefef">
+		<img src="img/progress.gif" style="margin-top: 15%;margin-left: 15%;"/>
+	</div>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.js" type="text/javascript"></script>
+    <!-- query auto complete -->
+    <script src="js/query.js" type="text/javascript"></script>
+	
+	<!-- js function -->
+	<script type="text/javascript" src="js/jquery-2.2.2.js"></script>
+	<script type="text/javascript">
+	
+		function btn_query(){
+			var $btn = $("input.btn");//获取按钮元素
+			$btn.bind("click",function(){
+				$("#loading").show();
+				$.ajax({
+	                type:"post",
+	                url:"predictByCase",//需要用来处理ajax请求的action,excuteAjax为处理的方法名，JsonAction为action名
+	                data:{//设置数据源
+	                	count:$('#count').val(),
+	                	threshold:$('#threshold').val()
+	                },
+	                dataType:"json",//设置需要返回的数据类型
+	                success:function(data){
+	                	$('#loading').hide();
+	                	// parse return data
+	                	/* var jsonObject = jQuery.parseJSON(data);
+	                	var infos = "<table class='table table-bordered'><thead><tr class='info'><td>No.</td><td>Info</td><td>Detail</td></tr></thead><tbody>";
+	                	var index = 1;
+	                	$.each(jsonObject.infoMap, function(key, value){
+	                		infos += "<tr><td>" + index + "</td><td>" + value + "</td><td><a href='detailRecord?ehealthregno=" + key + "'>详细信息</a></td></tr>";
+	                		index++;
+                    	});
+	                	infos += "</tbody></table>"; */
+	                	$('#contents').html(data);
+	                },
+	                error:function(){
+	                    alert("系统异常，请稍后重试！");
+	                }
+				});
+			});
+		}
+		
+		/* 页面加载完成，绑定事件 */
+        $(document).ready(function(){
+        	$('#loading').hide(); 
+            btn_query();//点击提交，执行ajax
+        });
+	</script>
+	
 </body>
 
 </html>

@@ -142,6 +142,57 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 	}
 	
 	
+	/**
+	 * Query records based on input description
+	 * @return
+	 */
+	public String queryRecordByInput(){
+		logger.info("Query records based on input description begin!");
+		
+		/**
+		 * 1. Parse the request parameters
+		 */
+		// 1.1 parse the request parameters
+		Map<String, String> requestMap = MedicineByDescription.parseRequestParameter(request);
+		
+		// 1.2 get the diagnose, description, batch, threshold of machine learning
+		String diagnose = requestMap.get("diagnose"); // diagnose
+		String description = requestMap.get("description"); // description
+		String batch = requestMap.get("batch");  // batch
+		
+		// 1.3 formatted the description to output
+		String descconvertString = MedicineByDescription.getFormatedDescirption(description);
+		String descriptionString = diagnose + descconvertString;
+		
+		/**
+		 * 2. Case-base statistics to predict medicines
+		 */
+		
+		// 2.2 get all records with same batch
+		List<EHealthRecord> eHealthRecordsByBatch = MedicineByDescription.getRecordsByBatch(batch); // all record with same batch
+		
+		// 2.6 get similar records based on the description
+		List<EHealthRecord> similaryRecords = MedicineByDescription.getSimilaryEHealthRecords(eHealthRecordsByBatch, diagnose, description);
+		
+		
+		
+		// 4. format return result
+		Map<String, Object> map = new HashMap<>();
+				
+				
+		map.put("infoMap", similaryRecords.size());
+		map.put("descriptionString", descriptionString);
+				
+		JSONObject json = JSONObject.fromObject(map);
+				
+		result = json.toString();
+		
+		logger.info("Query records based on input description end!");
+		
+		return SUCCESS;
+	}
+	
+	
 
 	@Override
 	public void setServletRequest(HttpServletRequest request) {

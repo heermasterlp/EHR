@@ -42,6 +42,14 @@
             </result>
       	</action>
       	
+      	<!-- query record information by medicines -->
+      	<action name="querybyinputdescription" class="com.um.ehr.action.QueryAction" method="queryRecordByInput">
+        <!-- return value type: json -->
+        	<result type="json">
+            	<param name="root">result<!-- result is action return value，and need setter and getter method --></param>
+            </result>
+      	</action>
+      	
       	<!-- statistics  component relations of medicines  -->
       	<action name="staticCompRelationByMedicines" class="com.um.ehr.action.StatisticsAction" method="cnmedicineProba">
         <!-- return value type: json -->
@@ -73,8 +81,21 @@
             	<param name="root">result<!-- result is action return value，and need setter and getter method --></param>
             </result>
       	</action>
+      <!-- predict medicines by input -->
+      <action name="predictByInput" class="com.um.ehr.action.PredictAciton" method="predictByInput">
+        <!-- 将返回类型设置为json -->
+        	<result type="json">
+            	<param name="root">result<!-- result是action中设置的变量名，也是页面需要返回的数据，该变量必须有setter和getter方法 --></param>
+            </result>
+      </action>
       
-      
+      <!-- predict medicines by case -->
+      <action name="predictByCase" class="com.um.ehr.action.PredictAciton" method="predictByCase">
+        <!-- 将返回类型设置为json -->
+        	<result type="json">
+            	<param name="root">result<!-- result是action中设置的变量名，也是页面需要返回的数据，该变量必须有setter和getter方法 --></param>
+            </result>
+      </action>
       
       
       

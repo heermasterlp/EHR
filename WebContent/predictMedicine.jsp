@@ -81,7 +81,7 @@
 	    		<!-- Page Heading -->
                  <div id="left">
         <div>
-            <form name="form" method="post">
+            <form id="myForm" name="myForm" method="post">
                 <div id="left_left">
                     <!-- 症型 -->
                      <div class="row">
@@ -94,19 +94,19 @@
                     <div>
                         <p>
                             年度：
-                            <select name="batch">  
+                            <select id="batch" name="batch">  
                                 <option value="null">全部</option>
                                 <option value="2012" selected>2012</option>
                                 <option value="2011">2011</option>
                                 <option value="2010">2010</option>
                                 <option value="2009">2009</option>
                             </select> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <input id="predictButton" type="submit" class="btn btn-xs btn-success" value="预测处方" onclick="javascript: form.action='predictByStatisticAndMachine';" /> 
+                            <input id="predictButton" type="button" class="btn btn-xs btn-success" value="预测处方" onclick="javascript: form.action='predictByStatisticAndMachine';" /> 
                             
                         </p>
                         <hr>
                         <p class="text-danger">
-                            机器学习阈值（0～1）：<input type="text" name="threshold" value="0.3" />
+                            机器学习阈值（0～1）：<input id="threshold" type="text" name="threshold" value="0.3" />
                         </p>
                         <hr>
                         <p>时间状态</p>
@@ -114,7 +114,7 @@
                             <tr>
                                 <td class="info"><label>时间状态:</label></td>
                                 <td>
-                                    <select name="timestatus">
+                                    <select id="timestatus" name="timestatus">
                                         <option value="cmtreat" selected>单纯中医药治疗</option>
                                         <option value="shuqian">术前</option>
                                         <option value="shuhou">术后</option>
@@ -134,7 +134,7 @@
                             <tr>
                                 <td class="info"><label>虚:</label></td>
                                 <td>
-                                    <select name="xu">
+                                    <select id="xu" name="xu">
                                         <option value="气虚">气虚</option>
                                         <option value="脾虚">脾虚</option>
                                         <option value="气阴两虚">气阴两虚</option>
@@ -177,7 +177,7 @@
                             <tr>
                                 <td class="danger"><label>痰量：</label></td>
                                 <td>
-                                    <select name="sputumamount">
+                                    <select id="sputumamount" name="sputumamount">
                                         <option value="oksputumamount" selected>正常</option>
                                         <option value="littlesputumamount">少</option>
                                         <option value="muchsputumamount">多</option>
@@ -187,7 +187,7 @@
                             <tr>
                                 <td class="danger"><label>痰色：</label></td>
                                 <td>
-                                    <select name="sputumcolor">
+                                    <select id="sputumcolor" name="sputumcolor">
                                         <option value="defalutsputumcolor">正常</option>
                                         <option value="yellowsputumcolor">黄</option>
                                         <option value="whitesputumcolor">白</option>
@@ -200,7 +200,7 @@
                             <tr>
                                 <td class="danger"><label>咳嗽：</label></td>
                                 <td>
-                                    <select name="cough">
+                                    <select id="cough" name="cough">
                                         <option value="okcough" selected>正常</option>
                                         <option value="badcough">轻</option>
                                         <option value="worsecough">中</option>
@@ -224,7 +224,7 @@
                             <tr>
                                 <td class="danger"><label>纳：</label></td>
                                 <td>
-                                <select name="na">
+                                <select id="na" name="na">
                                     <option value="okna" selected>正常</option>
                                     <option value="badna">纳差</option>
                                     <option value="anorexiana">厌食</option>
@@ -237,7 +237,7 @@
                             <tr>
                                 <td class="danger"><label>大便：</label></td>
                                 <td>
-                                    <select name="defecate" >
+                                    <select id="defecate" name="defecate" >
                                         <option value="defaultdefecate" selected>正常</option>
                                         <option value="okdefecate">便秘（轻）</option>
                                         <option value="baddefecate">便秘（中）</option>
@@ -250,7 +250,7 @@
                             <tr>
                                 <td class="danger"><label>小便：</label></td>
                                 <td>
-                                    <select name="urinate" >
+                                    <select id="urinate" name="urinate" >
                                         <option value="okurinate" selected>正常</option>
                                         <option value="badurinate">小便次多</option>
                                         <option value="worseurinate">尿频</option>
@@ -261,7 +261,7 @@
                             <tr>
                                 <td class="danger"><label>胸肋痛：</label></td>
                                 <td>
-                                    <select name="xonglei">
+                                    <select id="xonglei" name="xonglei">
                                         <option value="noxonglei" selected>正常</option>
                                         <option value="okxonglei">胸肋痛（轻）</option>
                                         <option value="badxonglei">胸肋痛（中）</option>
@@ -273,7 +273,7 @@
                             <tr>
                                 <td class="danger"><label>腹痛：</label></td>
                                 <td>
-                                    <select name="futong">
+                                    <select id="futong" name="futong">
                                         <option value="nofutong" selected>正常</option>
                                         <option value="okfutong">腹痛（轻）</option>
                                         <option value="badfutong">腹痛（中）</option>
@@ -305,7 +305,7 @@
                             <tr>
                                 <td class="success"><label>舌色：</label></td>
                                 <td>
-                                    <select name="tonguecolor">
+                                    <select id="tonguecolor" name="tonguecolor">
                                         <option value="oktonguecolor" selected>正常</option>
                                         <option value="whitetonguecolor">淡白</option>
                                         <option value="redtonguecolor">红色</option>
@@ -319,7 +319,7 @@
                             <tr>
                                 <td class="success"><label>舌苔：</label></td>
                                 <td>
-                                    <select name="coatedtongue">
+                                    <select id="coatedtongue" name="coatedtongue">
                                         <option value="whitecoatedtongue" selected>正常</option>
                                         <option value="yellowcoatedtongue">黄苔</option>
                                         <option value="purplecoatedtongue">紫苔</option>
@@ -332,7 +332,7 @@
                             <tr>
                                 <td class="success"><label>气力：</label></td>
                                 <td>
-                                    <select name="energy">
+                                    <select id="energy" name="energy">
                                         <option value="okenergy" selected>正常</option>
                                         <option value="badenergy">差</option>
                                         <option value="worseenergy">特差</option>
@@ -342,7 +342,7 @@
                             <tr>
                                 <td class="success"><label>眠：</label></td>
                                 <td>
-                                    <select name="sleep">
+                                    <select id="sleep" name="sleep">
                                         <option value="oksleep" selected>正常</option>
                                         <option value="badsleep">失眠（轻）</option>
                                         <option value="worsesleep">失眠（中）</option>
@@ -354,7 +354,7 @@
                             <tr>
                                 <td class="success"><label>寒热：</label></td>
                                 <td>
-                                    <select name="hanre">
+                                    <select id="hanre" name="hanre">
                                         <option value="hanwu" selected>正常</option>
                                         <option value="hanqing">寒（轻）</option>
                                         <option value="hanzhong">寒（重）</option>
@@ -368,7 +368,7 @@
                             <tr>
                                 <td class="success"><label>汗：</label></td>
                                 <td>
-                                    <select name="sweat">
+                                    <select id="sweat" name="sweat">
                                         <option value="nosweat" selected>正常</option>
                                         <option value="sweat">有</option>
                                         <option value="zihan">自汗</option>
@@ -380,7 +380,7 @@
                             <tr>
                                 <td class="success"><label>口渴：</label></td>
                                 <td>
-                                    <select name="thirst">
+                                    <select id="thirst" name="thirst">
                                         <option value="okthirst" selected>正常</option>
                                         <option value="badthirst">喝不多饮</option>
                                         <option value="worsethirst">口渴多饮</option>
@@ -390,7 +390,7 @@
                             <tr>
                                 <td class="success"><label>口味：</label></td>
                                 <td>
-                                    <select name="taste">
+                                    <select id="taste" name="taste">
                                         <option value="lighttaste">正常</option>
                                         <option value="acidtaste">泛酸</option>
                                         <option value="bittertaste">口苦</option>
@@ -406,11 +406,93 @@
         </div>
     </div>
     <div id="right">
+    	<div id="result">
+    	</div>
         
     
     </div>
     </div>
 	    	</div>
-	    </div>
+		    </div>
+	<div id="loading" style="position: fixed; top:0; left:0; width:100%; height: 100%; center center #efefef">
+		<img src="img/progress.gif" style="margin-top: 15%;margin-left: 15%;"/>
+	</div>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.js" type="text/javascript"></script>
+	<script type="text/javascript" src="js/jquery-2.2.2.js"></script>
+	<script type="text/javascript">
+		
+		
+		
+		function btn(){
+			var $btn = $("input.btn");//获取按钮元素
+			$btn.bind("click",function(){
+				$('#loading').show(); 
+				var zhengxingString = "";
+				var pulseString = "";
+				var bodydiscomfortString = "";
+				$($('input[name=zhengxing]:checked', '#myForm')).each(function(){
+					zhengxingString += this.value + ",";
+				});
+				$($('input[name=bodydiscomfort]:checked', '#myForm')).each(function(){
+					bodydiscomfortString += this.value + ",";
+				});
+				$($('input[name=pulse]:checked', '#myForm')).each(function(){
+					pulseString += this.value + ",";
+				});
+				
+				$.ajax({
+                    type:"post",
+                    url:"predictByInput",//需要用来处理ajax请求的action,excuteAjax为处理的方法名，JsonAction为action名
+                    data:{//设置数据源
+                        batch:$('#batch').val(),
+                        threshold:$('#threshold').val(),
+                        timestatus:$('#timestatus').val(),
+                        xu:$('#xu').val(),
+                        tanyu:$('input[name=tanyu]:checked', '#myForm').val(),
+                        tanshi:$('input[name=tanshi]:checked', '#myForm').val(),
+                        zhengxing:zhengxingString,
+                        sputumamount:$('#sputumamount').val(),
+                        sputumcolor:$('#sputumcolor').val(),
+                        cough:$('#cough').val(),
+                        pulse:pulseString,
+                        na:$('#na').val(),
+                        defecate:$('#defecate').val(),
+                        constipation:$('input[name=constipation]:checked', '#myForm').val(),
+                        urinate:$('#urinate').val(),
+                        xonglei:$('#xonglei').val(),
+                        futong:$('#futong').val(),
+                        tengtong:$('input[name=tengtong]').val(),
+                        bodydiscomfort:bodydiscomfortString,
+                        tonguecolor:$('#tonguecolor').val(),
+                        coatedtongue:$('#coatedtongue').val(),
+                        energy:$('#energy').val(),
+                        sleep:$('#sleep').val(),
+                        hanre:$('#hanre').val(),
+                        sweat:$('#sweat').val(),
+                        thirst:$('#thirst').val(),
+                        taste:$('#taste').val()
+                    },
+                    dataType:"json",//设置需要返回的数据类型
+                    success:function(data){
+                    	$('#loading').hide(); 
+                       	// resut 
+                        $('#result').html(data);
+                         
+                    },
+                    error:function(){
+                        alert("系统异常，请稍后重试！");
+                    }//这里不要加","
+                });
+			});
+		}
+		
+		/* 页面加载完成，绑定事件 */
+        $(document).ready(function(){
+        	$('#loading').hide(); 
+            btn();//点击提交，执行ajax
+        });
+	</script>
 </body>
 </html>
