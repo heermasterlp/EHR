@@ -76,7 +76,7 @@ public class LoginAction extends ActionSupport implements SessionAware {
 	}
 	
 	/**
-	 * Logout
+	 * Logout action
 	 * @return
 	 */
 	public String logout(){

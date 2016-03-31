@@ -134,12 +134,11 @@ public class MachineLearningPredict {
 	}
 	
 	/**
-	 *  根据病例数据，进行机器学习算法,对输入病例数据进行初始化
+	 * Convert diagnose and description to machine learning code 
 	 * @param 
 	 * @return
 	 */
 	public static List<String> parseDiagAndDescByEhealthRecords( EHealthRecord e){
-		
 		if( e == null ){ return null; }
 		
 		String diag = e.getChinesediagnostics();

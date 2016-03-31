@@ -238,9 +238,9 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     		
             Map<String,Object> map = new HashMap<String,Object>();
             
-//            map.put("medicineListByStatistics", medicineListByStatisticSorted);
-//            map.put("medicineListByRules", medicineListByRules);
-//            map.put("medicineListByMachine", medicineListByMachine);
+            map.put("medicineListByStatistics", medicineListByStatisticSorted);
+            map.put("medicineListByRules", medicineListByRules);
+            map.put("medicineListByMachine", medicineListByMachine);
             
             map.put("medicineList", medicineList);
             
@@ -288,24 +288,24 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     		count = Integer.valueOf(countString); // order number
     		count--;
     		targetRecord = allList.get( count );
-    				
     	}
     			
     	if(targetRecord == null){
     		return SUCCESS;
     	}
     	//4. the diagnose and description info of target record
-    	String diag = targetRecord.getChinesediagnostics();
-    	String description = targetRecord.getConditionsdescribed();
-    	String diagnose = "";
-    	String[] diagKeywords = DiagClassifyData.diagKeywords;
-    	for( String k : diagKeywords ){
-    		if(diag.matches(".*" + k + ".*")){
-    			diagnose += k + " ";
-    		}
-    	}
-    	// format the description of target record
-    	String formattedDescription = MedicineByDescription.formattedDescriptionByCount(description);
+//    	String diag = targetRecord.getChinesediagnostics();
+//    	String description = targetRecord.getConditionsdescribed();
+//    	String diagnose = "";
+//    	String[] diagKeywords = DiagClassifyData.diagKeywords;
+//    	for( String k : diagKeywords ){
+//    		if(diag.matches(".*" + k + ".*")){
+//    			diagnose += k + " ";
+//    		}
+//    	}
+//    	// format the description of target record
+//    	String formattedDescription = MedicineByDescription.formattedDescriptionByCount(description);
+    	
     	// 5. the origin medicines in target record            
     	List<String> orignMedicines = new ArrayList<String>();
     	if( targetRecord.getChineseMedicines() != null && targetRecord.getChineseMedicines().size() > 0 ){
@@ -363,6 +363,4 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     	
     	return SUCCESS;
     }
-	
-	
 }
