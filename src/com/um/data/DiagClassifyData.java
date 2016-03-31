@@ -834,10 +834,10 @@ public class DiagClassifyData {
 		"zihan:自汗",
 		"daohan:盗汗",
 		"dahan:大汗",
-		"noxonglei:胸肋痛（无）",
-		"okxonglei:胸肋痛（轻）",
-		"badxonglei:胸肋痛（中）",
-		"worsexonglei:胸肋痛（重）",
+		"noxionglei:胸肋痛（无）",
+		"okxionglei:胸肋痛（轻）",
+		"badxionglei:胸肋痛（中）",
+		"worsexionglei:胸肋痛（重）",
 		"nofutong:痛（无）",
 		"okfutong:腹痛（轻）",
 		"badfutong:腹痛（中）",
@@ -942,10 +942,10 @@ public class DiagClassifyData {
 		"zihan:2",
 		"daohan:3",
 		"dahan:4",
-		"noxonglei:0",
-		"okxonglei:1",
-		"badxonglei:2",
-		"worsexonglei:3",
+		"noxionglei:0",
+		"okxionglei:1",
+		"badxionglei:2",
+		"worsexionglei:3",
 		"nofutong:0",
 		"okfutong:1",
 		"badfutong:2",
@@ -1041,10 +1041,10 @@ public class DiagClassifyData {
 		"zihan:，少气自汗",
 		"daohan:盗汗",
 		"dahan:大汗",
-		"noxonglei:无胸肋痛",
-		"okxonglei:左胸轻痛，|胸部疼痛缓解，|咳嗽胸痛减少，|夜间胸痛缓解，|右胸背部隐痛，|，胸痛缓解，|左胸隐痛，|胸部隐痛，|，少许胸痛，|轻度胸肋痛|胸痛缓解|偶胸痛|稍有疼痛|偶有胸痛|胸胁不适轻微|现仍左胸胁不适|，胸闷痛减轻，|现胸背隐痛，",
-		"badxonglei:现左胸闷不适，|，胸痛，|胸背部疼痛，|现左胸胁不适，|现左胁肋疼痛不适|现左胸疼痛，|现右侧胸背痛，|现左胸背疼痛|现胸背痛|、颈、胸部疼痛|胸肋痛|骨痛|现头、颈、胸部疼痛｜。头痛骨痛",
-		"worsexonglei:重度胸肋痛|夜间胸痛|右侧胸痛|胸闷胸痛|全身骨痛|胸背痛",
+		"noxionglei:无胸肋痛",
+		"okxionglei:左胸轻痛，|胸部疼痛缓解，|咳嗽胸痛减少，|夜间胸痛缓解，|右胸背部隐痛，|，胸痛缓解，|左胸隐痛，|胸部隐痛，|，少许胸痛，|轻度胸肋痛|胸痛缓解|偶胸痛|稍有疼痛|偶有胸痛|胸胁不适轻微|现仍左胸胁不适|，胸闷痛减轻，|现胸背隐痛，",
+		"badxionglei:现左胸闷不适，|，胸痛，|胸背部疼痛，|现左胸胁不适，|现左胁肋疼痛不适|现左胸疼痛，|现右侧胸背痛，|现左胸背疼痛|现胸背痛|、颈、胸部疼痛|胸肋痛|骨痛|现头、颈、胸部疼痛｜。头痛骨痛",
+		"worsexionglei:重度胸肋痛|夜间胸痛|右侧胸痛|胸闷胸痛|全身骨痛|胸背痛",
 		"nofutong:无腹痛",
 		"okfutong:轻度腹痛",
 		"badfutong:现便时腹痛|腹痛",
@@ -1155,7 +1155,7 @@ public class DiagClassifyData {
 		"maishu%1:numberpulse",
 		"shetai%0:whitecoatedtongue#1:yellowcoatedtongue#2:purplecoatedtongue#3:blackcoatedtongue#4:nitaicoatedtongue#5:houtaicoatedtongue",
 		"xiaobian%0:okurinate#1:badurinate#2:worseurinate#3:bloodurinate",
-		"xiongleitong%0:noxonglei#1:okxonglei#2:badxonglei#3:worsexonglei",
+		"xiongleitong%0:noxionglei#1:okxionglei#2:badxionglei#3:worsexionglei",
 		"xinji%1:xinji",
 		"mamu%1:mamu",
 		"xuetan%1:redlittlesputumcolor#2:redmuchsputumcolor#3:redmoresputumcolor",
@@ -1169,7 +1169,7 @@ public class DiagClassifyData {
 		"maichen%1:sinkpulse",
 		"hanrewanglai%1:hanrewanglai",
 		"maixian%1:chordpulse",
-		"dabian%0:defaultdefecate#1:okdefecate#2:baddefecate#3:worsedefecate",
+		"dabian%0:defaultdefecate#1:okdefecate#2:baddefecate#3:worsedefecate#4:blooddefecate",
 		"na%0:okna#1:badna#2:anorexiana#3:worsena",
 		"muxuan%1:muxuan",
 		"shese%0:oktonguecolor#1:whitetonguecolor#2:redtonguecolor#3:jiangtonguecolor#4:purpletonguecolor#5:cyantonguecolor#6:bluetonguecolor",
@@ -1242,7 +1242,7 @@ public class DiagClassifyData {
 	/**
 	 * Second project strings
 	 */
-	public final static String[] secondProjectStrings = {"yaotong","wantong","toutong","touyun","xinji","xiongmen","fuzhang","wanzhang","shenzhong","erming","muxuan","mamu","shese","shetai","qili","mian","hanrewanglai","re","hann","han","kouke","kouwei"};
+	public final static String[] secondProjectStrings = {"yaotong","wantong","toutong","touyun","xinji","xiongmen","fuzhang","wanzhang","shenzhong","erming","muxuan","mamu","shese","shetai","qili","mian","hanre","re","hann","han","kouke","kouwei"};
 	
 	/**
 	 * The main description key words

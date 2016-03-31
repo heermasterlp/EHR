@@ -34,19 +34,6 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
 	 
 	 private String result;
 	
-	@Override
-	public void setServletRequest(HttpServletRequest request) {
-		// TODO Auto-generated method stub
-		this.request = request;
-	}
-
-	public String getResult() {
-		return result;
-	}
-
-	public void setResult(String result) {
-		this.result = result;
-	}
 	
 	/**
      * Predict medicines
@@ -54,11 +41,6 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
      */
     public String predictByInput(){
         try {
-            //获取数据
-            
-            //将数据存储在map里，再转换成json类型数据，也可以自己手动构造json类型数据
-            
-            
             /**
              * 1. Parse request parameters
              */
@@ -78,7 +60,7 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
             String defecate = request.getParameter("defecate");
             String constipation = request.getParameter("constipation");
             String urinate = request.getParameter("urinate");
-            String xonglei = request.getParameter("xonglei");
+            String xionglei = request.getParameter("xionglei");
             String futong = request.getParameter("futong");
             String tengtong = request.getParameter("tengtong");
             String bodydiscomfort = request.getParameter("bodydiscomfort");
@@ -91,20 +73,27 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
             String thirst = request.getParameter("thirst");
             String taste = request.getParameter("taste");
             
-            logger.info("batch: " + batch);
+            logger.info("xionglei:-" + xionglei);
+            
         	// format diagnose and description
             String diagnose = "";
             String description = "";
             
             // diagnose
             diagnose = zhengxing + (tanyu.equals("yes") ? "痰瘀," : "") + (tanshi.equals("yes") ? "痰湿,":"") + xu;
-            
+            logger.info("diagnose: " + diagnose);
             // description
-            description = timestatus + "," +sputumamount + "," + sputumcolor + "," + cough + "," + pulse + na + "," 
-            				+ defecate + "," + constipation + "," + urinate + "," + xonglei + ","
-            				+ futong + "," + tengtong + bodydiscomfort + tonguecolor + "," 
+            description = timestatus + "," +sputumamount + "," + sputumcolor + "," + cough + "," + na + "," 
+            				+ defecate + "," + urinate + "," + xionglei + ","
+            				+ futong + "," + tonguecolor + "," 
             				+ coatedtongue + "," + energy + "," + sleep + "," + hanre + ","
             				+ sweat + "," + thirst + "," + taste;
+            description += pulse.contains(",") ? "," + pulse : "";
+            description += tengtong.contains(",") ? tengtong : "";
+            description += bodydiscomfort.contains(",") ? bodydiscomfort : "";
+            description += constipation == null ? "" : "xiexie";
+            
+            logger.info("description: " + description);
             // 1.3 formatted the description to output
     		String descconvertString = MedicineByDescription.getFormatedDescirption(description);
     		String descriptionString = diagnose + descconvertString;
@@ -134,6 +123,7 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     		
     		// 2.6 get similar records based on the description
     		List<EHealthRecord> similaryRecords = MedicineByDescription.getSimilaryEHealthRecords(eHealthRecordsByBatch, diagnose, description);
+    		logger.info("similary records: " + similaryRecords.size());
     		
     		if (similaryRecords != null && similaryRecords.size() > 0) {
     			// 2.7 statistic the medicines in the similar records
@@ -177,6 +167,7 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
              * 4. Predict medicines based on rules
              */
     		List<String> medicineListByRules = BasedOnRulePredict.predictBasedOnRules(descriptionString);
+    		
             /**
              * 5. Return result
              */
@@ -235,14 +226,40 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     			}
 			}
     		
+    		// Format similiary records result
+    		Map<String, ArrayList<String>> formattedSimilarRecords = new HashMap<>();
+    		for (EHealthRecord eRecord : similaryRecords) {
+				String regno = eRecord.getRegistrationno();
+				String recordDescription = eRecord.getConditionsdescribed();
+				// format description
+				String formattedDescription = MedicineByDescription.formattedDescriptionByCount(recordDescription);
+				String formattedMedicines = "";
+				if (eRecord.getChineseMedicines() == null || eRecord.getChineseMedicines().size() == 0) {
+					continue;
+				}
+				for (ChineseMedicine cMedicine : eRecord.getChineseMedicines()) {
+					formattedMedicines += cMedicine.getNameString() + ",";
+				}
+				// result
+				ArrayList<String> descAndMedicines = new ArrayList<>();
+				descAndMedicines.add(formattedDescription);
+				descAndMedicines.add(formattedMedicines);
+				formattedSimilarRecords.put(regno, descAndMedicines);
+			}
+    		
+    		
     		
             Map<String,Object> map = new HashMap<String,Object>();
             
             map.put("medicineListByStatistics", medicineListByStatisticSorted);
-            map.put("medicineListByRules", medicineListByRules);
             map.put("medicineListByMachine", medicineListByMachine);
-            
+            map.put("medicineListByRules", medicineListByRules);
             map.put("medicineList", medicineList);
+            
+            map.put("formattedSimilarRecords", formattedSimilarRecords);
+            map.put("similarSize", similaryRecords.size());
+            
+            
             
             JSONObject json = JSONObject.fromObject(map);//将map对象转换成json类型数据
             result = json.toString();//给result赋值，传递给页面
@@ -294,17 +311,6 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     		return SUCCESS;
     	}
     	//4. the diagnose and description info of target record
-//    	String diag = targetRecord.getChinesediagnostics();
-//    	String description = targetRecord.getConditionsdescribed();
-//    	String diagnose = "";
-//    	String[] diagKeywords = DiagClassifyData.diagKeywords;
-//    	for( String k : diagKeywords ){
-//    		if(diag.matches(".*" + k + ".*")){
-//    			diagnose += k + " ";
-//    		}
-//    	}
-//    	// format the description of target record
-//    	String formattedDescription = MedicineByDescription.formattedDescriptionByCount(description);
     	
     	// 5. the origin medicines in target record            
     	List<String> orignMedicines = new ArrayList<String>();
@@ -363,4 +369,19 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     	
     	return SUCCESS;
     }
+    
+    
+    @Override
+	public void setServletRequest(HttpServletRequest request) {
+		// TODO Auto-generated method stub
+		this.request = request;
+	}
+
+	public String getResult() {
+		return result;
+	}
+
+	public void setResult(String result) {
+		this.result = result;
+	}
 }

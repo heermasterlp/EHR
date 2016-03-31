@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import com.um.data.DiagClassifyData;
 import com.um.model.ChineseMedicine;
@@ -19,6 +20,8 @@ import com.um.model.EHealthRecord;
 import com.um.mongodb.converter.MedicineStatics;
 
 public class DiagMedicineProcess {
+	
+	private static Logger logger = Logger.getLogger("com.um.util.DiagMedicineProcess");
 	
 	/**
 	 *  根据诊断关键字，对病例进行分类，
@@ -143,6 +146,7 @@ public class DiagMedicineProcess {
 	 * @return
 	 */
 	public static List<EHealthRecord> getEhealthRecordByDescription(String description,List<EHealthRecord> eHealthRecords){
+		logger.info(description);
 		if( description.equals("") || eHealthRecords == null || eHealthRecords.size() == 0){
 			return null;
 		}
@@ -154,21 +158,21 @@ public class DiagMedicineProcess {
 		// 2. built project reference table
 		Map<String, HashMap<String, String>> projectReferenceTable = getProjectReferenceTable();
 		
-		List<String> mainProjectList = new ArrayList<String>();
-		List<String> secondProjectList = new ArrayList<String>();
-		
+		final List<String> mainProjectList = new ArrayList<String>();
+		final List<String> secondProjectList = new ArrayList<String>();
+		// main and second project name
 		for (String string : DiagClassifyData.mainProjectStrings) {
-			mainProjectList.add(string);
+			mainProjectList.add(string.trim());
 		}
 		for (String string : DiagClassifyData.secondProjectStrings) {
-			secondProjectList.add(string);
+			secondProjectList.add(string.trim());
 		}
 		
 		// 3. input description information format and initial
 		Map<String, String> inputMainInfo = new HashMap<String, String>(); // Main description information
 		Map<String, String> inputSecondInfo = new HashMap<String, String>(); // Second description information
 		int matchOfRange = 0; // number of main description not zero
-		// initial the map
+		// initial the input code map
 		for (String string : DiagClassifyData.mainProjectStrings) {
 			inputMainInfo.put(string, "0");
 		}
@@ -208,12 +212,8 @@ public class DiagMedicineProcess {
 			similarRecords = getRecordsOnRangeOfMatchNumber(inputMainInfo, inputSecondInfo, eHealthRecords, matchOfRange);
 		}else {
 			while(similarRecords != null && similarRecords.size() == 0 && matchOfRange >= 2){
-//				System.out.println("------" + matchOfRange);
 				similarRecords = getRecordsOnRangeOfMatchNumber(inputMainInfo, inputSecondInfo, eHealthRecords, matchOfRange);
 				matchOfRange--;
-//				if (similarRecords != null) {
-//					System.out.println("count:" + similarRecords.size());
-//				}
 			}
 		}
 		return similarRecords;

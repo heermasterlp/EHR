@@ -29,12 +29,12 @@
 	    <div id="page-wrapper">
 	    	<div class="container-fluid">
 	    		<!-- Page Heading -->
-                <div id="left">
+                <div id="left-panel">
             		<div class="row">
 		                <div class="col-lg-12">
 		                	<h1 class="page-header"> 基于案例预测处方</h1>
 		                </div>
-			            <form id="myForm" name="myForm" method='' action=''>
+			            <form id="myForm" name="myForm" action=''>
 			                <div id="left_rigth">
 			                    <p class="text-danger">
 			                        <label>请入病例序号(1-1130) 或挂号号</label>
@@ -53,7 +53,15 @@
 			            </form>
         			</div>
     		</div>
-			<div id="contents">
+			<div id="right-panel">
+				<div>
+					<div><h3>原始病历中的中药</h3></div>
+					<div id="orignMedicines"></div>
+				</div>
+				<div>
+					<div><h3>机器学习结果</h3></div>
+					<div id="medicineListByMachine"></div>
+				</div>
 			</div>
 	    	</div>
 	    </div>
@@ -84,15 +92,20 @@
 	                success:function(data){
 	                	$('#loading').hide();
 	                	// parse return data
-	                	/* var jsonObject = jQuery.parseJSON(data);
-	                	var infos = "<table class='table table-bordered'><thead><tr class='info'><td>No.</td><td>Info</td><td>Detail</td></tr></thead><tbody>";
-	                	var index = 1;
-	                	$.each(jsonObject.infoMap, function(key, value){
-	                		infos += "<tr><td>" + index + "</td><td>" + value + "</td><td><a href='detailRecord?ehealthregno=" + key + "'>详细信息</a></td></tr>";
-	                		index++;
-                    	});
-	                	infos += "</tbody></table>"; */
-	                	$('#contents').html(data);
+	                	var jsonObject = jQuery.parseJSON(data);
+	                	
+	                	var orignMedicinesString = "";
+	                	var medicineListByMachine = "";
+	                	
+	                	$.each(jsonObject.orignMedicines, function(id, value){
+	                		orignMedicinesString += value + ",";
+	                	});
+	                	$('#orignMedicines').html(orignMedicinesString);
+	                	
+	                	$.each(jsonObject.medicineListByMachine, function(id, value){
+	                		medicineListByMachine += value + ",";
+	                	});
+	                	$('#medicineListByMachine').html(medicineListByMachine);
 	                },
 	                error:function(){
 	                    alert("系统异常，请稍后重试！");

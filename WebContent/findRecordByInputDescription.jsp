@@ -26,18 +26,16 @@
 	
 		<!-- Main page -->
 	    
-	    <div id="page-wrapper">
-	    	<div class="container-fluid">
-	    		<!-- Page Heading -->
-                 <div id="left">
-        <div>
+	    <div id="page-wrapper" style="height: 1700px;">
+	    	<!-- Page Heading -->
+            <div class="col-xs-6" align="left">
             <form id="myForm" name="myForm" method="post">
                 <div id="left_left">
                     <!-- 症型 -->
                      <div class="row">
                         <div class="col-lg-12">
                             <h1 class="page-header">
-                                基于输入预测处方
+                                基于输入症状查找病历
                             </h1>
                         </div>
                     </div>
@@ -209,16 +207,16 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td class="danger"><label>胸肋痛：</label></td>
-                                <td>
-                                    <select id="xonglei" name="xonglei">
-                                        <option value="noxonglei" selected>正常</option>
-                                        <option value="okxonglei">胸肋痛（轻）</option>
-                                        <option value="badxonglei">胸肋痛（中）</option>
-                                        <option value="worsexonglei">胸肋痛（重）</option>
-                                    </select>
-                                </td>
-                            </tr>
+	                                <td class="danger"><label>胸肋痛：</label></td>
+	                                <td>
+	                                    <select id="xionglei" name="xionglei">
+	                                        <option value="noxionglei" selected>正常</option>
+	                                        <option value="okxionglei">胸肋痛（轻）</option>
+	                                        <option value="badxionglei">胸肋痛（中）</option>
+	                                        <option value="worsexionglei">胸肋痛（重）</option>
+	                                    </select>
+	                                </td>
+	                            </tr>
                             
                             <tr>
                                 <td class="danger"><label>腹痛：</label></td>
@@ -354,16 +352,13 @@
                 </div>
             </form>
         </div>
+        <div class="col-xs-6">
+	    	<div id="contents">
+	    	</div>
+	    </div>
     </div>
-    <div id="right">
-    	<div id="contents">
-    	</div>
-        
     
     </div>
-    </div>
-	    	</div>
-		    </div>
 	
 	
 	<!-- Bootstrap Core JavaScript -->
@@ -373,25 +368,28 @@
 		
 		
 		
-		function btn(){
-			var $btn = $("input.btn");//获取按钮元素
-			$btn.bind("click",function(){
-				$('#loading').show(); 
-				var zhengxingString = "";
-				var pulseString = "";
-				var bodydiscomfortString = "";
-				$($('input[name=zhengxing]:checked', '#myForm')).each(function(){
-					zhengxingString += this.value + ",";
-				});
-				$($('input[name=bodydiscomfort]:checked', '#myForm')).each(function(){
-					bodydiscomfortString += this.value + ",";
-				});
-				$($('input[name=pulse]:checked', '#myForm')).each(function(){
-					pulseString += this.value + ",";
-				});
-				
-				$.ajax({
-                    type:"post",
+	var $btn = $("input.btn");//获取按钮元素
+	$btn.bind("click",function(){
+		$('#loading').show(); 
+		var zhengxingString = "";
+		var pulseString = "";
+		var bodydiscomfortString = "";
+		var tengtongString = "";
+		$($('input[name=zhengxing]:checked', '#myForm')).each(function(){
+			zhengxingString += this.value + ",";
+		});
+		$($('input[name=bodydiscomfort]:checked', '#myForm')).each(function(){
+			bodydiscomfortString += this.value + ",";
+		});
+		$($('input[name=tengtong]:checked', '#myForm')).each(function(){
+			tengtongString += this.value + ",";
+		});
+		$($('input[name=pulse]:checked', '#myForm')).each(function(){
+			pulseString += this.value + ",";
+		});
+		
+		$.ajax({
+            type:"post",
                     url:"querybyinputdescription",//需要用来处理ajax请求的action,excuteAjax为处理的方法名，JsonAction为action名
                     data:{//设置数据源
                         batch:$('#batch').val(),
@@ -409,9 +407,9 @@
                         defecate:$('#defecate').val(),
                         constipation:$('input[name=constipation]:checked', '#myForm').val(),
                         urinate:$('#urinate').val(),
-                        xonglei:$('#xonglei').val(),
+                        xionglei:$('#xionglei').val(),
                         futong:$('#futong').val(),
-                        tengtong:$('input[name=tengtong]').val(),
+                        tengtong:tengtongString,
                         bodydiscomfort:bodydiscomfortString,
                         tonguecolor:$('#tonguecolor').val(),
                         coatedtongue:$('#coatedtongue').val(),
@@ -441,7 +439,7 @@
                     }//这里不要加","
                 });
 			});
-		}
+		
 		
 		/* 页面加载完成，绑定事件 */
         $(document).ready(function(){
