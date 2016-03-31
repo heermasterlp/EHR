@@ -73,8 +73,6 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
             String thirst = request.getParameter("thirst");
             String taste = request.getParameter("taste");
             
-            logger.info("xionglei:-" + xionglei);
-            
         	// format diagnose and description
             String diagnose = "";
             String description = "";

@@ -168,16 +168,53 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 		logger.info("Query records based on input description begin!");
 		
 		/**
-		 * 1. Parse the request parameters
-		 */
-		// 1.1 parse the request parameters
-		Map<String, String> requestMap = MedicineByDescription.parseRequestParameter(request);
-		
-		// 1.2 get the diagnose, description, batch, threshold of machine learning
-		String diagnose = requestMap.get("diagnose"); // diagnose
-		String description = requestMap.get("description"); // description
-		String batch = requestMap.get("batch");  // batch
-		
+         * 1. Parse request parameters
+         */
+    	// get parameters
+    	String batch = request.getParameter("batch");
+        String timestatus = request.getParameter("timestatus");
+        String xu = request.getParameter("xu");
+        String tanyu = request.getParameter("tanyu");
+        String tanshi = request.getParameter("tanshi");
+        String zhengxing = request.getParameter("zhengxing");
+        String sputumamount = request.getParameter("sputumamount");
+        String sputumcolor = request.getParameter("sputumcolor");
+        String cough = request.getParameter("cough");
+        String pulse = request.getParameter("pulse");
+        String na = request.getParameter("na");
+        String defecate = request.getParameter("defecate");
+        String constipation = request.getParameter("constipation");
+        String urinate = request.getParameter("urinate");
+        String xionglei = request.getParameter("xionglei");
+        String futong = request.getParameter("futong");
+        String tengtong = request.getParameter("tengtong");
+        String bodydiscomfort = request.getParameter("bodydiscomfort");
+        String tonguecolor = request.getParameter("tonguecolor");
+        String coatedtongue = request.getParameter("coatedtongue");
+        String energy = request.getParameter("energy");
+        String sleep = request.getParameter("sleep");
+        String hanre = request.getParameter("hanre");
+        String sweat = request.getParameter("sweat");
+        String thirst = request.getParameter("thirst");
+        String taste = request.getParameter("taste");
+        
+    	// format diagnose and description
+        String diagnose = "";
+        String description = "";
+        
+        // diagnose
+        diagnose = zhengxing + (tanyu.equals("yes") ? "痰瘀," : "") + (tanshi.equals("yes") ? "痰湿,":"") + xu;
+        logger.info("diagnose: " + diagnose);
+        // description
+        description = timestatus + "," +sputumamount + "," + sputumcolor + "," + cough + "," + na + "," 
+        				+ defecate + "," + urinate + "," + xionglei + ","
+        				+ futong + "," + tonguecolor + "," 
+        				+ coatedtongue + "," + energy + "," + sleep + "," + hanre + ","
+        				+ sweat + "," + thirst + "," + taste;
+        description += pulse.contains(",") ? "," + pulse : "";
+        description += tengtong.contains(",") ? tengtong : "";
+        description += bodydiscomfort.contains(",") ? bodydiscomfort : "";
+        description += constipation == null ? "" : "xiexie";
 		// 1.3 formatted the description to output
 		String descconvertString = MedicineByDescription.getFormatedDescirption(description);
 		String descriptionString = diagnose + descconvertString;
@@ -192,14 +229,32 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 		// 2.6 get similar records based on the description
 		List<EHealthRecord> similaryRecords = MedicineByDescription.getSimilaryEHealthRecords(eHealthRecordsByBatch, diagnose, description);
 		
-		
-		
 		// 4. format return result
 		Map<String, Object> map = new HashMap<>();
-				
-				
-		map.put("infoMap", similaryRecords.size());
-		map.put("descriptionString", descriptionString);
+		
+		Map<String, ArrayList<String>> formattedSimilarRecords = new HashMap<>();
+		for (EHealthRecord eRecord : similaryRecords) {
+			String regno = eRecord.getRegistrationno();
+			String recordDescription = eRecord.getConditionsdescribed();
+			// format description
+			String formattedDescription = MedicineByDescription.formattedDescriptionByCount(recordDescription);
+			String formattedMedicines = "";
+			if (eRecord.getChineseMedicines() == null || eRecord.getChineseMedicines().size() == 0) {
+				continue;
+			}
+			for (ChineseMedicine cMedicine : eRecord.getChineseMedicines()) {
+				formattedMedicines += cMedicine.getNameString() + ",";
+			}
+			// result
+			ArrayList<String> descAndMedicines = new ArrayList<>();
+			descAndMedicines.add(formattedDescription);
+			descAndMedicines.add(formattedMedicines);
+			formattedSimilarRecords.put(regno, descAndMedicines);
+		}
+		
+		// output 20
+		
+		map.put("formattedSimilarRecords", formattedSimilarRecords);
 				
 		JSONObject json = JSONObject.fromObject(map);
 				
@@ -237,11 +292,6 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 		Document targetRecordDoc = iterable.first();
 		
 		targetRecord = EhealthRecordConverter.toEHealthRecord(targetRecordDoc);
-		
-//		Map<String, Object> map = new HashMap<>();
-//		map.put("resultMap", targetRecordDoc);
-//		
-//		JSONObject json = JSONObject.fromObject(map);
 		
 		client.close();
 		logger.info("query record detail end");

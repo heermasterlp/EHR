@@ -29,7 +29,7 @@
 	    <div id="page-wrapper">
 	    	<div class="container-fluid">
 	    		<!-- Page Heading -->
-                <div id="left-panel">
+                <div class="col-xs-6" align="left">
             		<div class="row">
 		                <div class="col-lg-12">
 		                	<h1 class="page-header"> 基于案例预测处方</h1>
@@ -53,7 +53,7 @@
 			            </form>
         			</div>
     		</div>
-			<div id="right-panel">
+			<div class="col-xs-6" align="left">
 				<div>
 					<div><h3>原始病历中的中药</h3></div>
 					<div id="orignMedicines"></div>
