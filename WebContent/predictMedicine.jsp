@@ -353,7 +353,7 @@
 	                </div>
 	            </form>
         	</div>
-        	<div class="col-xs-6">
+        	<div class="col-xs-6" align="left">
     		<div>
     			<div><h3>基于统计预测结果</h3></div>
     			<div id="medicineListByStatistics"></div>
@@ -361,17 +361,17 @@
     		<hr>
     		<div>
     			<div><h3>基于机器学习预测结果</h3></div>
-    			<div id="medicineListByStatistics"></div>
+    			<div id="medicineListByMachine"></div>
     		</div>
     		<hr>
     		<div>
     			<div><h3>基于规则预测结果</h3></div>
-    			<div id="medicineListByStatistics"></div>
+    			<div id="medicineListByRules"></div>
     		</div>
     		<hr>
     		<div>
     			<div><h3>综合预测结果</h3></div>
-    			<div id="medicineListByStatistics"></div>
+    			<div id="medicineList"></div>
     		</div>
     		<hr>
     		<div id="similarRecords">

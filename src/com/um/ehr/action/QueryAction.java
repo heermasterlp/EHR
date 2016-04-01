@@ -215,9 +215,6 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
         description += tengtong.contains(",") ? tengtong : "";
         description += bodydiscomfort.contains(",") ? bodydiscomfort : "";
         description += constipation == null ? "" : "xiexie";
-		// 1.3 formatted the description to output
-		String descconvertString = MedicineByDescription.getFormatedDescirption(description);
-		String descriptionString = diagnose + descconvertString;
 		
 		/**
 		 * 2. Case-base statistics to predict medicines

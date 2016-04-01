@@ -55,7 +55,6 @@ public class StatisticsAction extends ActionSupport implements ServletRequestAwa
 		// 3. statistics medicines 
 		Map<String, String> resMap = DiagMedicineProcess.statisMedicProbability(medicines,eHealthRecordsByBatch);
 				
-		Map<String, ArrayList<String>> resultMap = new HashMap<String, ArrayList<String>>();
 		List<String> resultList = new ArrayList<String>();
 		
 		if (resMap != null && resMap.size() > 0) {
@@ -140,24 +139,12 @@ public class StatisticsAction extends ActionSupport implements ServletRequestAwa
 				}
 			}
 		}
-		
+		// statistics result
 		HashMap<String, Integer> rHashMaps = MedicineStatics.staticsChineseMedicine(medicineNamesList);
-		
-//		// 3. format the result
-//		DecimalFormat df = new DecimalFormat("#.##");
-//		Map<String, ArrayList<String>> resultMap = new HashMap<String, ArrayList<String>>();
-//		Set<String> rHashMapsKeySet = rHashMaps.keySet();
-//		for (String r : rHashMapsKeySet) {
-//			int num = rHashMaps.get(r);
-//			double percent = 100.0 * num / length;
-//			ArrayList<String> list = new ArrayList<String>();
-//			list.add(num + "");
-//			list.add(percent + "");
-//			resultMap.put(r, list);
-//		}
-		
+		// format result 
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("resultMap", rHashMaps);
+		map.put("recordSize", length);
 		
 		JSONObject json = JSONObject.fromObject(map);
 		
@@ -239,6 +226,7 @@ public class StatisticsAction extends ActionSupport implements ServletRequestAwa
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("resultMap", cnClassifyStatistics);
 		map.put("numMap", cnClassifyNumber);
+		map.put("ehealthCount", ehealthCount);
 		
 		JSONObject json = JSONObject.fromObject(map);
 		result = json.toString();
@@ -264,7 +252,7 @@ public class StatisticsAction extends ActionSupport implements ServletRequestAwa
 		 */
 		List<EHealthRecord> eHealthRecordsByBatch = MedicineByDescription.getRecordsByBatch(batch); // 符合某一批次的全部病历
 		
-		int totalCount = eHealthRecordsByBatch.size();
+		int recordSize = eHealthRecordsByBatch.size();
 		
 		/**
 		 * 2.诊断分类
@@ -354,6 +342,7 @@ public class StatisticsAction extends ActionSupport implements ServletRequestAwa
 		// format result
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("resultMap", chineseDiagMap);
+		map.put("recordSize", recordSize);
 		
 		JSONObject json = JSONObject.fromObject(map);
 		result = json.toString();

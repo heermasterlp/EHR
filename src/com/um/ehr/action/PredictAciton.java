@@ -226,6 +226,7 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     		
     		// Format similiary records result
     		Map<String, ArrayList<String>> formattedSimilarRecords = new HashMap<>();
+    		int index = 0;
     		for (EHealthRecord eRecord : similaryRecords) {
 				String regno = eRecord.getRegistrationno();
 				String recordDescription = eRecord.getConditionsdescribed();
@@ -243,11 +244,14 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
 				descAndMedicines.add(formattedDescription);
 				descAndMedicines.add(formattedMedicines);
 				formattedSimilarRecords.put(regno, descAndMedicines);
+				if (index > similarnumber) {
+					break;
+				}
+				index++;
 			}
     		
-    		
-    		
             Map<String,Object> map = new HashMap<String,Object>();
+            logger.info(medicineListByMachine + "   " + medicineListByRules);
             
             map.put("medicineListByStatistics", medicineListByStatisticSorted);
             map.put("medicineListByMachine", medicineListByMachine);

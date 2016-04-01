@@ -83,10 +83,11 @@
 	                	$('#loading').hide();
 	                	// parse return data
 	                	var jsonObject = jQuery.parseJSON(data);
+	                	var recordSize = Number(jsonObject.recordSize);
 	                	var infos = "<table class='table table-bordered'><thead><tr class='info'><td>No.</td><td>诊断类型</td><td>数量</td></tr></thead><tbody>";
 	                	var index = 1;
 	                	$.each(jsonObject.resultMap, function(key, value){
-	                		infos += "<tr><td>" + index + "</td><td>" + key + "</td><td>" + value + "</td></tr>";
+	                		infos += "<tr><td>" + index + "</td><td>" + key + "</td><td>" + value + " (" + ( 100.0 * Number(value) / recordSize ).toFixed(2) + "%)</td></tr>";
 	                		index++;
                     	});
 	                	infos += "</tbody></table>";
