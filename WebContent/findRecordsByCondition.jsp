@@ -4,13 +4,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>输入中药查找病历</title>
 	<meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
+	<title>Find Records by Condition</title>
 	<!-- Bootstrap Core CSS -->
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
     <!-- Custom CSS -->
@@ -22,58 +21,63 @@
 </head>
 <body>
 	<div id="wrapper">
-	
 		<s:include value="navigation.html" />
-	
 		<!-- Main page -->
-	    
-	    <div id="page-wrapper">
-	    	<div class="container-fluid">
-	    		<!-- Page Heading -->
-                <div class="row">
-                	<div class="col-lg-12">
-                		<h1 class="page-header">输入中药查找病历</h1>
-                	</div>
+		
+		<div class="container-fluid">
+	    	<!-- Page Heading -->
+            <div class="row">
+            	<div class="col-lg-12">
+            		<h1 class="page-header">根据条件查询病历</h1>
             	</div>
-            	<form action="" method="get">
-                	<p>
-                        年度：
-                        <select id="batch" name="batch">  
-                            <option value="null">全部</option>
-                            <option value="2012" selected>2012</option>
-                            <option value="2011">2011</option>
-                            <option value="2010">2010</option>
-                            <option value="2009">2009</option>
-                        </select>  
-                	</p>
-                	<input id="medicines" type="text" name="medicines" />
-                	<input type="button" class="btn btn-success btn-xs" value="查询" />
-                	<label>(多味中药空格分割)</label>   
-            	</form>
-            	<hr>
-				<div id="contents">
-				</div>
-	    	</div>
+            </div>
+            <div class="col-sm-12">
+				<form action="" method="get" role="form">
+		    		<div class="form-group">
+		    			<label>年度：</label>&nbsp;&nbsp;
+					    <select id="batch" name="batch">
+						    <option value="null">全部</option>
+						    <option value="2012" selected>2012</option>
+						    <option value="2011">2011</option>
+						    <option value="2010">2010</option>
+						    <option value="2009">2009</option>
+					    </select>  
+					    <label for="tags">姓名： </label>&nbsp;&nbsp;
+						<input id="pname" type="text"  name="pname" />&nbsp;&nbsp;
+										
+						<label for="tags">处理： </label>&nbsp;&nbsp;
+						<input id="process" type="text"  name="process" />&nbsp;&nbsp;
+										
+						<label for="tags">中药名称： </label>&nbsp;&nbsp;
+						<input id="medicines" type="text"  name="medicines" />&nbsp;&nbsp;
+										
+						<input id="query" type="button" class="btn btn-xs btn-success" value="查询" /> 
+		    		</div>
+				</form>
+			</div>
 	    </div>
+	    <div id="contents">
+		</div>
 	</div>
-	
-	
 	<!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.js" type="text/javascript"></script>
-    <!-- js function -->
+    <!-- query auto complete -->
+    <script src="js/query.js" type="text/javascript"></script>
+	
+	<!-- js function -->
 	<script type="text/javascript" src="js/jquery-2.2.2.js"></script>
 	<script type="text/javascript">
-		
-		// query based on medicines
 		function btn_query(){
 			var $btn = $("input.btn");//获取按钮元素
 			$btn.bind("click",function(){
 				$("#loading").show();
 				$.ajax({
 	                type:"post",
-	                url:"querybymedicine",//需要用来处理ajax请求的action,excuteAjax为处理的方法名，JsonAction为action名
+	                url:"queryRecordsByCondition",//需要用来处理ajax请求的action,excuteAjax为处理的方法名，JsonAction为action名
 	                data:{//设置数据源
 	                	batch:$('#batch').val(),
+	                	pname:$('#pname').val(),
+	                	process:$('#process').val(),
 	                	medicines:$('#medicines').val()
 	                },
 	                dataType:"json",//设置需要返回的数据类型
@@ -137,14 +141,16 @@
 				}
 			}); 
 		}
+		
 	
 		/* 页面加载完成，绑定事件 */
 	    $(document).ready(function(){
-	    	$('#loading').hide(); 
+	    	$('#loading').hide();
 	    	$('#detail').hide();
 	        btn_query();//点击提交，执行ajax
 	    });
 	</script>
+	
 	<div id="loading" style="position: fixed; top:0; left:0; width:100%; height: 100%; center center #efefef">
 		<img src="img/progress.gif" style="margin-top: 15%;margin-left: 15%;"/>
 	</div>

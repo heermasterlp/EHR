@@ -102,7 +102,12 @@ public class MedicineStatics {
 			  
 			 String nameString = "";
 			 for(int i = 0; i < ss.length; i++){
-				 nameString += ss[i] + "|";
+				 
+				 if (i == ss.length - 1) {
+					nameString += ss[i];
+				}else{
+					nameString += ss[i] + "|";
+				}
 			 }
 			 resultList.add(nameString);
 		 }

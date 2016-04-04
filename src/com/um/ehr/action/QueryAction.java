@@ -270,7 +270,7 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 		logger.info("query record detail start");
 		// 1. get request parameters
 		String ehealthregno = request.getParameter("ehealthregno");
-		
+		logger.info("requestno: " + ehealthregno);
 		// 2. query record by condition
 		BasicDBObject condition = new BasicDBObject("ehealthrecord.registrationno",ehealthregno);
 		
@@ -279,6 +279,10 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 		MongoCollection<Document> ehealthRecordCollection = db.getCollection(DataBaseSetting.ehealthcollection);
 		
 		FindIterable<Document> iterable = ehealthRecordCollection.find(condition);
+		
+		Map<String, Object> map = new HashMap<>();
+		
+		
 		if (iterable == null || iterable.first() == null) {
 			
 			client.close();
@@ -290,11 +294,122 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 		
 		targetRecord = EhealthRecordConverter.toEHealthRecord(targetRecordDoc);
 		
+		map.put("targetRecord", targetRecord);
+		
+		JSONObject json = JSONObject.fromObject(map);
+		
+		result = json.toString();
+		
 		client.close();
 		logger.info("query record detail end");
 		return SUCCESS;
 	}
 	
+	/**
+	 * Query records by condition
+	 * @return
+	 */
+	public String queryRecordsByCondition(){
+		logger.info("query records by condition start!");
+		
+		List<EHealthRecord> targetRecordsList = new ArrayList<>();
+		
+		// 1. get request parameters
+		String batch = request.getParameter("batch");
+		String pname = request.getParameter("pname");
+		String process = request.getParameter("process");
+		String medicine = request.getParameter("medicines");
+		String[] medicines = null;
+		if (medicine != null && !"".equals(medicine)) {
+			medicines = medicine.split(" ");
+		}
+		
+		// 2.2 get all records with same batch
+		List<EHealthRecord> eHealthRecordsByBatch = MedicineByDescription.getRecordsByBatch(batch); // all record with same batch
+		
+		for (EHealthRecord eHealthRecord : eHealthRecordsByBatch) {
+			boolean isMatch = false;
+			// patient name
+			if (pname != null && !"".equals(pname)) {
+				if (!eHealthRecord.getPatientInfo().getName().equals(pname)) {
+					isMatch = false;
+				}else{
+					isMatch = true;
+				}
+			}else{
+				isMatch = true;
+			}
+			
+			// record process
+			if (process != null && !"".equals(process)) {
+				if (!eHealthRecord.getProcessString().equals(process)) {
+					isMatch = isMatch && false;
+				}else{
+					isMatch = isMatch && true;
+				}
+			}else{
+				isMatch = isMatch && true;
+			}
+			// medicines
+			if (medicines != null && medicines.length > 0) {
+				if (eHealthRecord.getChineseMedicines() == null || eHealthRecord.getChineseMedicines().size() == 0) {
+					continue;
+				}
+				int count = 0;
+				for (ChineseMedicine cm : eHealthRecord.getChineseMedicines()) {
+					for (String med : medicines) {
+						if (cm.getNameString().equals(med)) {
+							count++;
+						}
+					}
+				}
+				if (count == medicines.length) {
+					// all medicine in this record
+					isMatch = isMatch && true;
+				}else{
+					isMatch = isMatch && false;
+				}
+			}else{
+				isMatch = isMatch && true;
+			}
+			// match add to list
+			if (isMatch) {
+				targetRecordsList.add(eHealthRecord);
+			}
+		}
+		
+		// 3. format result
+		Map<String, Object> map = new HashMap<>();
+		
+		Map<String, ArrayList<String>> formattedSimilarRecords = new HashMap<>();
+		for (EHealthRecord eRecord : targetRecordsList) {
+			String regno = eRecord.getRegistrationno();
+			String recordDescription = eRecord.getConditionsdescribed();
+			// format description
+			String formattedDescription = MedicineByDescription.formattedDescriptionByCount(recordDescription);
+			String formattedMedicines = "";
+			if (eRecord.getChineseMedicines() == null || eRecord.getChineseMedicines().size() == 0) {
+				continue;
+			}
+			for (ChineseMedicine cMedicine : eRecord.getChineseMedicines()) {
+				formattedMedicines += cMedicine.getNameString() + ",";
+			}
+			// result
+			ArrayList<String> descAndMedicines = new ArrayList<>();
+			descAndMedicines.add(formattedDescription);
+			descAndMedicines.add(formattedMedicines);
+			formattedSimilarRecords.put(regno, descAndMedicines);
+		}
+		
+		map.put("infoMap", formattedSimilarRecords);
+		
+		JSONObject json = JSONObject.fromObject(map);
+		
+		result = json.toString();
+		
+		logger.info("query records by condition end!");
+		return SUCCESS;
+	}
 	
 
 	@Override

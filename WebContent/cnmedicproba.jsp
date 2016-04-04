@@ -58,6 +58,8 @@
 				</div>
 				<div id="contents">
 				</div>
+				<div id="statistics">
+				</div>
 	    	</div>
 	    </div>
 	</div>
@@ -86,25 +88,32 @@
 	                	$('#loading').hide();
 	                	// parse return data
 	                	var jsonObject = jQuery.parseJSON(data);
-	                	
 	                	var infos = "";
-	                	
-	                	var count = 0; // list length
+	                	var targetRecordSize = jsonObject.targetRecordSize;
+	                	/* var count = 0; // list length
 	                	$.each(jsonObject.resultMap, function(id, value){
 	                		count++;
 	                	});
 	                	
 	                	if(count == 3){
 	                		infos = "<table class='table table-bordered'><thead><tr class='info'><td>中药</td><td>总数</td><td>百分百</td></tr></thead><tbody><tr>";
-	                		$.each(jsonObject.resultMap, function(id, value){
-		                		infos += "<td>" + value + "</td>";
+	                		$.each(jsonObject.resultMap, function(key, value){
+		                		infos += "<tr><td>" + key+"</td><td>" + value[0] +"</td></tr>";
 		                	});
-	                	}else if(count == 5){
+	                	}else if(count == 5){ */
 	                		infos = "<table class='table table-bordered'><thead><tr class='info'><td>中药组合</td><td>并集数量</td><td>并集百分百</td><td>交集数量</td><td>交集百分百</td></tr></thead><tbody>";
-	                		$.each(jsonObject.resultMap, function(id, value){
-		                		infos += "<td>" + value + "</td>";
+	                		$.each(jsonObject.resultMap, function(key, value){
+		                		infos += "<tr><td>" + key+"</td><td>" + value[0] +"</td><td>" + value[1] + "</td><td>" + value[2] + "</td><td>" + value[3] + "</td></tr>";
 		                	});
-	                	}
+	                		
+	                		tables = "<table class='table table-bordered'><thead><tr class='info'><td>No</td><td>症状</td><td>数量</td><td>百分百</td></tr></thead><tbody>";
+	                		var index = 1;
+	                		$.each(jsonObject.statisticResult, function(key, value){
+		                		tables += "<tr><td>" + index +"</td><td>" + key +"</td><td>" + value + "</td><td>" + (100.0 * value / Number(targetRecordSize)).toFixed(2) + "%</td></tr>";
+		                		index++;
+		                	});
+	                		
+	                	/* } */
 	                	
 	                	/* if(jsonObject.resultMap.length == 2){
 	                		infos = "<table class='table table-bordered'><thead><tr class='info'><td></td><td></td><td></td></tr></thead><tbody><tr>";
@@ -117,10 +126,12 @@
 	                		$.each(jsonObject.resultMap, function(id, value){
 		                		infos += "<td>" + value + "</td>";
 		                	});
-	                	}
+	                	}*/
 	                	
-	                	infos += "</tr></tbody></table>"; */
+	                	infos += "</tbody></table>"; 
+	                	tables += "</tbody></table>"; 
 	                	$('#contents').html(infos);
+	                	$('#statistics').html(tables);
 	                },
 	                error:function(){
 	                    alert("系统异常，请稍后重试！");

@@ -50,13 +50,22 @@
             </result>
       	</action>
       	
+      	<!-- query record information by condition -->
+      	<action name="queryRecordsByCondition" class="com.um.ehr.action.QueryAction" method="queryRecordsByCondition">
+        <!-- return value type: json -->
+        	<result type="json">
+            	<param name="root">result<!-- result is action return value，and need setter and getter method --></param>
+            </result>
+      	</action>
+      	
+      	
       	<!-- query record detail information -->
       	<action name="detailRecord" class="com.um.ehr.action.QueryAction" method="detailRecord">
         <!-- return value type: json -->
-        	<!-- <result type="json">
-            	<param name="root">resultresult is action return value，and need setter and getter method</param>
-            </result> -->
-            <result name="success">/detail.jsp</result>
+        	<result type="json">
+            	<param name="root">result<!--result is action return value，and need setter and getter method--></param>
+            </result>
+            <!-- <result name="success">/detail.jsp</result> -->
       	</action>
       	
       	<!-- statistics  component relations of medicines  -->

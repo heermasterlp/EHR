@@ -3,6 +3,8 @@ package com.um.ehr.action;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,15 +49,16 @@ public class StatisticsAction extends ActionSupport implements ServletRequestAwa
 		
 		// 1. get request parameters
 		String batch = request.getParameter("batch");
-		String medicines = request.getParameter("medicines");
+		String medicineStr = request.getParameter("medicines");
+		String[] medicines = medicineStr.split(" ");
 		
 		// 2. get records based on batch
 		List<EHealthRecord> eHealthRecordsByBatch = MedicineByDescription.getRecordsByBatch(batch);
 		
 		// 3. statistics medicines 
-		Map<String, String> resMap = DiagMedicineProcess.statisMedicProbability(medicines,eHealthRecordsByBatch);
+		Map<String, String> resMap = DiagMedicineProcess.statisMedicProbability(medicineStr,eHealthRecordsByBatch);
 				
-		List<String> resultList = new ArrayList<String>();
+		Map<String, ArrayList<String>> resultMap = new HashMap<>();
 		
 		if (resMap != null && resMap.size() > 0) {
 			Set<String> keySet = resMap.keySet();
@@ -81,9 +84,7 @@ public class StatisticsAction extends ActionSupport implements ServletRequestAwa
 						valueList.add(vs[1]); // 并集百分比
 //						descriptionList = DiagMedicineProcess.getDescriptionByMedicine(medicines, eHealthRecordsByBatch);
 					}
-//					resultMap.put(s, valueList);
-					resultList.add(s);
-					resultList.addAll(valueList);
+					resultMap.put(s, valueList);
 				}
 			}else{
 				//多味中药
@@ -96,16 +97,92 @@ public class StatisticsAction extends ActionSupport implements ServletRequestAwa
 					valueList.add(vs[1].split("\\|")[0]); // 交集
 					valueList.add(vs[1].split("\\|")[1]); //交集百分比
 							
-//					resultMap.put(s, valueList);
-					resultList.add(s);
-					resultList.addAll(valueList);
+					resultMap.put(s, valueList);
 				}
 			}
 		}
 		
-		// 4. format result
+		// 4.get the description statistics
+		List<EHealthRecord> targetRecordList = new ArrayList<>();
+		for (EHealthRecord eHealthRecord : eHealthRecordsByBatch) {
+			if(DiagMedicineProcess.hasThisMedicine(eHealthRecord, medicines)){
+				//同时出现在同一病历中
+				targetRecordList.add(eHealthRecord);
+			}
+		}
+		int targetRecordSize = targetRecordList.size();
+		logger.info("target size: " + targetRecordSize);
+		
+		List<String> descriptionKeywordList = new ArrayList<>();
+		
+		// 描述中包含的关键字
+		String[] descKeywords = DiagClassifyData.descKeywords;
+		Map<String, String[]> descKeywordsMap = new HashMap<String, String[]>();
+		for(String s : descKeywords){
+			String[] splits = s.split(":");
+			if(splits == null || splits.length != 2){
+				continue;
+			}
+			String[] values = splits[1].split("\\|");
+			if(values == null || values.length == 0){
+				continue;
+			}
+			descKeywordsMap.put(splits[0], values);
+		}
+		
+		String[] descriptionStrings = DiagClassifyData.descriptionStrings;
+		Map<String, String> descriptionStringsMap = new HashMap<>();
+		for (String string : descriptionStrings) {
+			String[] splits = string.split(":");
+			descriptionStringsMap.put(splits[0], splits[1]);
+		}
+		
+		String[] normalAndBaddescription = DiagClassifyData.normalAndBaddescription;
+		Map<String, String> normalAndBaddescriptionMap = new HashMap<>();
+		for (String string : normalAndBaddescription) {
+			String[] splits = string.split(":");
+			normalAndBaddescriptionMap.put(splits[0], splits[1]);
+		}
+		
+		
+		
+		for (EHealthRecord eRecord : targetRecordList) {
+			Set<String> descKeywordSet = descKeywordsMap.keySet();// 全部项目
+			for( String d : descKeywordSet){
+				String[] values = descKeywordsMap.get(d);
+				if( DiagMedicineProcess.checkDescriptionMatch(eRecord.getConditionsdescribed(), values)){
+					//项目符合
+					if (!normalAndBaddescriptionMap.get(d).equals("0")) {
+						descriptionKeywordList.add(descriptionStringsMap.get(d));
+					}
+				}
+			}
+		}
+		logger.info("st: " + descriptionKeywordList);
+		// statistics description key word
+		Map<String, Integer> statisticResult = new HashMap<>();
+		Set<String> repeat = new HashSet<>();
+		for (String string : descriptionKeywordList) {
+			if (repeat.contains(string)) {
+				int num = statisticResult.get(string);
+				num++;
+				statisticResult.remove(string);
+				statisticResult.put(string, num);
+			}else{
+				statisticResult.put(string, 1);
+				repeat.add(string);
+			}
+		}
+		
+		// sort
+		statisticResult = DiagMedicineProcess.sortMapByValue(statisticResult);
+		
+		
+		// 5. format result
 		Map<String, Object> map = new HashMap<>();
-		map.put("resultMap", resultList);
+		map.put("resultMap", resultMap);
+		map.put("statisticResult", statisticResult);
+		map.put("targetRecordSize", targetRecordSize);
 		
 		JSONObject json = JSONObject.fromObject(map);
 		
