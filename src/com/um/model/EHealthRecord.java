@@ -310,11 +310,4 @@ public class EHealthRecord {
 	public void setDoctor(String string){
 		this.doctor = string;
 	}
-	
-	
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

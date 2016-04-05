@@ -46,7 +46,6 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
              */
         	// get parameters
         	String batch = request.getParameter("batch");
-            double threshold = Double.valueOf(request.getParameter("threshold"));
             String timestatus = request.getParameter("timestatus");
             String xu = request.getParameter("xu");
             String tanyu = request.getParameter("tanyu");
@@ -159,7 +158,7 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     		//  3.1 initial the input parameters of machine learning
     		List<String> inputcode = MachineLearningPredict.parseDiagAndDesc(diagnose, description); // format the input parameters
     		// 	3.2 predict the medicines based on the machine learning
-    		List<String> medicineListByMachine = MachineLearningPredict.predict(inputcode, threshold); // the predict result of machine learning
+    		List<String> medicineListByMachine = MachineLearningPredict.predict(inputcode); // the predict result of machine learning
     		
             /**
              * 4. Predict medicines based on rules
@@ -284,7 +283,6 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     	String countString = request.getParameter("count"); // the order number of records
     			
     	int count = 0; // record order number
-    	double threshold = Double.valueOf(request.getParameter("threshold").trim()); // threshold of machine learning
     	// 2. find all records with batch 2012
     	List<EHealthRecord> allList = MedicineByDescription.getRecordsByBatch("2012");
     	if ("".equals(countString)) {
@@ -338,7 +336,7 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     	List<String> inputcode = MachineLearningPredict.parseDiagAndDescByEhealthRecords(targetRecord);
     			
     	//  7.2 predict medicines with machine learning
-    	List<String> medicineListByMachine = MachineLearningPredict.predict(inputcode, threshold); // the result of machine learning
+    	List<String> medicineListByMachine = MachineLearningPredict.predict(inputcode); // the result of machine learning
     			
     	// 8. calculate the accuracy
     	double statisticsPercent = 0.0; // the accuracy of case-based

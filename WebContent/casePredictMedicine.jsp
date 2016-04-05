@@ -42,10 +42,6 @@
 			                    <p>
 			                        <input id="count" type="text" name="count" />
 			                    </p>
-			                    <p class="text-danger">
-			                        机器学习阈值(0~1):<br>
-			                        <input id="threshold" type="text" name="threshold" value="0.3" />
-			                    </p>
 			                    <p>
 			                        <input name="sub" type="button" class="btn btn-success btn-xs" value="根据病例预测处方"  />
 			                    </p>
@@ -85,8 +81,7 @@
 	                type:"post",
 	                url:"predictByCase",//需要用来处理ajax请求的action,excuteAjax为处理的方法名，JsonAction为action名
 	                data:{//设置数据源
-	                	count:$('#count').val(),
-	                	threshold:$('#threshold').val()
+	                	count:$('#count').val()
 	                },
 	                dataType:"json",//设置需要返回的数据类型
 	                success:function(data){

@@ -19,6 +19,10 @@
     <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <!-- style -->
     <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <!-- js function -->
+	<script type="text/javascript" src="js/jquery-2.2.2.js"></script>
+	<!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.js" type="text/javascript"></script>
 </head>
 <body>
 	<div id="wrapper">
@@ -56,12 +60,8 @@
 	    	</div>
 	    </div>
 	</div>
+	<s:include value="detail.html" />
 	
-	
-	<!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.js" type="text/javascript"></script>
-    <!-- js function -->
-	<script type="text/javascript" src="js/jquery-2.2.2.js"></script>
 	<script type="text/javascript">
 		
 		// query based on medicines
@@ -84,7 +84,7 @@
 	                	var infos = "<table class='table table-bordered'><thead><tr class='info'><td>No.</td><td>Info</td><td>Detail</td></tr></thead><tbody>";
 	                	var index = 1;
 	                	$.each(jsonObject.infoMap, function(key, value){
-	                		infos += "<tr><td>" + index + "</td><td>" + value + "</td><td><label onclick='a_detail(" + key + ");'>详细信息</label></td></tr>";
+	                		infos += "<tr><td>" + index + "</td><td>" + value + "</td><td><button class='btn btn-primary btn-sm' onclick='a_detail(" + key + ");' >Detail</button></td></tr>";
 	                		index++;
 	                	});
 	                	infos += "</tbody></table>";
@@ -94,12 +94,6 @@
 	                    alert("系统异常，请稍后重试！");
 	                }
 				});
-			});
-			
-			// detail table
-			var $detailtable = $('#detail');
-			$detailtable.bind("click", function(){
-				$('#detail').hide();
 			});
 		}
 		
@@ -133,7 +127,7 @@
 					$('#chinesemedicines').html(jsonObject.targetRecord.chineseMedicineToString);
 					$('#doctor').html(jsonObject.targetRecord.doctor);
 					
-					$('#detail').show();
+					$("#myModal").modal();
 				}
 			}); 
 		}
@@ -141,13 +135,12 @@
 		/* 页面加载完成，绑定事件 */
 	    $(document).ready(function(){
 	    	$('#loading').hide(); 
-	    	$('#detail').hide();
 	        btn_query();//点击提交，执行ajax
 	    });
 	</script>
 	<div id="loading" style="position: fixed; top:0; left:0; width:100%; height: 100%; center center #efefef">
 		<img src="img/progress.gif" style="margin-top: 15%;margin-left: 15%;"/>
 	</div>
-	<s:include value="detail.html" />
+	
 </body>
 </html>

@@ -1,102 +1,128 @@
-<div id="detail" class="div_area" >
-		<div class="div_context">
-			<table class="table table-bordered" >
-	       	<tr class="info">
-	       		<th rowspan="8"><label>个人信息</label></th>
-	       		<th><label>医院</label></th>
-	       		<th><label>时间</label></th>
-	       		<th><label>科别</label></th>
-	       	</tr>
-	       	<tr>
-	       		<td><label id="hospital"></label></td>
-	       		<td><label id="date"></label></td>
-	       		<td><label id="medicalservice"></label></td>
-	       	</tr>
-	       	
-	       	<tr class="info">
-	       		<th><label>挂号号</label></th>
-	       		<th><label>姓名</label></th>
-	       		<th><label>性别</label></th>
-	       	</tr>
-	       	<tr>
-	       		<td><label id="registrationno"></label></td>
-	       		<td><label id="patientname"></label></td>
-	       		<td><label id="patientgender"></label></td>
-	       	</tr>
-	       	
-	       	<tr class="info">
-	       		<th><label>年龄</label></th>
-	       		<th><label>职业</label></th>
-	       		<th><label>电话</label></th>
-	       	</tr>
-	       	<tr>
-	       		<td><label id="patientage"></label></td>
-	       		<td><label id="patientprofession"></label></td>
-	       		<td><label id="patientphone"></label></td>
-	       	</tr>
-	       	
-	       	<tr class="info">
-	       		<th><label>联系人</label></th>
-	       		<th><label>地址</label></th>
-	       		<th><label></label></th>
-	       	</tr>
-	       	<tr>
-	       		<td><label id="patientcontact"></label></td>
-	       		<td><label id="patientaddress"></label></td>
-	       		<td><label id=""></label></td>
-	       	</tr>
-	       	<tr>
-	       		<th class="info"><label>病症描述</label></th>
-	       		<td colspan="3"><label id="description"></label></td>
-	       	</tr>
-	       	
-	       	<tr>
-	       		<th class="info"><label>西医诊断</label></th>
-	       		<td colspan="3"><label id="westerndiagnose"></label></td>
-	       	</tr>
-	       	<tr>
-	       		<th class="info"><label>中医诊断</label></th>
-	       		<td colspan="3"><label id="chinesediagnose"></label></td>
-	       	</tr>
-	       	<tr>
-	       		<th class="info"><label>处理</label></th>
-	       		<td colspan="3"><label id="process"></label></td>
-	       	</tr>
-	       	<tr>
-	       		<th class="info"><label>西药处方</label></th>
-	       		<td colspan="3">
-	       			<table>
-	       				<tr>
-	       					<th></th>
-	       					<th>名称</th>
-	       				</tr>
-	       				<tr>
-	       					<td></td>
-	       					<td><label id="westernmedicines"></label></td>
-	       				</tr>
-	       			</table>
-				</td>
-	       	</tr>
-	       	<tr>
-	       		<th class="info"><label>中药处方</label></th>
-	       		<!-- 中药处方 -->
-	       		<td colspan="3">
-	       			<table >
-	       				<tr>
-	       					<th></th>
-	       					<th>名称</th>
-		  				</tr>
-	       					<tr>
-	       						<td></td>
-	       						<td><label id="chinesemedicines"></label></td>
-	       					</tr>
-	       			</table>
-				</td>
-	       	</tr>
-	       	<tr>
-	       		<th class="info">医师</th>
-	       		<td colspan="3"><label id="doctor"></label></td>
-	       	</tr>
+<!-- Modal -->
+<div class = "modal fade" id = "myModal" tabindex = "-1" role = "dialog" 
+   aria-labelledby = "myModalLabel" aria-hidden = "true">
+   
+   <div class = "modal-dialog">
+      <div class = "modal-content">
+         
+         <div class = "modal-header">
+            <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+               ×
+            </button>
+            
+            <h4 class = "modal-title" id = "myModalLabel">
+               EHR Detail
+            </h4>
+         </div>
+         
+         <div class = "modal-body">
+            <table class="table table-bordered" >
+		       	<tr class="info">
+		       		<th rowspan="8"><label>个人信息</label></th>
+		       		<th><label>医院</label></th>
+		       		<th><label>时间</label></th>
+		       		<th><label>科别</label></th>
+		       	</tr>
+		       	<tr>
+		       		<td><label id="hospital"></label></td>
+		       		<td><label id="date"></label></td>
+		       		<td><label id="medicalservice"></label></td>
+		       	</tr>
+		       	
+		       	<tr class="info">
+		       		<th><label>挂号号</label></th>
+		       		<th><label>姓名</label></th>
+		       		<th><label>性别</label></th>
+		       	</tr>
+		       	<tr>
+		       		<td><label id="registrationno"></label></td>
+		       		<td><label id="patientname"></label></td>
+		       		<td><label id="patientgender"></label></td>
+		       	</tr>
+		       	
+		       	<tr class="info">
+		       		<th><label>年龄</label></th>
+		       		<th><label>职业</label></th>
+		       		<th><label>电话</label></th>
+		       	</tr>
+		       	<tr>
+		       		<td><label id="patientage"></label></td>
+		       		<td><label id="patientprofession"></label></td>
+		       		<td><label id="patientphone"></label></td>
+		       	</tr>
+		       	
+		       	<tr class="info">
+		       		<th><label>联系人</label></th>
+		       		<th><label>地址</label></th>
+		       		<th><label></label></th>
+		       	</tr>
+		       	<tr>
+		       		<td><label id="patientcontact"></label></td>
+		       		<td><label id="patientaddress"></label></td>
+		       		<td><label id=""></label></td>
+		       	</tr>
+		       	<tr>
+		       		<th class="info"><label>病症描述</label></th>
+		       		<td colspan="3"><label id="description"></label></td>
+		       	</tr>
+		       	
+		       	<tr>
+		       		<th class="info"><label>西医诊断</label></th>
+		       		<td colspan="3"><label id="westerndiagnose"></label></td>
+		       	</tr>
+		       	<tr>
+		       		<th class="info"><label>中医诊断</label></th>
+		       		<td colspan="3"><label id="chinesediagnose"></label></td>
+		       	</tr>
+		       	<tr>
+		       		<th class="info"><label>处理</label></th>
+		       		<td colspan="3"><label id="process"></label></td>
+		       	</tr>
+		       	<tr>
+		       		<th class="info"><label>西药处方</label></th>
+		       		<td colspan="3">
+		       			<table>
+		       				<tr>
+		       					<th></th>
+		       					<th>名称</th>
+		       				</tr>
+		       				<tr>
+		       					<td></td>
+		       					<td><label id="westernmedicines"></label></td>
+		       				</tr>
+		       			</table>
+					</td>
+		       	</tr>
+		       	<tr>
+		       		<th class="info"><label>中药处方</label></th>
+		       		<!-- 中药处方 -->
+		       		<td colspan="3">
+		       			<table >
+		       				<tr>
+		       					<th></th>
+		       					<th>名称</th>
+			  				</tr>
+		       					<tr>
+		       						<td></td>
+		       						<td><label id="chinesemedicines"></label></td>
+		       					</tr>
+		       			</table>
+					</td>
+		       	</tr>
+		       	<tr>
+		       		<th class="info">医师</th>
+		       		<td colspan="3"><label id="doctor"></label></td>
+		       	</tr>
 	       </table>
-		</div>
-	</div>
+         </div>
+         
+         <div class = "modal-footer">
+            <button type = "button" class = "btn btn-default" data-dismiss = "modal">
+               Close
+            </button>
+         </div>
+         
+      </div><!-- /.modal-content -->
+   </div><!-- /.modal-dialog -->
+   
+</div><!-- /.modal -->

@@ -19,6 +19,9 @@
     <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <!-- style -->
     <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <script type="text/javascript" src="js/jquery-2.2.2.js"></script>
+	<!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.js" type="text/javascript"></script>
 </head>
 <body>
 	<div id="wrapper">
@@ -54,9 +57,6 @@
 	                            
 	                        </p>
 	                        <hr>
-	                        <p class="text-danger">
-	                            机器学习阈值（0～1）：<input id="threshold" type="text" name="threshold" value="0.3" />
-	                        </p>
 	                        <hr>
 	                        <p>时间状态</p>
 	                        <table class="table table-bordered">
@@ -379,12 +379,8 @@
     	</div>
     </div>
     	</div>
-    
+    <s:include value="detail.html" />
 	
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.js" type="text/javascript"></script>
-	<script type="text/javascript" src="js/jquery-2.2.2.js"></script>
 	<script type="text/javascript">
 		function btn(){
 			var $btn = $("input.btn");//获取按钮元素
@@ -412,7 +408,6 @@
                     url:"predictByInput",//需要用来处理ajax请求的action,excuteAjax为处理的方法名，JsonAction为action名
                     data:{//设置数据源
                         batch:$('#batch').val(),
-                        threshold:$('#threshold').val(),
                         timestatus:$('#timestatus').val(),
                         xu:$('#xu').val(),
                         tanyu:$('input[name=tanyu]:checked', '#myForm').val(),
@@ -474,7 +469,7 @@
                         var tables = "<table class='table table-bordered'><thead><tr class='info'><td>No.</td><td>Descirption</td><td>Medicines</td><td>Detail</td></tr></thead><tbody>";
 	                	var index = 1;
                        	$.each(jsonObject.formattedSimilarRecords, function(key, value){
-                       		tables += "<tr><td>" + index + "</td><td>" + value[0] + "</td><td>" + value[1] + "</td><td><label onclick='a_detail(" + key + ");'>详细信息</label></td></tr>";
+                       		tables += "<tr><td>" + index + "</td><td>" + value[0] + "</td><td>" + value[1] + "</td><td><button class='btn btn-primary btn-sm' onclick='a_detail(" + key + ");' >Detail</button></td></tr>";
                        		index++;
                        	});
                        	tables += "</tbody></table>";
@@ -487,11 +482,6 @@
                         alert("系统异常，请稍后重试！");
                     }//这里不要加","
                 });
-			});
-			// detail table
-			var $detailtable = $('#detail');
-			$detailtable.bind("click", function(){
-				$('#detail').hide();
 			});
 		}
 		// detail function
@@ -524,20 +514,19 @@
 					$('#chinesemedicines').html(jsonObject.targetRecord.chineseMedicineToString);
 					$('#doctor').html(jsonObject.targetRecord.doctor);
 					
-					$('#detail').show();
+					$("#myModal").modal();
 				}
 			}); 
 		}
 		/* 页面加载完成，绑定事件 */
         $(document).ready(function(){
         	$('#loading').hide();
-        	$('#detail').hide();
             btn();//点击提交，执行ajax
         });
 	</script>
 	<div id="loading" style="position: fixed; top:0; left:0; width:100%; height: 100%; center center #efefef">
 		<img src="img/progress.gif" style="margin-top: 15%;margin-left: 15%;"/>
 	</div>
-	<s:include value="detail.html" />
+	
 </body>
 </html>

@@ -18,6 +18,10 @@
     <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <!-- style -->
     <link rel="stylesheet" type="text/css" href="css/style.css" />
+   
+	<script type="text/javascript" src="js/jquery-2.2.2.js"></script>
+	 <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.js" type="text/javascript"></script>
 </head>
 <body>
 	<div id="wrapper">
@@ -359,11 +363,8 @@
     </div>
     
     </div>
+    <s:include value="detail.html" />
 	
-	
-	<!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.js" type="text/javascript"></script>
-	<script type="text/javascript" src="js/jquery-2.2.2.js"></script>
 	<script type="text/javascript">
 		
 		function btn_query() {
@@ -426,7 +427,7 @@
 		                    	 var tables = "<table class='table table-bordered'><thead><tr class='info'><td>No.</td><td>Descirption</td><td>Medicines</td><td>Detail</td></tr></thead><tbody>";
 		 	                	var index = 1;
 		                        $.each(jsonObject.formattedSimilarRecords, function(key, value){
-		                        	tables += "<tr><td>" + index + "</td><td>" + value[0] + "</td><td>" + value[1] + "</td><td><label onclick='a_detail(" + key + ");'>详细信息</label></td></tr>";
+		                        	tables += "<tr><td>" + index + "</td><td>" + value[0] + "</td><td>" + value[1] + "</td><td><button class='btn btn-primary btn-sm' onclick='a_detail(" + key + ");' >Detail</button></td></tr>";
 		                        	index++;
 		                        });
 		                        tables += "</tbody></table>";
@@ -438,11 +439,7 @@
 		                    }//这里不要加","
 		                });
 					});
-			// detail table
-			var $detailtable = $('#detail');
-			$detailtable.bind("click", function(){
-				$('#detail').hide();
-			});
+			
 		}
 		// detail function
 		function a_detail(ehealthno) {
@@ -474,7 +471,7 @@
 					$('#chinesemedicines').html(jsonObject.targetRecord.chineseMedicineToString);
 					$('#doctor').html(jsonObject.targetRecord.doctor);
 					
-					$('#detail').show();
+					$("#myModal").modal();
 				}
 			}); 
 		}
@@ -482,13 +479,12 @@
 		/* 页面加载完成，绑定事件 */
         $(document).ready(function(){
         	$('#loading').hide();
-        	$('#detail').hide();
         	btn_query();//点击提交，执行ajax
         });
 	</script>
 	<div id="loading" style="position: fixed; top:0; left:0; width:100%; height: 100%; center center #efefef">
 		<img src="img/progress.gif" style="margin-top: 15%;margin-left: 15%;"/>
 	</div>
-	<s:include value="detail.html" />
+	
 </body>
 </html>

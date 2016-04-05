@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import newpredictum.Predictum;
+import predictmedicine.PredictMedicine;
 
 import com.mathworks.toolbox.javabuilder.MWClassID;
 import com.mathworks.toolbox.javabuilder.MWComplexity;
@@ -30,20 +30,20 @@ public class MachineLearningPredict {
 	 * @param threshold
 	 * @return
 	 */
-	public static List<String> predict(List<String> inputcode, double threshold){
+	public static List<String> predict(List<String> inputcode){
 		if( inputcode == null || inputcode.size() == 0 ){
 			return null;
 		}
 		List<String> medicineListByMachine = new ArrayList<String>();
 		// Machine learning object
-		Predictum predictum = null;
+		PredictMedicine predictum = null;
 		int predictConditionCount = inputcode.size(); // the number of machine learning input parameters
 		MWNumericArray x = null; /* Array of x values */
 		Object[] y = null;
 		
 		try {
 			// predict bean
-			predictum = new Predictum();
+			predictum = new PredictMedicine();
 			
 			int[] dims1 = { 1, predictConditionCount }; // the x input parameters of machine learning
 			x = MWNumericArray.newInstance(dims1, MWClassID.DOUBLE,MWComplexity.REAL); // x input matrix
@@ -52,8 +52,7 @@ public class MachineLearningPredict {
 				x.set(i, Integer.valueOf(inputcode.get(i-1)));
 			}
 			// machine learning predict medicines
-			y = predictum.newpredictum(1, x, threshold);
-			
+			y = predictum.predictmedicine(1, x);
 			if(y == null) return null;
 			
 			MWLogicalArray yy = (MWLogicalArray) y[0];
@@ -145,19 +144,7 @@ public class MachineLearningPredict {
 		String description = e.getConditionsdescribed();
 		
 		// 描述中包含的关键字
-		String[] descKeywords = DiagClassifyData.descKeywords;
-		Map<String, String[]> descKeywordsMap = new HashMap<String, String[]>();
-		for(String s : descKeywords){
-			String[] splits = s.split(":");
-			if(splits == null || splits.length != 2){
-				continue;
-			}
-			String[] values = splits[1].split("\\|");
-			if(values == null || values.length == 0){
-				continue;
-			}
-			descKeywordsMap.put(splits[0], values);
-		}
+		Map<String, String[]> descKeywordsMap = DiagClassifyData.getDescKeywords();
 		
 		// 诊断转换
 		String[] diagKeywords = DiagClassifyData.diagKeywords;

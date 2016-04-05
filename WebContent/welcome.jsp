@@ -18,6 +18,15 @@
     <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <!-- style -->
     <link rel="stylesheet" type="text/css" href="css/style.css" />
+   
+    <!-- query auto complete -->
+    <script src="js/query.js" type="text/javascript"></script>
+	
+	<!-- js function -->
+	<script type="text/javascript" src="js/jquery-2.2.2.js"></script>
+	 <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.js" type="text/javascript"></script>
+	
 </head>
 <body>
 	<div id="wrapper">
@@ -47,25 +56,23 @@
 		    					</select>  
 		    			</div>
 		                <div class="form-group">
-		                	<label for="tags">姓名： </label>&nbsp;&nbsp;
+		                	<label for="pname">姓名： </label>&nbsp;&nbsp;
 							<input id="pname" type="text"  name="pname" />&nbsp;&nbsp;
 			    			<input id="query" type="button" class="btn btn-xs btn-success" value="查询" /> 
 		              	</div>
 					</form>
 				</div>
 	    	</div>
+	    	<div align="left">
+	    		<h4><label id="count"></label></h4>
+	    	</div>
 	    	<div id="contents">
 			</div>
 	    </div>
 	</div>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.js" type="text/javascript"></script>
-    <!-- query auto complete -->
-    <script src="js/query.js" type="text/javascript"></script>
+	<s:include value="detail.html" />
 	
-	<!-- js function -->
-	<script type="text/javascript" src="js/jquery-2.2.2.js"></script>
+    
 	<script type="text/javascript">
 	
 		function btn_query(){
@@ -87,22 +94,17 @@
 	                	var infos = "<table class='table table-bordered'><thead><tr class='info'><td>No.</td><td>Info</td><td>Detail</td></tr></thead><tbody>";
 	                	var index = 1;
 	                	$.each(jsonObject.infoMap, function(key, value){
-	                		infos += "<tr><td>" + index + "</td><td>" + value + "</td><td><label onclick='a_detail(" + key + ");'>详细信息</label></td></tr>";
+	                		infos += "<tr><td>" + index + "</td><td>" + value + "</td><td><button class='btn btn-primary btn-sm' onclick='a_detail(" + key + ");' >Detail</button></td></tr>";
 	                		index++;
                     	});
 	                	infos += "</tbody></table>";
+	                	$('#count').html("total count: " + (index-1));
 	                	$('#contents').html(infos);
 	                },
 	                error:function(){
 	                    alert("系统异常，请稍后重试！");
 	                }
 				});
-			});
-			
-			// detail table
-			var $detailtable = $('#detail');
-			$detailtable.bind("click", function(){
-				$('#detail').hide();
 			});
 		}
 		// detail function
@@ -135,7 +137,7 @@
 					$('#chinesemedicines').html(jsonObject.targetRecord.chineseMedicineToString);
 					$('#doctor').html(jsonObject.targetRecord.doctor);
 					
-					$('#detail').show();
+					$("#myModal").modal();
 				}
 			}); 
 		}
@@ -143,14 +145,13 @@
 		/* 页面加载完成，绑定事件 */
         $(document).ready(function(){
         	$('#loading').hide();
-        	$('#detail').hide();
             btn_query();//点击提交，执行ajax
         });
 	</script>
 	<div id="loading" class="hidden" style="position: fixed; top:0; left:0; width:100%; height: 100%; center center #efefef">
 		<img src="img/progress.gif" style="margin-top: 15%;margin-left: 15%;"/>
 	</div>
-	<s:include value="detail.html" />
+	
 	
 	
 </body>

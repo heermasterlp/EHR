@@ -355,7 +355,7 @@
 		"刘亚清"
 
     ];
-    $( "#tags" ).autocomplete({
+    $( "#pname" ).autocomplete({
       source: availableTags
     });
   });
