@@ -101,7 +101,7 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
              */
             List<String> medicineListByStatis = new ArrayList<String>(); // predict medicines result
             // 2.1 statistics medicines larger than 90% records
-    		int outputnumber = 15; // the number of output medicine
+    		int outputnumber = 16; // the number of output medicine
     		int similarnumber = 6; // similar record number
     		
     		// 2.2 get all records with same batch
@@ -115,9 +115,6 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     		double percent = 0.9; // the percent 
     		
     		List<String> medicineWithInevitable = DiagMedicineProcess.statisMedicineWithPercent(allMedicineMap, allRecordsNum, percent);
-    		if(medicineWithInevitable != null && medicineWithInevitable.size() > 0){
-    			medicineListByStatis.addAll(medicineWithInevitable); //the medicine with percent large than 90%
-    		}
     		
     		// 2.6 get similar records based on the description
     		List<EHealthRecord> similaryRecords = MedicineByDescription.getSimilaryEHealthRecords(eHealthRecordsByBatch, diagnose, description);
@@ -126,10 +123,11 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     		if (similaryRecords != null && similaryRecords.size() > 0) {
     			// 2.7 statistic the medicines in the similar records
     			Set<String> cnmedicineSet = DiagMedicineProcess.getMedicinesByDescription(description, similaryRecords);
-    			for (String med : medicineListByStatis) {
-    				if (!cnmedicineSet.contains(med)) {
+    			logger.info("set:" + cnmedicineSet);
+    			for (String med : medicineWithInevitable) {
+    				if (cnmedicineSet.contains(med)) {
     					// remove the medicine from medicine list not in the cnmedicine set
-    					medicineListByStatis.remove(med);
+    					medicineListByStatis.add(med);
     				}
     			}
     			for (String cn : cnmedicineSet) {
@@ -146,7 +144,7 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     		
     		// 2.7 Sort the medicine with same order with machine learning result
     		List<String> medicineListByStatisticSorted = new ArrayList<String>();
-    		for( String s : DiagClassifyData.machineMedicine ){
+    		for( String s : DiagClassifyData.statisticsMedicine ){
     			if (medicineListByStatis.contains(s)) {
     				medicineListByStatisticSorted.add(s);
     			}
@@ -223,6 +221,28 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     			}
 			}
     		
+    		// sorted
+    		List<String> medicineListSorted = new ArrayList<String>();
+    		for( String s : DiagClassifyData.statisticsMedicine ){
+    			if (medicineList.contains(s)) {
+    				medicineListSorted.add(s);
+    			}
+    		}
+    		
+    		// fix medicinelist
+    		if (medicineListSorted.contains("党参")) {
+    			medicineListSorted.remove("党参");
+    			if (!medicineListSorted.contains("党参(太子参)")) {
+    				medicineListSorted.add("党参(太子参)");
+				}
+			}
+    		if (medicineListSorted.contains("太子参")) {
+    			medicineListSorted.remove("太子参");
+    			if (!medicineListSorted.contains("党参(太子参)")) {
+    				medicineListSorted.add("党参(太子参)");
+				}
+			}
+    		
     		// Format similiary records result
     		Map<String, ArrayList<String>> formattedSimilarRecords = new HashMap<>();
     		int index = 0;
@@ -253,6 +273,20 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     		 * Format return records result with color
     		 */
     		// statistics result
+    		logger.info("size:" + medicineListByStatisticSorted.size());
+    		// fix 
+    		if (medicineListByStatisticSorted.contains("党参")) {
+    			medicineListByStatisticSorted.remove("党参");
+    			if (!medicineListByStatisticSorted.contains("党参(太子参)")) {
+    				medicineListByStatisticSorted.add("党参(太子参)");
+				}
+			}
+    		if (medicineListByStatisticSorted.contains("太子参")) {
+    			medicineListByStatisticSorted.remove("太子参");
+    			if (!medicineListByStatisticSorted.contains("党参(太子参)")) {
+    				medicineListByStatisticSorted.add("党参(太子参)");
+				}
+			}
     		Map<String, ArrayList<String>> statisticsResultMap = EhealthUtil.formatStatisticsResult(medicineListByStatisticSorted, medicineListByMachine, medicineListByRules);
     		
     		// machine result
@@ -268,7 +302,7 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
             map.put("medicineListByStatistics", statisticsResultMap);
             map.put("medicineListByMachine", machineResultMap);
             map.put("medicineListByRules", ruleResultMap);
-            map.put("medicineList", medicineList);
+            map.put("medicineList", medicineListSorted);
             
             map.put("formattedSimilarRecords", formattedSimilarRecords);
             map.put("similarSize", similaryRecords.size());
@@ -330,17 +364,32 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     			orignMedicines.add(c.getNameString());
     		}
     	}
-    			
+    	logger.info("orign: " + orignMedicines);		
     	// 6. sort the origin medicines with a fix order
     	List<String> sortedList = new ArrayList<String>();
     			
-    	for( String s : DiagClassifyData.machineMedicine ){
+    	for( String s : DiagClassifyData.statisticsMedicine ){
     		for( String o : orignMedicines ){
     			if( s == o || s.equals(o) ){
     				sortedList.add(s);
     			}
     		}
     	}
+    	
+    	// fix orign medicines
+    	// fix 
+		if (sortedList.contains("党参")) {
+			sortedList.remove("党参");
+			if (!sortedList.contains("党参(太子参)")) {
+				sortedList.add("党参(太子参)");
+			}
+		}
+		if (sortedList.contains("太子参")) {
+			sortedList.remove("太子参");
+			if (!sortedList.contains("党参(太子参)")) {
+				sortedList.add("党参(太子参)");
+			}
+		}
     			
     	// 7. predict medicines with machine learning 
     	//  7.1 initial input parameters of machine learning
@@ -348,6 +397,7 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     			
     	//  7.2 predict medicines with machine learning
     	List<String> medicineListByMachine = MachineLearningPredict.predict(inputcode); // the result of machine learning
+    	
     			
     	// 8. calculate the accuracy
     	double statisticsPercent = 0.0; // the accuracy of case-based
@@ -359,7 +409,7 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     	index = 0;
     			
     	for( String s : medicineListByMachine ){
-    		if( orignMedicines.contains(s) ){
+    		if( sortedList.contains(s) ){
     			index++;
     		}
     	}
@@ -383,7 +433,7 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     	colorMap.put("black", blackList);
     	colorMap.put("red", redList);
     	
-    	map.put("orignMedicines", orignMedicines);
+    	map.put("orignMedicines", sortedList);
     	map.put("medicineListByMachine", colorMap);
     	map.put("statisticsPercent", df.format(statisticsPercent));
     	map.put("mechineLearningPercent", df.format(mechineLearningPercent));

@@ -124,19 +124,17 @@ public class DiagMedicineProcess {
 		if( description.equals("") || eHealthRecords == null || eHealthRecords.size() == 0){
 			return null;
 		}
-		// 1.Find records based on the description
-		List<EHealthRecord> eRecords = getEhealthRecordByDescription(description,eHealthRecords); 
-		if( eRecords == null || eRecords.size() == 0 ){
-			return null;
-		}
-		
 		// 2. Statistics the Chinese medicines
-		Map<String, Integer> medicineMap = statisEhealthMedicine(eRecords);
+		Map<String, Integer> medicineMap = statisEhealthMedicine(eHealthRecords);
 		medicineMap = DiagMedicineProcess.sortMapByValue(medicineMap); //sorted
 		
 		Set<String> medicineSet = medicineMap.keySet();
 		return medicineSet;
 	}
+	
+	
+	
+	
 	
 	
 	/**
