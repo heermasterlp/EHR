@@ -1,5 +1,8 @@
 package com.um.data;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class DiagClassifyData {
 
 	
@@ -916,6 +919,18 @@ public class DiagClassifyData {
 		"worsecough:咳嗽中",
 		"worstcough:咳嗽重"
 	};
+	/**
+	 * Get descriptionStrings
+	 * @return
+	 */
+	public static Map<String, String> getDescriptionStrings(){
+		Map<String, String> descriptionStringsMap = new HashMap<>();
+		for (String string : descriptionStrings) {
+			String[] splits = string.split(":");
+			descriptionStringsMap.put(splits[0], splits[1]);
+		}
+		return descriptionStringsMap;
+	}
 	
 	/**
 	 * The input key words value
@@ -1026,6 +1041,20 @@ public class DiagClassifyData {
 	};
 	
 	/**
+	 * Get normalAndBaddescription
+	 * @return
+	 */
+	public static Map<String, String> getNormalAndBaddescription(){
+		
+		Map<String, String> normalAndBaddescriptionMap = new HashMap<>();
+		for (String string : normalAndBaddescription) {
+			String[] splits = string.split(":");
+			normalAndBaddescriptionMap.put(splits[0], splits[1]);
+		}
+		return normalAndBaddescriptionMap;
+	}
+	
+	/**
 	 *  The machine learning input description keywords
 	 */
 	public final static String[] descKeywords = {
@@ -1123,6 +1152,27 @@ public class DiagClassifyData {
 		"worsecough:：咳嗽，|现咳嗽稀痰，|咽痒咳嗽痰粘，|，咽痒咳嗽，|现咽痒咳嗽，|，咳嗽咯痰，|现咳嗽，|，咳嗽，|现仍咳嗽血痰|，干咳|，饮水呛咳|，咽痒咳嗽|时咳嗽咯痰|咳嗽痰多|咳嗽咽痒|咳嗽少气|咳嗽无痰|少咳痰粘|咳嗽痰少|咯少量血痰|咳嗽痰色白|痰血减少|咯黄白痰|痰白可咯|少痰难咯|黄痰难咯|咯黄白色稀痰|咯痰|咳嗽胸闷|痰难咯|咯白痰|咯血痰|咳嗽痰白|咯黄色稀痰|咯黄痰|咯黄白粘痰",
 		"worstcough:咳嗽频繁|咳嗽反复|咳嗽痰血|咳嗽加重|咳嗽较剧"
 	};
+	
+	/**
+	 * Get descKeywords
+	 * @return
+	 */
+	public static Map<String, String[]> getDescKeywords(){
+		Map<String, String[]> descKeywordsMap = new HashMap<String, String[]>();
+		for(String s : descKeywords){
+			String[] splits = s.split(":");
+			if(splits == null || splits.length != 2){
+				continue;
+			}
+			String[] values = splits[1].split("\\|");
+			if(values == null || values.length == 0){
+				continue;
+			}
+			descKeywordsMap.put(splits[0], values);
+		}
+		return descKeywordsMap;
+	}
+	
 	
 	/**
 	 * The input items of machine learning 

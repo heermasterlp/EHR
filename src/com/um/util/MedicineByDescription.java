@@ -20,6 +20,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.um.data.DataBaseSetting;
 import com.um.data.DiagClassifyData;
+import com.um.model.ChineseMedicine;
 import com.um.model.EHealthRecord;
 import com.um.mongodb.converter.EhealthRecordConverter;
 
@@ -515,6 +516,30 @@ public class MedicineByDescription {
 		}
 		
 		return formattedDescriptionString;
+	}
+	
+	/**
+	 * Get all medicines in records with repeat
+	 * @param eHealthRecords
+	 * @return
+	 */
+	public static List<String> getAllMedicinesNameWithRepeat(List<EHealthRecord> eHealthRecords){
+		if (eHealthRecords == null || eHealthRecords.size() == 0) {
+			return null;
+		}
+		// statistics result
+		List<String> medicinesList = new ArrayList<String>();
+		
+		// get all medicines in this records list
+		for(EHealthRecord e : eHealthRecords){
+			if(e.getChineseMedicines() != null && e.getChineseMedicines().size() > 0){
+				for(ChineseMedicine c : e.getChineseMedicines()){
+					medicinesList.add(c.getNameString());
+				}
+			}
+		}
+		
+		return medicinesList;
 	}
 	
 }

@@ -474,7 +474,7 @@
                         var tables = "<table class='table table-bordered'><thead><tr class='info'><td>No.</td><td>Descirption</td><td>Medicines</td><td>Detail</td></tr></thead><tbody>";
 	                	var index = 1;
                        	$.each(jsonObject.formattedSimilarRecords, function(key, value){
-                       		tables += "<tr><td>" + index + "</td><td>" + value[0] + "</td><td>" + value[1] + "</td><td><a href='detailRecord?ehealthregno=" + key + "'>详细信息</a></td></tr>";
+                       		tables += "<tr><td>" + index + "</td><td>" + value[0] + "</td><td>" + value[1] + "</td><td><label onclick='a_detail(" + key + ");'>详细信息</label></td></tr>";
                        		index++;
                        	});
                        	tables += "</tbody></table>";
@@ -488,16 +488,56 @@
                     }//这里不要加","
                 });
 			});
+			// detail table
+			var $detailtable = $('#detail');
+			$detailtable.bind("click", function(){
+				$('#detail').hide();
+			});
 		}
-		
+		// detail function
+		function a_detail(ehealthno) {
+			$.ajax({
+				type: "post",
+				url: "detailRecord",
+				data: {
+					ehealthregno: ehealthno
+				},
+				dataType:"json",//设置需要返回的数据类型
+				success: function(data) {
+					var jsonObject = jQuery.parseJSON(data);
+					$('#hospital').html(jsonObject.targetRecord.hospital);
+					$('#date').html(jsonObject.targetRecord.date);
+					$('#medicalservice').html(jsonObject.targetRecord.medicalservice);
+					$('#registrationno').html(jsonObject.targetRecord.registrationno);
+					$('#patientname').html(jsonObject.targetRecord.patientInfo.name);
+					$('#patientgender').html(jsonObject.targetRecord.patientInfo.gender);
+					$('#patientage').html(jsonObject.targetRecord.patientInfo.age);
+					$('#patientprofession').html(jsonObject.targetRecord.patientInfo.profession);
+					$('#patientphone').html(jsonObject.targetRecord.patientInfo.phoneNumber);
+					$('#patientcontact').html(jsonObject.targetRecord.patientInfo.contact);
+					$('#patientaddress').html(jsonObject.targetRecord.patientInfo.address);
+					$('#description').html(jsonObject.targetRecord.conditionsdescribed);
+					$('#westerndiagnose').html(jsonObject.targetRecord.westerndiagnostics);
+					$('#chinesediagnose').html(jsonObject.targetRecord.chinesediagnostics);
+					$('#process').html(jsonObject.targetRecord.processString);
+					$('#westernmedicines').html(jsonObject.targetRecord.westernMedicineToString);
+					$('#chinesemedicines').html(jsonObject.targetRecord.chineseMedicineToString);
+					$('#doctor').html(jsonObject.targetRecord.doctor);
+					
+					$('#detail').show();
+				}
+			}); 
+		}
 		/* 页面加载完成，绑定事件 */
         $(document).ready(function(){
-        	$('#loading').hide(); 
+        	$('#loading').hide();
+        	$('#detail').hide();
             btn();//点击提交，执行ajax
         });
 	</script>
 	<div id="loading" style="position: fixed; top:0; left:0; width:100%; height: 100%; center center #efefef">
 		<img src="img/progress.gif" style="margin-top: 15%;margin-left: 15%;"/>
 	</div>
+	<s:include value="detail.html" />
 </body>
 </html>

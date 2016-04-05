@@ -52,6 +52,9 @@
 		        		</form>
 					</div>
 				</div>
+				<div align="left">
+					<h4><label id="count"></label></h4>
+				</div>
 				<div id="contents">
 				</div>
 	    	</div>
@@ -87,6 +90,7 @@
 	                		index++;
 	                	});
 	                	infos += "</tbody></table>";
+	                	$('#count').html("total count:" + recordSize);
 	                	$('#contents').html(infos);
 	                },
 	                error:function(){

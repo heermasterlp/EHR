@@ -17,6 +17,9 @@ public class EhealthUtil {
 			return eHealthRecord;
 		}
 		
+		// remove patient name
+		eHealthRecord.getPatientInfo().setName(eHealthRecord.getPatientInfo().getName().substring(0, 1) + "xx");
+		
 		// remove profession
 		eHealthRecord.getPatientInfo().setProfession("xxxxxxx");
 		

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,12 +25,11 @@ import com.um.mongodb.converter.MedicineStatics;
 import com.um.util.DiagMedicineProcess;
 import com.um.util.MedicineByDescription;
 
+/**
+ * Statistics Action
+ */
 public class StatisticsAction extends ActionSupport implements ServletRequestAware {
-
-
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
 	
 	private static Logger logger = Logger.getLogger("com.um.ehr.action.StatisticsAction");
@@ -82,7 +80,6 @@ public class StatisticsAction extends ActionSupport implements ServletRequestAwa
 						String[] vs = valueString.split("\\|"); // 区分交集和并集
 						valueList.add(vs[0]); // 并集
 						valueList.add(vs[1]); // 并集百分比
-//						descriptionList = DiagMedicineProcess.getDescriptionByMedicine(medicines, eHealthRecordsByBatch);
 					}
 					resultMap.put(s, valueList);
 				}
@@ -116,35 +113,9 @@ public class StatisticsAction extends ActionSupport implements ServletRequestAwa
 		List<String> descriptionKeywordList = new ArrayList<>();
 		
 		// 描述中包含的关键字
-		String[] descKeywords = DiagClassifyData.descKeywords;
-		Map<String, String[]> descKeywordsMap = new HashMap<String, String[]>();
-		for(String s : descKeywords){
-			String[] splits = s.split(":");
-			if(splits == null || splits.length != 2){
-				continue;
-			}
-			String[] values = splits[1].split("\\|");
-			if(values == null || values.length == 0){
-				continue;
-			}
-			descKeywordsMap.put(splits[0], values);
-		}
-		
-		String[] descriptionStrings = DiagClassifyData.descriptionStrings;
-		Map<String, String> descriptionStringsMap = new HashMap<>();
-		for (String string : descriptionStrings) {
-			String[] splits = string.split(":");
-			descriptionStringsMap.put(splits[0], splits[1]);
-		}
-		
-		String[] normalAndBaddescription = DiagClassifyData.normalAndBaddescription;
-		Map<String, String> normalAndBaddescriptionMap = new HashMap<>();
-		for (String string : normalAndBaddescription) {
-			String[] splits = string.split(":");
-			normalAndBaddescriptionMap.put(splits[0], splits[1]);
-		}
-		
-		
+		Map<String, String[]> descKeywordsMap = DiagClassifyData.getDescKeywords();
+		Map<String, String> descriptionStringsMap = DiagClassifyData.getDescriptionStrings();
+		Map<String, String> normalAndBaddescriptionMap = DiagClassifyData.getNormalAndBaddescription();
 		
 		for (EHealthRecord eRecord : targetRecordList) {
 			Set<String> descKeywordSet = descKeywordsMap.keySet();// 全部项目
@@ -177,7 +148,6 @@ public class StatisticsAction extends ActionSupport implements ServletRequestAwa
 		// sort
 		statisticResult = DiagMedicineProcess.sortMapByValue(statisticResult);
 		
-		
 		// 5. format result
 		Map<String, Object> map = new HashMap<>();
 		map.put("resultMap", resultMap);
@@ -207,20 +177,13 @@ public class StatisticsAction extends ActionSupport implements ServletRequestAwa
 		List<EHealthRecord> eHealthRecordsByBatch = MedicineByDescription.getRecordsByBatch(batch);
 		
 		int length = eHealthRecordsByBatch.size(); //record number
-		
-		List<String> medicineNamesList = new ArrayList<String>(); // medicines name list
-		for(EHealthRecord e : eHealthRecordsByBatch){
-			if(e.getChineseMedicines() != null && e.getChineseMedicines().size() > 0){
-				for(ChineseMedicine c : e.getChineseMedicines()){
-					medicineNamesList.add(c.getNameString());
-				}
-			}
-		}
+		// all medicines in records with repeat
+		List<String> medicineNamesList = MedicineByDescription.getAllMedicinesNameWithRepeat(eHealthRecordsByBatch);
 		// statistics result
-		HashMap<String, Integer> rHashMaps = MedicineStatics.staticsChineseMedicine(medicineNamesList);
+		HashMap<String, Integer> resultMap = MedicineStatics.staticsChineseMedicine(medicineNamesList);
 		// format result 
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("resultMap", rHashMaps);
+		map.put("resultMap", resultMap);
 		map.put("recordSize", length);
 		
 		JSONObject json = JSONObject.fromObject(map);

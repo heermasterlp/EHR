@@ -26,11 +26,11 @@ import com.um.util.MedicineByDescription;
 
 import net.sf.json.JSONObject;
 
+/**
+ *  Query action
+ */
 public class QueryAction extends ActionSupport implements ServletRequestAware{
 
-	/**
-	 *  Query action
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	private static Logger logger = Logger.getLogger("com.um.ehr.action.QueryAction");
@@ -230,7 +230,11 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 		Map<String, Object> map = new HashMap<>();
 		
 		Map<String, ArrayList<String>> formattedSimilarRecords = new HashMap<>();
+		int count = 0;
 		for (EHealthRecord eRecord : similaryRecords) {
+			if (count > 20) {
+				break;
+			}
 			String regno = eRecord.getRegistrationno();
 			String recordDescription = eRecord.getConditionsdescribed();
 			// format description
@@ -247,10 +251,10 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 			descAndMedicines.add(formattedDescription);
 			descAndMedicines.add(formattedMedicines);
 			formattedSimilarRecords.put(regno, descAndMedicines);
+			count++;
 		}
 		
 		// output 20
-		
 		map.put("formattedSimilarRecords", formattedSimilarRecords);
 				
 		JSONObject json = JSONObject.fromObject(map);
@@ -292,7 +296,7 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 		// 3. format result
 		Document targetRecordDoc = iterable.first();
 		
-		targetRecord = EhealthRecordConverter.toEHealthRecord(targetRecordDoc);
+		targetRecord = EhealthUtil.encryptionRecord(EhealthRecordConverter.toEHealthRecord(targetRecordDoc));
 		
 		map.put("targetRecord", targetRecord);
 		
@@ -410,7 +414,6 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 		logger.info("query records by condition end!");
 		return SUCCESS;
 	}
-	
 
 	@Override
 	public void setServletRequest(HttpServletRequest request) {
@@ -418,32 +421,20 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 		this.request = request;
 	}
 
-
-
 	public HttpServletRequest getRequest() {
 		return request;
 	}
-
-
 
 	public void setRequest(HttpServletRequest request) {
 		this.request = request;
 	}
 
-
-
 	public String getResult() {
 		return result;
 	}
 
-
-
 	public void setResult(String result) {
 		this.result = result;
 	}
-
-
-
-
 
 }

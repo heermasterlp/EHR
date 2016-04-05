@@ -56,7 +56,10 @@
 				</form>
 			</div>
 	    </div>
-	    <div id="contents">
+	    <div align="left">
+	    	<h4><label id="count"></label></h4>
+	    </div>
+	    <div id="contents" align="left">
 		</div>
 	</div>
 	<!-- Bootstrap Core JavaScript -->
@@ -88,10 +91,11 @@
 	                	var infos = "<table class='table table-bordered'><thead><tr class='info'><td>No.</td><td>Info</td><td>Detail</td></tr></thead><tbody>";
 	                	var index = 1;
 	                	$.each(jsonObject.infoMap, function(key, value){
-	                		infos += "<tr><td>" + index + "</td><td>" + value + "</td><td><label onclick='a_detail(" + key + ");'>详细信息</label></td></tr>";
+	                		infos += "<tr><td>" + index + "</td><td><h4>症状：</h4>" + value[0] +"<h4>中药处方：</h4>"+ value[1] + "</td><td><label onclick='a_detail(" + key + ");'>详细信息</label></td></tr>";
 	                		index++;
 	                	});
 	                	infos += "</tbody></table>";
+	                	$('#count').html("total count: " + (index-1));
 	                	$('#contents').html(infos);
 	                },
 	                error:function(){

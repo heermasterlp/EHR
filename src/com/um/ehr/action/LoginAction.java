@@ -13,6 +13,11 @@ import com.mongodb.client.MongoDatabase;
 import com.opensymphony.xwork2.ActionSupport;
 import com.um.ehr.setting.DataBaseSetting;
 
+/**
+ * Login Action
+ * @author heermaster
+ *
+ */
 public class LoginAction extends ActionSupport implements SessionAware {
 	
 	private static final long serialVersionUID = 1L;

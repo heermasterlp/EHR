@@ -58,6 +58,9 @@
 				</div>
 				<div id="contents">
 				</div>
+				<div align="left">
+					<h4><label id="count"></label></h4>
+				</div>
 				<div id="statistics">
 				</div>
 	    	</div>
@@ -129,7 +132,8 @@
 	                	}*/
 	                	
 	                	infos += "</tbody></table>"; 
-	                	tables += "</tbody></table>"; 
+	                	tables += "</tbody></table>";
+	                	$('#count').html("total count:" + targetRecordSize); 
 	                	$('#contents').html(infos);
 	                	$('#statistics').html(tables);
 	                },

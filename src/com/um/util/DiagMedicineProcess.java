@@ -598,9 +598,7 @@ public class DiagMedicineProcess {
 			
 			int count = results.size();
 			double percent = 100.0 * count / allRecrods.size();
-//			System.out.println("[all record]: " + allRecrods.size());
 			resultMap.put(names[0], count + "|" + df.format(percent));
-			
 		}
 		return resultMap;
 	}
