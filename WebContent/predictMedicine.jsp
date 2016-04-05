@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-	<title>输入预测处方</title>
+	<title>根据症状预测中药处方</title>
 	<!-- Bootstrap Core CSS -->
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
     <!-- Custom CSS -->
@@ -39,7 +39,7 @@
 	                     <div class="row">
 	                        <div class="col-lg-12">
 	                            <h1 class="page-header">
-	                                基于输入预测处方
+	                                根据症状预测中药处方
 	                            </h1>
 	                        </div>
 	                    </div>
@@ -354,6 +354,12 @@
 	            </form>
         	</div>
         	<div class="col-xs-6" align="left">
+        	<hr>
+        	<div>
+        		<div><h3>输入症状</h3></div>
+    			<div id="descconvertString"></div>
+        	</div>
+        	<hr>
     		<div>
     			<div><h3>基于统计预测结果</h3></div>
     			<div id="medicineListByStatistics"></div>
@@ -439,26 +445,69 @@
                     	$('#loading').hide(); 
                        	// resut 
                        	var jsonObject = jQuery.parseJSON(data);
-                       	var medicineListByStatistics = ""; // statistics result
-                       	var medicineListByMachine = "";  // machine learning result
-                       	var medicineListByRules = ""; // rule result
+                       	var medicineListByStatisticsBlack = ""; // statistics result
+                       	var medicineListByStatisticsBlue = "";
+                       	var medicineListByStatisticsRed = "";
+                       	var medicineListByMachineBlack = "";  // machine learning result
+                    	var medicineListByMachineBlue = "";
+                    	var medicineListByMachineRed = "";
+                       	var medicineListByRulesBlack = ""; // rule result
+                       	var medicineListByRulesBlue = "";
+                       	var medicineListByRulesRed = "";
                        	var medicineList = ""; // comprehensive result
                        	
+                       	var descconvertString = jsonObject.descconvertString;
+                       	$('#descconvertString').html(descconvertString);
+                       	
                        	// statistics result
-                       	$.each(jsonObject.medicineListByStatistics, function(id, value){
+                       	// black
+                       	$.each(jsonObject.medicineListByStatistics.black, function(id, value){
+                       		medicineListByStatisticsBlack += value + ",";
+                       	});
+                       	// blue
+                       	$.each(jsonObject.medicineListByStatistics.blue, function(id, value){
+                       		medicineListByStatisticsBlue += value + ",";
+                       	});
+                       	// red
+                       	$.each(jsonObject.medicineListByStatistics.red, function(id, value){
+                       		medicineListByStatisticsRed += value + ",";
+                       	});
+                 
+                       	/* $.each(jsonObject.medicineListByStatistics, function(id, value){
                        		medicineListByStatistics += value + ",";
-                       	});
-                        $('#medicineListByStatistics').html(medicineListByStatistics);
+                       	}); */
+                        $('#medicineListByStatistics').html(medicineListByStatisticsBlack + "<font color='blue'>"+medicineListByStatisticsBlue+"</font>" + "<font color='red'>"+medicineListByStatisticsRed+"</font>");
+                       	
                        	// machine learning result
-                       	$.each(jsonObject.medicineListByMachine, function(id, value){
-                       		medicineListByMachine += value + ",";
+                       	// black
+                       	$.each(jsonObject.medicineListByMachine.black, function(id, value){
+                       		medicineListByMachineBlack += value + ",";
                        	});
-                        $('#medicineListByMachine').html(medicineListByMachine);
+                       	// blue
+                       	$.each(jsonObject.medicineListByMachine.blue, function(id, value){
+                       		medicineListByMachineBlue += value + ",";
+                       	});
+                       	// red
+                       	$.each(jsonObject.medicineListByMachine.red, function(id, value){
+                       		medicineListByMachineRed += value + ",";
+                       	});
+                       	
+                        $('#medicineListByMachine').html(medicineListByMachineBlack + "<font color='blue'>"+medicineListByMachineBlue+"</font>" + "<font color='red'>"+medicineListByMachineRed+"</font>");
                        	// rule result
-                       	$.each(jsonObject.medicineListByRules, function(id, value){
-                       		medicineListByRules += value + ",";
+                       	// black
+                       	$.each(jsonObject.medicineListByRules.black, function(id, value){
+                       		medicineListByRulesBlack += value + ",";
                        	});
-                        $('#medicineListByRules').html(medicineListByRules);
+                       	// blue
+                       	$.each(jsonObject.medicineListByRules.blue, function(id, value){
+                       		medicineListByRulesBlue += value + ",";
+                       	});
+                       	// red
+                       	$.each(jsonObject.medicineListByRules.red, function(id, value){
+                       		medicineListByRulesRed += value + ",";
+                       	});
+                       	
+                        $('#medicineListByRules').html(medicineListByRulesBlack + "<font color='blue'>"+medicineListByRulesBlue+"</font>" + "<font color='red'>"+medicineListByRulesRed+"</font>");
                        	// comprehensive result
                        	$.each(jsonObject.medicineList, function(id, value){
                        		medicineList += value + ",";
@@ -473,7 +522,6 @@
                        		index++;
                        	});
                        	tables += "</tbody></table>";
-                       	
                        	
                         $('#similarRecords').html(tables);
                          

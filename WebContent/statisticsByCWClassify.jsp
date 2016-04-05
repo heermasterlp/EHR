@@ -35,7 +35,7 @@
 						<div class="row">
 				        	<div class="col-lg-12">
 				            <h1 class="page-header">
-				           	基于中医诊断的统计
+				           	中医诊断出现概率统计
 				            </h1>
 				           
 				            </div>

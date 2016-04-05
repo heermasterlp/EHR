@@ -21,6 +21,7 @@ import com.um.model.ChineseMedicine;
 import com.um.model.EHealthRecord;
 import com.um.util.BasedOnRulePredict;
 import com.um.util.DiagMedicineProcess;
+import com.um.util.EhealthUtil;
 import com.um.util.MachineLearningPredict;
 import com.um.util.MedicineByDescription;
 
@@ -151,7 +152,6 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     			}
     		}
             
-            
             /**
              * 3. Predict medicines based on machine learning method
              */
@@ -249,18 +249,29 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
 				index++;
 			}
     		
+    		/*
+    		 * Format return records result with color
+    		 */
+    		// statistics result
+    		Map<String, ArrayList<String>> statisticsResultMap = EhealthUtil.formatStatisticsResult(medicineListByStatisticSorted, medicineListByMachine, medicineListByRules);
+    		
+    		// machine result
+    		Map<String, ArrayList<String>> machineResultMap = EhealthUtil.formatMachineLearningResult(medicineListByStatisticSorted, medicineListByMachine, medicineListByRules);
+    		// rules result
+    		Map<String, ArrayList<String>> ruleResultMap = EhealthUtil.formatRulesResult(medicineListByStatisticSorted, medicineListByMachine, medicineListByRules);
+    		
             Map<String,Object> map = new HashMap<String,Object>();
             logger.info(medicineListByMachine + "   " + medicineListByRules);
             
-            map.put("medicineListByStatistics", medicineListByStatisticSorted);
-            map.put("medicineListByMachine", medicineListByMachine);
-            map.put("medicineListByRules", medicineListByRules);
+            map.put("descconvertString", descconvertString);
+            
+            map.put("medicineListByStatistics", statisticsResultMap);
+            map.put("medicineListByMachine", machineResultMap);
+            map.put("medicineListByRules", ruleResultMap);
             map.put("medicineList", medicineList);
             
             map.put("formattedSimilarRecords", formattedSimilarRecords);
             map.put("similarSize", similaryRecords.size());
-            
-            
             
             JSONObject json = JSONObject.fromObject(map);//将map对象转换成json类型数据
             result = json.toString();//给result赋值，传递给页面
@@ -357,8 +368,23 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     	
     	// 9. format result
     	Map<String, Object> map = new HashMap<String, Object>();
+    	Map<String, ArrayList<String>> colorMap = new HashMap<String, ArrayList<String>>();
+    	ArrayList<String> blackList = new ArrayList<String>();
+    	ArrayList<String> redList = new ArrayList<String>();
+    	
+    	// format machine learning result
+    	for (String med : medicineListByMachine) {
+			if (orignMedicines.contains(med)) {
+				blackList.add(med);
+			}else{
+				redList.add(med);
+			}
+		}
+    	colorMap.put("black", blackList);
+    	colorMap.put("red", redList);
+    	
     	map.put("orignMedicines", orignMedicines);
-    	map.put("medicineListByMachine", medicineListByMachine);
+    	map.put("medicineListByMachine", colorMap);
     	map.put("statisticsPercent", df.format(statisticsPercent));
     	map.put("mechineLearningPercent", df.format(mechineLearningPercent));
     	

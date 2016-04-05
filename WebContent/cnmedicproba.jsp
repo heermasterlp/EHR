@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-	<title>chinese medicines probably</title>
+	<title>根据中药统计并、交集和症状</title>
 	<!-- Bootstrap Core CSS -->
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
     <!-- Custom CSS -->
@@ -33,7 +33,7 @@
 					<div class="row">
 				        <div class="col-lg-12">
 				            <h1 class="page-header">
-				           		中药关系统计
+				           		根据中药统计并、交集和症状
 				            </h1>
 				        </div>
 				  	</div>

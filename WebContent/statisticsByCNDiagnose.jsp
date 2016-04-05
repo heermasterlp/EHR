@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-	<title>statistics by chinese</title>
+	<title>中医诊断出现概率统计</title>
 	<!-- Bootstrap Core CSS -->
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
     <!-- Custom CSS -->
@@ -35,7 +35,7 @@
 					<div class="row">
 		                    <div class="col-lg-12">
 		                        <h1 class="page-header">
-		                            中医诊断统计
+		                            中医诊断出现概率统计
 		                        </h1>
 		                    </div>
 		                </div>

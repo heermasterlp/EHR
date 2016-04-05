@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-	<title>Find Records by Condition</title>
+	<title>根据病人姓名，处理和中药名称查找病历</title>
 	<!-- Bootstrap Core CSS -->
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
     <!-- Custom CSS -->
@@ -35,7 +35,7 @@
 	    	<!-- Page Heading -->
             <div class="row">
             	<div class="col-lg-12">
-            		<h1 class="page-header">根据条件查询病历</h1>
+            		<h1 class="page-header">根据病人姓名，处理和中药名称查找病历</h1>
             	</div>
             </div>
             <div class="col-sm-12">

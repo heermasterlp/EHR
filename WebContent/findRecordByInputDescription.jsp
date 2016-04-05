@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-	<title>基于输入症状查询病历</title>
+	<title>根据病历症状查找病历</title>
 	<!-- Bootstrap Core CSS -->
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
     <!-- Custom CSS -->
@@ -39,7 +39,7 @@
                      <div class="row">
                         <div class="col-lg-12">
                             <h1 class="page-header">
-                                基于输入症状查找病历
+                                根据病历症状查找病历
                             </h1>
                         </div>
                     </div>

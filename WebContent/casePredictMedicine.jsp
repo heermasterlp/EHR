@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-	<title>案例预测处方</title>
+	<title>根据案例验证机器学习结果</title>
 	<!-- Bootstrap Core CSS -->
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
     <!-- Custom CSS -->
@@ -32,7 +32,7 @@
                 <div class="col-xs-6" align="left">
             		<div class="row">
 		                <div class="col-lg-12">
-		                	<h1 class="page-header"> 基于案例预测处方</h1>
+		                	<h1 class="page-header"> 根据案例验证机器学习结果</h1>
 		                </div>
 			            <form id="myForm" name="myForm" action=''>
 			                <div id="left_rigth">
@@ -51,11 +51,11 @@
     		</div>
 			<div class="col-xs-6" align="left">
 				<div>
-					<div><h3>原始病历中的中药</h3></div>
+					<div><h3>原始病历中的中药<label id="originPercent"></label></h3></div>
 					<div id="orignMedicines"></div>
 				</div>
 				<div>
-					<div><h3>机器学习结果</h3></div>
+					<div><h3>机器学习结果<label id="machinePercnet"></label></h3></div>
 					<div id="medicineListByMachine"></div>
 				</div>
 			</div>
@@ -89,18 +89,31 @@
 	                	// parse return data
 	                	var jsonObject = jQuery.parseJSON(data);
 	                	
+	                	// origin medicine
+	                	var originPercent = jsonObject.statisticsPercent;
+	                	$('#originPercent').html(" ("+ originPercent +"%)");
 	                	var orignMedicinesString = "";
-	                	var medicineListByMachine = "";
-	                	
 	                	$.each(jsonObject.orignMedicines, function(id, value){
 	                		orignMedicinesString += value + ",";
 	                	});
 	                	$('#orignMedicines').html(orignMedicinesString);
 	                	
-	                	$.each(jsonObject.medicineListByMachine, function(id, value){
-	                		medicineListByMachine += value + ",";
+	                	// machine learning medicines
+	                	var machinePercnet = jsonObject.mechineLearningPercent;
+	                	$('#machinePercnet').html(" ("+ machinePercnet +"%)");
+	                	
+	                	// black
+	                	var medicineListByMachineBlack = "";
+	                	$.each(jsonObject.medicineListByMachine.black, function(id, value){
+	                		medicineListByMachineBlack += value + ",";
 	                	});
-	                	$('#medicineListByMachine').html(medicineListByMachine);
+	                	// red
+	                	var medicineListByMachineRed = "";
+	                	$.each(jsonObject.medicineListByMachine.red, function(id, value){
+	                		medicineListByMachineRed += value + ",";
+	                	});
+	                	
+	                	$('#medicineListByMachine').html(medicineListByMachineBlack + "<font color='red'>" + medicineListByMachineRed + "</font>");
 	                },
 	                error:function(){
 	                    alert("系统异常，请稍后重试！");

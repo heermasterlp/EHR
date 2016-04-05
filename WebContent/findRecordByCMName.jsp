@@ -5,7 +5,7 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>输入中药查找病历</title>
+	<title>根据中药名称查找病历</title>
 	<meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -36,7 +36,7 @@
 	    		<!-- Page Heading -->
                 <div class="row">
                 	<div class="col-lg-12">
-                		<h1 class="page-header">输入中药查找病历</h1>
+                		<h1 class="page-header">根据中药名称查找病历</h1>
                 	</div>
             	</div>
             	<form action="" method="get">
