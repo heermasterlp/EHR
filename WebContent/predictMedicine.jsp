@@ -361,25 +361,28 @@
         	</div>
         	<hr>
     		<div>
-    			<div><h3>基于统计预测结果</h3></div>
+    			<div><h3>基于统计预测结果<label id="statisticscount"></label></h3></div>
     			<div id="medicineListByStatistics"></div>
     		</div>
     		<hr>
     		<div>
-    			<div><h3>基于机器学习预测结果</h3></div>
+    			<div><h3>基于机器学习预测结果<label id="machinecount"></label></h3></div>
     			<div id="medicineListByMachine"></div>
     		</div>
     		<hr>
     		<div>
-    			<div><h3>基于规则预测结果</h3></div>
+    			<div><h3>基于规则预测结果<label id="rulecount"></label></h3></div>
     			<div id="medicineListByRules"></div>
     		</div>
     		<hr>
     		<div>
-    			<div><h3>综合预测结果</h3></div>
+    			<div><h3>综合预测结果<label id="listcount"></label></h3></div>
     			<div id="medicineList"></div>
     		</div>
     		<hr>
+    		<div>
+    			<h4><label id="count"></label></h4>
+    		</div>
     		<div id="similarRecords">
     		</div>
     	</div>
@@ -458,6 +461,13 @@
                        	
                        	var descconvertString = jsonObject.descconvertString;
                        	$('#descconvertString').html(descconvertString);
+                       	var countstr = "相似病历数量：" + jsonObject.similarSize;
+                    	$('#count').html(countstr);
+                    	
+                    	$('#statisticscount').html(": (共 " + jsonObject.statisticscount + "味)");
+                    	$('#machinecount').html(": (共 " + jsonObject.machinecount + "味)");
+                    	$('#rulecount').html(": (共 " + jsonObject.rulecount + "味)");
+                    	$('#listcount').html(": (共 " + jsonObject.listcount + "味)");
                        	
                        	// statistics result
                        	// black
@@ -523,6 +533,7 @@
                        	});
                        	tables += "</tbody></table>";
                        	
+                       
                         $('#similarRecords').html(tables);
                          
                     },

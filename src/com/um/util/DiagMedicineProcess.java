@@ -132,11 +132,6 @@ public class DiagMedicineProcess {
 		return medicineSet;
 	}
 	
-	
-	
-	
-	
-	
 	/**
 	 *  Get the similar records based on the description
 	 * @param description
@@ -144,7 +139,6 @@ public class DiagMedicineProcess {
 	 * @return
 	 */
 	public static List<EHealthRecord> getEhealthRecordByDescription(String description,List<EHealthRecord> eHealthRecords){
-		logger.info(description);
 		if( description.equals("") || eHealthRecords == null || eHealthRecords.size() == 0){
 			return null;
 		}

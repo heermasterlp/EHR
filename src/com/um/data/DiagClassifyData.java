@@ -751,7 +751,7 @@ public class DiagClassifyData {
 
 			"sputumamount%oksputumamount:咳嗽无痰|无痰#littlesputumamount:现咳嗽稀痰，|，痰白可咯减少，|有痰难咳，|咳嗽痰多缓解，|，有痰，|现咳嗽痰多缓解，|，痰少|现少咳痰血|，有痰，|咳嗽少痰|咳嗽痰少|咯少量血痰|痰血减少|痰少色白|少痰难咯|量少色黄|少许血丝痰|偶咳少痰|痰减少|少量痰血#muchsputumamount:现痰多难咯，|现咳嗽咯痰，|咽痒咳嗽痰粘，|现咳嗽痰难咯，|，咳嗽咯痰，|现少咳有痰色黄|咳嗽痰多|少咳痰粘|痰白可咯|痰多色黄|黄痰难咯|咯黄白色稀痰|痰黄白|痰浓稠|咽中有痰|痰多色白",
 
-			"sputumcolor%defalutsputumcolor:痰色正常|已无痰血#yellowsputumcolor:痰多色黄|黄痰难咯|痰黄白|痰色黄难咯|咯黄色稀痰|量少色黄|咯黄痰|咯黄白粘痰|现少咳有痰色黄#whitesputumcolor:现少咳痰白，|咳嗽痰色白|咯黄白痰|痰白可咯|痰少色白|白痰|少白痰|痰多色灰白|咯白痰|痰色白|咳嗽痰白|痰多色白#redlittlesputumcolor:痰血减少|，痰中带血，|咳嗽咯痰带血丝，|咯血减少，|痰中带血减轻|少许血丝痰|痰中血丝|少量痰血|偶有痰血|现咳嗽痰血缓解|现咳嗽痰血少，#redmuchsputumcolor:现咳嗽咯痰血，|咯少量血痰|痰中带血，|咯血痰|现仍咳嗽血痰#redmoresputumcolor:痰血加重",
+			"sputumcolor%defalutsputumcolor:痰色正常|已无痰血#yellowsputumcolor:痰多色黄|黄痰难咯|痰黄白|痰色黄难咯|咯黄色稀痰|量少色黄|咯黄痰|咯黄白粘痰|现少咳有痰色黄#whitesputumcolor:现少咳痰白，|咳嗽痰色白|咯黄白痰|痰白可咯|痰少色白|白痰|少白痰|痰多色灰白|咯白痰|痰色白|咳嗽痰白|痰多色白#redlittlesputumcolor:痰血减少|，痰中带血，|咳嗽咯痰带血丝，|咯血减少，|痰中带血减轻|少许血丝痰|痰中血丝|少量痰血|偶有痰血|现咳嗽痰血缓解|现咳嗽痰血少，#redmuchsputumcolor:现咳嗽咯痰血，|咯少量血痰|痰中带血，|咯血痰|，血痰，|现仍咳嗽血痰#redmoresputumcolor:痰血加重",
 
 			"cough%okcough:现无咳嗽咯痰，|咳嗽正常|已无咳嗽|咳嗽已止#badcough:。现偶咳嗽，|现少咳咯白痰，现咽痒少咳，|现少咳痰白，|现干咳减轻|现咳嗽痰血少，|咳嗽少作，|现咳嗽痰多缓解，|现少咳痰血|现偶有干咳|，少咳|现少咳有痰色黄|少许咳嗽|咳嗽稍好转|咳嗽缓解|偶有干咳|偶咳嗽|偶咯痰|咳嗽少作|咳嗽好转|咳嗽少|偶有痰血|偶有咳嗽|咳嗽减少|偶咳少痰|偶咳#worsecough:：咳嗽，|现咳嗽稀痰，|咽痒咳嗽痰粘，|，咽痒咳嗽，|现咽痒咳嗽，|，咳嗽咯痰，|现咳嗽，|，咳嗽，|现仍咳嗽血痰|，干咳|，饮水呛咳|，咽痒咳嗽|时咳嗽咯痰|咳嗽痰多|咳嗽咽痒|咳嗽少气|咳嗽无痰|少咳痰粘|咳嗽痰少|咯少量血痰|咳嗽痰色白|痰血减少|咯黄白痰|痰白可咯|少痰难咯|黄痰难咯|咯黄白色稀痰|咯痰|咳嗽胸闷|痰难咯|咯白痰|咯血痰|咳嗽痰白|咯黄色稀痰|咯黄痰|咯黄白粘痰#worstcough:咳嗽频繁|咳嗽反复|咳嗽痰血|咳嗽加重|咳嗽较剧",
 			
@@ -765,7 +765,7 @@ public class DiagClassifyData {
 
 			"coatedtongue%whitecoatedtongue:舌苔薄白|舌苔白|舌苔白腻#yellowcoatedtongue:舌苔微黄|舌苔黄|舌红苔微黄|舌淡苔微黄|舌红苔少|舌苔染色#purplecoatedtongue:紫苔#blackcoatedtongue:黑（灰）苔#nitaicoatedtongue:舌苔黄微腻|舌苔黄腻#houtaicoatedtongue:厚苔",
 
-			"defecate%defaultdefecate:二便可|无便秘#okdefecate:便秘缓解|大便次数多|大便尚可|大便次多|大便不畅|大便可|大便欠通畅#baddefecate:大便（中）#worsedefecate:二便失禁|大便欠通畅|大便难解|时便溏|便溏|便溏缓解|便烂|大便难排|大便时腹痛|大便不畅",
+			"defecate%defaultdefecate:二便可|无便秘#okdefecate:便秘缓解|大便次数多|大便尚可|大便次多|大便不畅|大便可|大便欠通畅#baddefecate:大便难排|大便欠通畅|，便秘，|，便秘。#worsedefecate:二便失禁|大便难解|时便溏|，便溏，|便溏缓解|便烂|大便时腹痛|大便不畅",
 
 			"xiexie%ok:，腹泻已止，|无腹泻#xiexie:泻泄|，腹泻（|因腹泻严重|，腹泻，|因腹泻、|，腹泻好转，|时腹泻，|时有腹泻|腹泻缓解|近腹泻，|皮疹腹泻|腹泻减少|，腹泻。|腹泻轻微|、腹泻，",
 
@@ -781,7 +781,7 @@ public class DiagClassifyData {
 
 			"sweat%sweat:有汗|汗多，|现汗仍多#nosweat:无汗#zihan:，少气自汗#daohan:盗汗#dahan:大汗",
 
-			"futong%nofutong:无腹痛#okfutong:轻度腹痛#badfutong:现便时腹痛|腹痛#worsefutong:重度腹痛（重）",
+			"futong%nofutong:无腹痛#okfutong:轻度腹痛#badfutong:大便时腹痛|现便时腹痛|腹痛#worsefutong:重度腹痛（重）",
 
 			"thirst%okthirst:口不渴#badthirst:喝不多饮#worsethirst:口渴多饮|，口干，|仍腰酸口干|现口干，|，夜晚口干|，口干咽痛，",
 
@@ -1076,7 +1076,7 @@ public class DiagClassifyData {
 		"worsexionglei:重度胸肋痛|夜间胸痛|右侧胸痛|胸闷胸痛|全身骨痛|胸背痛",
 		"nofutong:无腹痛",
 		"okfutong:轻度腹痛",
-		"badfutong:现便时腹痛|腹痛",
+		"badfutong:大便时腹痛|现便时腹痛|腹痛",
 		"worsefutong:重度腹痛",
 		"yaotong:腰痛|，腰酸痛，|腰骶酸痛|现腰痛|仍腰酸口干|，腰椎疼痛｜，腰酸，",
 		"wantong:脘痛",
@@ -1092,8 +1092,8 @@ public class DiagClassifyData {
 		"mamu:麻木|，时指麻，",
 		"defaultdefecate:无便秘",
 		"okdefecate:便秘缓解|大便次数多|大便尚可|大便次多|大便不畅|大便可|大便欠通畅",
-		"baddefecate:大便（中）",
-		"worsedefecate:二便失禁|大便欠通畅|大便难解|时便溏|，便溏，|便溏缓解|便烂|大便难排|大便时腹痛|大便不畅|，便秘，|大便时腹痛",
+		"baddefecate:大便难排|大便欠通畅|，便秘，|，便秘。",
+		"worsedefecate:二便失禁|大便难解|时便溏|，便溏，|便溏缓解|便烂|大便时腹痛|大便不畅",
 		"blooddefecate:，便血，",
 		"xiexie:泻泄|，腹泻（|因腹泻严重|，腹泻，|因腹泻、|，腹泻好转，|时腹泻，|时有腹泻|腹泻缓解|近腹泻，|皮疹腹泻|腹泻减少|，腹泻。|腹泻轻微|、腹泻，",
 		"okurinate:二便调|小便调",
@@ -1119,7 +1119,7 @@ public class DiagClassifyData {
 		"yellowsputumcolor:痰多色黄|黄痰难咯|痰黄白|痰色黄难咯|咯黄色稀痰|量少色黄|咯黄痰|咯黄白粘痰|现少咳有痰色黄",
 		"whitesputumcolor:现少咳痰白，|咳嗽痰色白|咯黄白痰|痰白可咯|痰少色白|白痰|少白痰|痰多色灰白|咯白痰|痰色白|咳嗽痰白|痰多色白",
 		"redlittlesputumcolor:痰血减少|咳嗽咯痰带血丝，|咯血减少，|痰中带血减轻|少许血丝痰|痰中血丝|少量痰血|偶有痰血|现咳嗽痰血缓解|现咳嗽痰血少，",
-		"redmuchsputumcolor:现咳嗽咯痰血，|咯少量血痰|痰中带血，|咯血痰|现仍咳嗽血痰",
+		"redmuchsputumcolor:现咳嗽咯痰血，|咯少量血痰|痰中带血，|咯血痰|，血痰，|现仍咳嗽血痰",
 		"redmoresputumcolor:痰血加重",
 		"oksleep:纳寐可|纳眠可|纳差眠可|纳改善眠可",
 		"badsleep:纳可眠改善，|纳眠尚可|纳眠一般|纳可眠一般|纳可眠稍差|纳差眠好转|纳可眠好转|眠差改善|纳差眠改善|纳欠佳眠一般|纳眠欠佳|纳差眠欠佳|纳眠好转|纳眠稍差",

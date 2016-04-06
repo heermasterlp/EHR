@@ -29,15 +29,14 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
 	
 	private static Logger logger = Logger.getLogger("com.um.ehr.action.PredictAciton"); 
 	
-	 private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
      
-	 private HttpServletRequest request;
+	private HttpServletRequest request;
 	 
-	 private String result;
-	
+	private String result;
 	
 	/**
-     * Predict medicines
+     * Action :  Predict medicines with input description
      * @return SUCCESS
      */
     public String predictByInput(){
@@ -45,7 +44,6 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
             /**
              * 1. Parse request parameters
              */
-        	// get parameters
         	String batch = request.getParameter("batch");
             String timestatus = request.getParameter("timestatus");
             String xu = request.getParameter("xu");
@@ -89,7 +87,9 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
             description += pulse.contains(",") ? "," + pulse : "";
             description += tengtong.contains(",") ? tengtong : "";
             description += bodydiscomfort.contains(",") ? bodydiscomfort : "";
-            description += constipation == null ? "" : "xiexie";
+            description += constipation == null ? "" : ",xiexie";
+            //fix error
+            if (description.contains(",,")) { description.replace(",,", ","); }
             
             logger.info("description: " + description);
             // 1.3 formatted the description to output
@@ -101,8 +101,8 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
              */
             List<String> medicineListByStatis = new ArrayList<String>(); // predict medicines result
             // 2.1 statistics medicines larger than 90% records
-    		int outputnumber = 16; // the number of output medicine
-    		int similarnumber = 6; // similar record number
+    		int OUTPUTNUMBER = 16; // the number of output medicine
+    		int SIMILARRECORDSIZE = 6; // similar record number
     		
     		// 2.2 get all records with same batch
     		List<EHealthRecord> eHealthRecordsByBatch = MedicineByDescription.getRecordsByBatch(batch); // all record with same batch
@@ -118,7 +118,9 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     		
     		// 2.6 get similar records based on the description
     		List<EHealthRecord> similaryRecords = MedicineByDescription.getSimilaryEHealthRecords(eHealthRecordsByBatch, diagnose, description);
-    		logger.info("similary records: " + similaryRecords.size());
+    		if (similaryRecords != null) {
+    			logger.info("similary records: " + similaryRecords.size());
+			}
     		
     		if (similaryRecords != null && similaryRecords.size() > 0) {
     			// 2.7 statistic the medicines in the similar records
@@ -136,10 +138,13 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     					medicineListByStatis.add(cn);
     				}
     			}
+    		}else{
+    			// similar record is zero , only return medicine with percent large than 90%
+    			medicineListByStatis.addAll(medicineWithInevitable);
     		}
-    		
-    		if (medicineListByStatis.size() > outputnumber) {
-    			medicineListByStatis = medicineListByStatis.subList(0, outputnumber);
+    		// set output number of medicines
+    		if (medicineListByStatis.size() > OUTPUTNUMBER) {
+    			medicineListByStatis = medicineListByStatis.subList(0, OUTPUTNUMBER);
     		}
     		
     		// 2.7 Sort the medicine with same order with machine learning result
@@ -169,15 +174,13 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     		List<String> medicineList = new ArrayList<>(); // compensive result with statistics, machine learning and rules
     		
     		Set<String> union = new HashSet<>();
-    		union.addAll(medicineListByStatisticSorted);
-    		union.addAll(medicineListByMachine);
-    		union.addAll(medicineListByRules);
+    		union.addAll(medicineListByStatisticSorted); union.addAll(medicineListByMachine); union.addAll(medicineListByRules);
     		
     		Map<String, String> uninomap = new HashMap<>();
     		// check medicines and count in those list
     		for (String un : union) {
 				if (medicineListByStatisticSorted.contains(un) && medicineListByMachine.contains(un) && medicineListByRules.contains(un)) {
-					// all in those list
+					// all in three list
 					uninomap.put(un, "3");
 				}
 				if (!medicineListByStatisticSorted.contains(un) && medicineListByMachine.contains(un) && medicineListByRules.contains(un) ||
@@ -192,7 +195,6 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
 					// only in 1 list
 					uninomap.put(un, "1");
 				}
-				
 			}
     		// result not enough, add medicines in 2 list
     		Set<String> unionKeyset = uninomap.keySet();
@@ -204,18 +206,18 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
 			}
     		
     		// add medicines in 2 list
-    		if (medicineList.size() < outputnumber) {
+    		if (medicineList.size() < OUTPUTNUMBER) {
     			for (String un : unionKeyset) {
-    				if (uninomap.get(un).equals("2") && medicineList.size() < outputnumber) {
+    				if (uninomap.get(un).equals("2") && medicineList.size() < OUTPUTNUMBER) {
     					medicineList.add(un);
     				}
     			}
 			}
     		
     		// add medicines only in 1 list
-    		if (medicineList.size() < outputnumber) {
+    		if (medicineList.size() < OUTPUTNUMBER) {
     			for (String un : unionKeyset) {
-    				if (uninomap.get(un).equals("1") && medicineList.size() < outputnumber) {
+    				if (uninomap.get(un).equals("1") && medicineList.size() < OUTPUTNUMBER) {
     					medicineList.add(un);
     				}
     			}
@@ -246,33 +248,31 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     		// Format similiary records result
     		Map<String, ArrayList<String>> formattedSimilarRecords = new HashMap<>();
     		int index = 0;
-    		for (EHealthRecord eRecord : similaryRecords) {
-				String regno = eRecord.getRegistrationno();
-				String recordDescription = eRecord.getConditionsdescribed();
-				// format description
-				String formattedDescription = MedicineByDescription.formattedDescriptionByCount(recordDescription);
-				String formattedMedicines = "";
-				if (eRecord.getChineseMedicines() == null || eRecord.getChineseMedicines().size() == 0) {
-					continue;
-				}
-				for (ChineseMedicine cMedicine : eRecord.getChineseMedicines()) {
-					formattedMedicines += cMedicine.getNameString() + ",";
-				}
-				// result
-				ArrayList<String> descAndMedicines = new ArrayList<>();
-				descAndMedicines.add(formattedDescription);
-				descAndMedicines.add(formattedMedicines);
-				formattedSimilarRecords.put(regno, descAndMedicines);
-				if (index > similarnumber) {
-					break;
-				}
-				index++;
+    		if (similaryRecords != null) {
+    			for (EHealthRecord eRecord : similaryRecords) {
+    				String regno = eRecord.getRegistrationno();
+    				String recordDescription = eRecord.getConditionsdescribed();
+    				// format description
+    				String formattedDescription = MedicineByDescription.formattedDescriptionByCount(recordDescription);
+    				String formattedMedicines = "";
+    				if (eRecord.getChineseMedicines() == null || eRecord.getChineseMedicines().size() == 0) {
+    					continue;
+    				}
+    				for (ChineseMedicine cMedicine : eRecord.getChineseMedicines()) {
+    					formattedMedicines += cMedicine.getNameString() + ",";
+    				}
+    				// result
+    				ArrayList<String> descAndMedicines = new ArrayList<>();
+    				descAndMedicines.add(formattedDescription);
+    				descAndMedicines.add(formattedMedicines);
+    				formattedSimilarRecords.put(regno, descAndMedicines);
+    				if (index > SIMILARRECORDSIZE) {
+    					break;
+    				}
+    				index++;
+    			}
 			}
     		
-    		/*
-    		 * Format return records result with color
-    		 */
-    		// statistics result
     		logger.info("size:" + medicineListByStatisticSorted.size());
     		// fix 
     		if (medicineListByStatisticSorted.contains("党参")) {
@@ -287,15 +287,18 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     				medicineListByStatisticSorted.add("党参(太子参)");
 				}
 			}
-    		Map<String, ArrayList<String>> statisticsResultMap = EhealthUtil.formatStatisticsResult(medicineListByStatisticSorted, medicineListByMachine, medicineListByRules);
     		
+    		/*
+    		 * Format return records result with color
+    		 */
+    		// statistics result
+    		Map<String, ArrayList<String>> statisticsResultMap = EhealthUtil.formatStatisticsResult(medicineListByStatisticSorted, medicineListByMachine, medicineListByRules);
     		// machine result
     		Map<String, ArrayList<String>> machineResultMap = EhealthUtil.formatMachineLearningResult(medicineListByStatisticSorted, medicineListByMachine, medicineListByRules);
     		// rules result
     		Map<String, ArrayList<String>> ruleResultMap = EhealthUtil.formatRulesResult(medicineListByStatisticSorted, medicineListByMachine, medicineListByRules);
     		
             Map<String,Object> map = new HashMap<String,Object>();
-            logger.info(medicineListByMachine + "   " + medicineListByRules);
             
             map.put("descconvertString", descconvertString);
             
@@ -304,8 +307,14 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
             map.put("medicineListByRules", ruleResultMap);
             map.put("medicineList", medicineListSorted);
             
+            //count
+            map.put("statisticscount", medicineListByStatisticSorted.size());
+            map.put("machinecount", medicineListByMachine.size());
+            map.put("rulecount", medicineListByRules.size());
+            map.put("listcount", medicineListSorted.size());
+            
             map.put("formattedSimilarRecords", formattedSimilarRecords);
-            map.put("similarSize", similaryRecords.size());
+            map.put("similarSize", (similaryRecords != null ? similaryRecords.size() : 0));
             
             JSONObject json = JSONObject.fromObject(map);//将map对象转换成json类型数据
             result = json.toString();//给result赋值，传递给页面

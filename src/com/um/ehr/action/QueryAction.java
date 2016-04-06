@@ -22,7 +22,6 @@ import com.um.ehr.setting.DataBaseSetting;
 import com.um.model.ChineseMedicine;
 import com.um.model.EHealthRecord;
 import com.um.mongodb.converter.EhealthRecordConverter;
-import com.um.util.DiagMedicineProcess;
 import com.um.util.EhealthUtil;
 import com.um.util.MedicineByDescription;
 
@@ -67,7 +66,6 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 		/*
 		 *  2. create reference table
 		 */
-		String description = "";
 		Map<String, String[]> descKeywords =  DiagClassifyData.getDescKeywords();
 		List<String> descList = new ArrayList<String>();
 		for (String desc : DiagClassifyData.descriptionStrings) {
