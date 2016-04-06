@@ -50,6 +50,14 @@
             </result>
       	</action>
       	
+      	<!-- query record information by one description -->
+      	<action name="queryRecordByOneDescription" class="com.um.ehr.action.QueryAction" method="queryRecordByOneDescription">
+        <!-- return value type: json -->
+        	<result type="json">
+            	<param name="root">result<!-- result is action return value，and need setter and getter method --></param>
+            </result>
+      	</action>
+      	
       	<!-- query record information by condition -->
       	<action name="queryRecordsByCondition" class="com.um.ehr.action.QueryAction" method="queryRecordsByCondition">
         <!-- return value type: json -->

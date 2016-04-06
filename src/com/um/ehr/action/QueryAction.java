@@ -17,10 +17,12 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.opensymphony.xwork2.ActionSupport;
+import com.um.data.DiagClassifyData;
 import com.um.ehr.setting.DataBaseSetting;
 import com.um.model.ChineseMedicine;
 import com.um.model.EHealthRecord;
 import com.um.mongodb.converter.EhealthRecordConverter;
+import com.um.util.DiagMedicineProcess;
 import com.um.util.EhealthUtil;
 import com.um.util.MedicineByDescription;
 
@@ -48,6 +50,93 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 
 	public void setTargetRecord(EHealthRecord targetRecord) {
 		this.targetRecord = targetRecord;
+	}
+	
+	/**
+	 * Action : query records by input one description
+	 * @return
+	 */
+	public String queryRecordByOneDescription(){
+		logger.info("Query patient's record based one description start!");
+		/*
+		 * 1. get request parameters
+		 */
+		String batch = request.getParameter("batch");
+		String descriptionStr = request.getParameter("description");
+		
+		/*
+		 *  2. create reference table
+		 */
+		String description = "";
+		Map<String, String[]> descKeywords =  DiagClassifyData.getDescKeywords();
+		List<String> descList = new ArrayList<String>();
+		for (String desc : DiagClassifyData.descriptionStrings) {
+			if (desc.contains(descriptionStr)) {
+				String[] splits = desc.split(":");
+				String[] valueStrings = descKeywords.get(splits[0]);
+				if (valueStrings != null && valueStrings.length > 0) {
+					for (String v : valueStrings) {
+						descList.add(v);
+					}
+				}
+			}
+		}
+		
+		logger.info("descrition : " + descList);
+		
+		/*
+		 *  3. get all batch records
+		 */
+		List<EHealthRecord> eHealthRecordsByBatch = MedicineByDescription.getRecordsByBatch(batch); // all record with same batch
+		
+		List<EHealthRecord> similarRecords = new ArrayList<EHealthRecord>();
+		for (EHealthRecord eHealthRecord : eHealthRecordsByBatch) {
+			for (String string : descList) {
+				if (eHealthRecord.getConditionsdescribed().contains(string)) {
+					similarRecords.add(eHealthRecord);
+					break;
+				}
+			}
+		}
+		logger.info("similar size: " + similarRecords.size());
+		
+		/*
+		 *  4. format result
+		 */
+		Map<String, ArrayList<String>> formattedSimilarRecords = new HashMap<>();
+		for (EHealthRecord eRecord : similarRecords) {
+			String regno = eRecord.getRegistrationno();
+			String recordDescription = eRecord.getConditionsdescribed();
+			// format description
+			String formattedDescription = MedicineByDescription.formattedDescriptionByCount(recordDescription);
+			String formattedMedicines = "";
+			if (eRecord.getChineseMedicines() == null || eRecord.getChineseMedicines().size() == 0) {
+				continue;
+			}
+			for (ChineseMedicine cMedicine : eRecord.getChineseMedicines()) {
+				formattedMedicines += cMedicine.getNameString() + ",";
+			}
+			// result
+			ArrayList<String> descAndMedicines = new ArrayList<>();
+			descAndMedicines.add(formattedDescription);
+			descAndMedicines.add(formattedMedicines);
+			formattedSimilarRecords.put(regno, descAndMedicines);
+		}
+		
+		/*
+		 *  5. return result
+		 */
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		map.put("infoMap", formattedSimilarRecords);
+		
+		JSONObject json = JSONObject.fromObject(map);
+		
+		result = json.toString();
+		
+		logger.info("Query patient's record based one description end!");
+		
+		return SUCCESS;
 	}
 
 	/**
