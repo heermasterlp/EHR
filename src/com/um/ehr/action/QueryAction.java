@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.bson.Document;
-
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
@@ -49,6 +48,63 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 
 	public void setTargetRecord(EHealthRecord targetRecord) {
 		this.targetRecord = targetRecord;
+	}
+	
+	
+	/**
+	 * Action : query record by no or registerno
+	 * @return
+	 */
+	public String queryRecordByNo(){
+		logger.info("Query patient's record based one no start!");
+		
+		// 1. parse the request parameters
+    	String countString = request.getParameter("count"); // the order number of records
+    	String batch = request.getParameter("batch");	
+    	int count = 0; // record order number
+    	// 2. find all records with batch 2012
+    	List<EHealthRecord> allList = MedicineByDescription.getRecordsByBatch(batch);
+    	if ("".equals(countString)) { return SUCCESS; }
+    	
+    	// 3. find the target record based on the conditions
+    	EHealthRecord targetrecord = null;
+    			
+    	if( countString.length() > 4 ){
+    		// the input info is the register number of record
+    		for( EHealthRecord e : allList ){
+    			if( e.getRegistrationno().equals(countString) ){
+    				targetrecord = e;
+    				break;
+    			}
+    			count++;
+    		}
+    	}else{
+    		// the input info is the order number of all records
+    		count = Integer.valueOf(countString); // order number
+    		count--;
+    		if (count < allList.size() && count >= 0) {
+    			targetrecord = allList.get( count );
+			}
+    	}
+    			
+    	if(targetrecord == null){
+    		return SUCCESS;
+    	}
+		
+    	// 4. format return result
+    	Map<String, Object> map = new HashMap<>();
+		
+		targetRecord = EhealthUtil.encryptionRecord(targetrecord);
+		
+		map.put("targetRecord", targetRecord);
+		map.put("count", count+1);
+		
+		JSONObject json = JSONObject.fromObject(map);
+		
+		result = json.toString();
+		
+		logger.info("Query patient's record based one no start!");
+		return SUCCESS;
 	}
 	
 	/**
@@ -372,7 +428,6 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 		FindIterable<Document> iterable = ehealthRecordCollection.find(condition);
 		
 		Map<String, Object> map = new HashMap<>();
-		
 		
 		if (iterable == null || iterable.first() == null) {
 			

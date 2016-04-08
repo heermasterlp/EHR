@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-	<title>根据病人姓名查找病历</title>
+	<title>病历预览</title>
 	<!-- Bootstrap Core CSS -->
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
     <!-- Custom CSS -->
@@ -26,7 +26,6 @@
 	<script type="text/javascript" src="js/jquery-2.2.2.js"></script>
 	 <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.js" type="text/javascript"></script>
-	
 </head>
 <body>
 	<div id="wrapper">
@@ -39,7 +38,7 @@
                  <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header">
-                            根据病人姓名查找病历 
+                            根据编号或挂号号查询病历
                         </h1>
                     </div>
                 </div>
@@ -56,8 +55,8 @@
 		    					</select>  
 		    			</div>
 		                <div class="form-group">
-		                	<label for="pname">姓名： </label>&nbsp;&nbsp;
-							<input id="pname" type="text"  name="pname" />&nbsp;&nbsp;
+		                	<label for="count">编号： </label>&nbsp;&nbsp;
+							<input id="count" type="text"  name="count" />&nbsp;&nbsp;
 			    			<input id="query" type="button" class="btn btn-xs btn-success" value="查询" /> 
 		              	</div>
 					</form>
@@ -73,32 +72,45 @@
 	<s:include value="detail.html" />
 	
 	<script type="text/javascript">
-	
+		
 		function btn_query(){
 			var $btn = $("input.btn");//获取按钮元素
 			$btn.bind("click",function(){
 				$("#loading").show();
 				$.ajax({
 	                type:"post",
-	                url:"querybyname",//需要用来处理ajax请求的action,excuteAjax为处理的方法名，JsonAction为action名
+	                url:"querybyno",//需要用来处理ajax请求的action,excuteAjax为处理的方法名，JsonAction为action名
 	                data:{//设置数据源
 	                	batch:$('#batch').val(),
-	                	pname:$('#pname').val()
+	                	count:$('#count').val()
 	                },
 	                dataType:"json",//设置需要返回的数据类型
 	                success:function(data){
 	                	$('#loading').hide();
-	                	// parse return data
+	                	// parse return data  targetRecord
 	                	var jsonObject = jQuery.parseJSON(data);
-	                	var infos = "<table class='table table-bordered'><thead><tr class='info'><td>No.</td><td>Info</td><td>Detail</td></tr></thead><tbody>";
-	                	var index = 1;
-	                	$.each(jsonObject.infoMap, function(key, value){
-	                		infos += "<tr><td>" + index + "</td><td>" + value + "</td><td><button class='btn btn-primary btn-sm' onclick='a_detail(" + key + ");' >Detail</button></td></tr>";
-	                		index++;
-                    	});
-	                	infos += "</tbody></table>";
-	                	$('#count').html("total count: " + (index-1));
-	                	$('#contents').html(infos);
+	                	$('#detailcount').html("编号：" + jsonObject.count);
+	                	$('#hospital').html(jsonObject.targetRecord.hospital);
+						$('#date').html(jsonObject.targetRecord.date);
+						$('#medicalservice').html(jsonObject.targetRecord.medicalservice);
+						$('#registrationno').html(jsonObject.targetRecord.registrationno);
+						$('#patientname').html(jsonObject.targetRecord.patientInfo.name);
+						$('#patientgender').html(jsonObject.targetRecord.patientInfo.gender);
+						$('#patientage').html(jsonObject.targetRecord.patientInfo.age);
+						$('#patientprofession').html(jsonObject.targetRecord.patientInfo.profession);
+						$('#patientphone').html(jsonObject.targetRecord.patientInfo.phoneNumber);
+						$('#patientcontact').html(jsonObject.targetRecord.patientInfo.contact);
+						$('#patientaddress').html(jsonObject.targetRecord.patientInfo.address);
+						$('#description').html(jsonObject.targetRecord.conditionsdescribed);
+						$('#westerndiagnose').html(jsonObject.targetRecord.westerndiagnostics);
+						$('#chinesediagnose').html(jsonObject.targetRecord.chinesediagnostics);
+						$('#process').html(jsonObject.targetRecord.processString);
+						$('#westernmedicines').html(jsonObject.targetRecord.westernMedicineToString);
+						$('#chinesemedicines').html(jsonObject.targetRecord.chineseMedicineToString);
+						$('#doctor').html(jsonObject.targetRecord.doctor);
+						
+						$("#myModal").modal();
+	               
 	                },
 	                error:function(){
 	                    alert("系统异常，请稍后重试！");
@@ -106,47 +118,15 @@
 				});
 			});
 		}
-		// detail function
-		function a_detail(ehealthno) {
-			$.ajax({
-				type: "post",
-				url: "detailRecord",
-				data: {
-					ehealthregno: ehealthno
-				},
-				dataType:"json",//设置需要返回的数据类型
-				success: function(data) {
-					var jsonObject = jQuery.parseJSON(data);
-					$('#hospital').html(jsonObject.targetRecord.hospital);
-					$('#date').html(jsonObject.targetRecord.date);
-					$('#medicalservice').html(jsonObject.targetRecord.medicalservice);
-					$('#registrationno').html(jsonObject.targetRecord.registrationno);
-					$('#patientname').html(jsonObject.targetRecord.patientInfo.name);
-					$('#patientgender').html(jsonObject.targetRecord.patientInfo.gender);
-					$('#patientage').html(jsonObject.targetRecord.patientInfo.age);
-					$('#patientprofession').html(jsonObject.targetRecord.patientInfo.profession);
-					$('#patientphone').html(jsonObject.targetRecord.patientInfo.phoneNumber);
-					$('#patientcontact').html(jsonObject.targetRecord.patientInfo.contact);
-					$('#patientaddress').html(jsonObject.targetRecord.patientInfo.address);
-					$('#description').html(jsonObject.targetRecord.conditionsdescribed);
-					$('#westerndiagnose').html(jsonObject.targetRecord.westerndiagnostics);
-					$('#chinesediagnose').html(jsonObject.targetRecord.chinesediagnostics);
-					$('#process').html(jsonObject.targetRecord.processString);
-					$('#westernmedicines').html(jsonObject.targetRecord.westernMedicineToString);
-					$('#chinesemedicines').html(jsonObject.targetRecord.chineseMedicineToString);
-					$('#doctor').html(jsonObject.targetRecord.doctor);
-					
-					$("#myModal").modal();
-				}
-			}); 
-		}
-		
+	
+	
 		/* 页面加载完成，绑定事件 */
-        $(document).ready(function(){
-        	$('#loading').hide();
-            btn_query();//点击提交，执行ajax
-        });
+	    $(document).ready(function(){
+	    	$('#loading').hide();
+	        btn_query();//点击提交，执行ajax
+	    });	
 	</script>
+	
 	<div id="loading" class="hidden" style="position: fixed; top:0; left:0; width:100%; height: 100%; center center #efefef">
 		<img src="img/progress.gif" style="margin-top: 15%;margin-left: 15%;"/>
 	</div>

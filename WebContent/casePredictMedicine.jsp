@@ -54,9 +54,113 @@
 					<div><h3>原始病历中的中药<label id="originPercent"></label></h3></div>
 					<div id="orignMedicines"></div>
 				</div>
+				<hr>
 				<div>
 					<div><h3>机器学习结果<label id="machinePercnet"></label></h3></div>
 					<div id="medicineListByMachine"></div>
+				</div>
+				<hr>
+				<div>
+					<div><h3>病历</h3></div>
+					<div><h5><label id="detailcount"></label></h5></div>
+					<table class="table table-bordered" >
+				       	<tr class="info">
+				       		<th rowspan="8"><label>个人信息</label></th>
+				       		<th><label>医院</label></th>
+				       		<th><label>时间</label></th>
+				       		<th><label>科别</label></th>
+				       	</tr>
+				       	<tr>
+				       		<td><label id="hospital"></label></td>
+				       		<td><label id="date"></label></td>
+				       		<td><label id="medicalservice"></label></td>
+				       	</tr>
+				       	
+				       	<tr class="info">
+				       		<th><label>挂号号</label></th>
+				       		<th><label>姓名</label></th>
+				       		<th><label>性别</label></th>
+				       	</tr>
+				       	<tr>
+				       		<td><label id="registrationno"></label></td>
+				       		<td><label id="patientname"></label></td>
+				       		<td><label id="patientgender"></label></td>
+				       	</tr>
+				       	
+				       	<tr class="info">
+				       		<th><label>年龄</label></th>
+				       		<th><label>职业</label></th>
+				       		<th><label>电话</label></th>
+				       	</tr>
+				       	<tr>
+				       		<td><label id="patientage"></label></td>
+				       		<td><label id="patientprofession"></label></td>
+				       		<td><label id="patientphone"></label></td>
+				       	</tr>
+				       	
+				       	<tr class="info">
+				       		<th><label>联系人</label></th>
+				       		<th><label>地址</label></th>
+				       		<th><label></label></th>
+				       	</tr>
+				       	<tr>
+				       		<td><label id="patientcontact"></label></td>
+				       		<td><label id="patientaddress"></label></td>
+				       		<td><label id=""></label></td>
+				       	</tr>
+				       	<tr>
+				       		<th class="info"><label>病症描述</label></th>
+				       		<td colspan="3"><label id="description"></label></td>
+				       	</tr>
+				       	
+				       	<tr>
+				       		<th class="info"><label>西医诊断</label></th>
+				       		<td colspan="3"><label id="westerndiagnose"></label></td>
+				       	</tr>
+				       	<tr>
+				       		<th class="info"><label>中医诊断</label></th>
+				       		<td colspan="3"><label id="chinesediagnose"></label></td>
+				       	</tr>
+				       	<tr>
+				       		<th class="info"><label>处理</label></th>
+				       		<td colspan="3"><label id="process"></label></td>
+				       	</tr>
+				       	<tr>
+				       		<th class="info"><label>西药处方</label></th>
+				       		<td colspan="3">
+				       			<table>
+				       				<tr>
+				       					<th></th>
+				       					<th>名称</th>
+				       				</tr>
+				       				<tr>
+				       					<td></td>
+				       					<td><label id="westernmedicines"></label></td>
+				       				</tr>
+				       			</table>
+							</td>
+				       	</tr>
+				       	<tr>
+				       		<th class="info"><label>中药处方</label></th>
+				       		<!-- 中药处方 -->
+				       		<td colspan="3">
+				       			<table >
+				       				<tr>
+				       					<th></th>
+				       					<th>名称</th>
+					  				</tr>
+				       					<tr>
+				       						<td></td>
+				       						<td><label id="chinesemedicines"></label></td>
+				       					</tr>
+				       			</table>
+							</td>
+				       	</tr>
+				       	<tr>
+				       		<th class="info">医师</th>
+				       		<td colspan="3"><label id="doctor"></label></td>
+				       	</tr>
+			       </table>
 				</div>
 			</div>
 	    	</div>
@@ -93,10 +197,16 @@
 	                	var originPercent = jsonObject.statisticsPercent;
 	                	$('#originPercent').html(" ("+ originPercent +"%)");
 	                	var orignMedicinesString = "";
-	                	$.each(jsonObject.orignMedicines, function(id, value){
-	                		orignMedicinesString += value + ",";
+	                	var orignMedicinesBlack = "";
+	                	var orignMedicinesRed = "";
+	                	
+	                	$.each(jsonObject.orignMedicines.black, function(id, value){
+	                		orignMedicinesBlack += value + ",";
 	                	});
-	                	$('#orignMedicines').html(orignMedicinesString);
+	                	$.each(jsonObject.orignMedicines.red, function(id, value){
+	                		orignMedicinesRed += value + ",";
+	                	});
+	                	$('#orignMedicines').html(orignMedicinesBlack + "<font color='red'>" + orignMedicinesRed + "</font>");
 	                	
 	                	// machine learning medicines
 	                	var machinePercnet = jsonObject.mechineLearningPercent;
@@ -114,6 +224,28 @@
 	                	});
 	                	
 	                	$('#medicineListByMachine').html(medicineListByMachineBlack + "<font color='red'>" + medicineListByMachineRed + "</font>");
+	                	
+	                	// target record
+	                	$('#detailcount').html("编号：" + jsonObject.count);
+	                	$('#hospital').html(jsonObject.targetRecord.hospital);
+						$('#date').html(jsonObject.targetRecord.date);
+						$('#medicalservice').html(jsonObject.targetRecord.medicalservice);
+						$('#registrationno').html(jsonObject.targetRecord.registrationno);
+						$('#patientname').html(jsonObject.targetRecord.patientInfo.name);
+						$('#patientgender').html(jsonObject.targetRecord.patientInfo.gender);
+						$('#patientage').html(jsonObject.targetRecord.patientInfo.age);
+						$('#patientprofession').html(jsonObject.targetRecord.patientInfo.profession);
+						$('#patientphone').html(jsonObject.targetRecord.patientInfo.phoneNumber);
+						$('#patientcontact').html(jsonObject.targetRecord.patientInfo.contact);
+						$('#patientaddress').html(jsonObject.targetRecord.patientInfo.address);
+						$('#description').html(jsonObject.targetRecord.conditionsdescribed);
+						$('#westerndiagnose').html(jsonObject.targetRecord.westerndiagnostics);
+						$('#chinesediagnose').html(jsonObject.targetRecord.chinesediagnostics);
+						$('#process').html(jsonObject.targetRecord.processString);
+						$('#westernmedicines').html(jsonObject.targetRecord.westernMedicineToString);
+						$('#chinesemedicines').html(jsonObject.targetRecord.chineseMedicineToString);
+						$('#doctor').html(jsonObject.targetRecord.doctor);
+	                	
 	                },
 	                error:function(){
 	                    alert("系统异常，请稍后重试！");

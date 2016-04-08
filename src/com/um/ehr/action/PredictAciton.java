@@ -77,7 +77,6 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
             
             // diagnose
             diagnose = zhengxing + (tanyu.equals("yes") ? "痰瘀," : "") + (tanshi.equals("yes") ? "痰湿,":"") + xu;
-            logger.info("diagnose: " + diagnose);
             // description
             description = timestatus + "," +sputumamount + "," + sputumcolor + "," + cough + "," + na + "," 
             				+ defecate + "," + urinate + "," + xionglei + ","
@@ -91,7 +90,6 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
             //fix error
             if (description.contains(",,")) { description.replace(",,", ","); }
             
-            logger.info("description: " + description);
             // 1.3 formatted the description to output
     		String descconvertString = MedicineByDescription.getFormatedDescirption(description);
     		String descriptionString = diagnose + descconvertString;
@@ -118,14 +116,10 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     		
     		// 2.6 get similar records based on the description
     		List<EHealthRecord> similaryRecords = MedicineByDescription.getSimilaryEHealthRecords(eHealthRecordsByBatch, diagnose, description);
-    		if (similaryRecords != null) {
-    			logger.info("similary records: " + similaryRecords.size());
-			}
     		
     		if (similaryRecords != null && similaryRecords.size() > 0) {
     			// 2.7 statistic the medicines in the similar records
     			Set<String> cnmedicineSet = DiagMedicineProcess.getMedicinesByDescription(description, similaryRecords);
-    			logger.info("set:" + cnmedicineSet);
     			for (String med : medicineWithInevitable) {
     				if (cnmedicineSet.contains(med)) {
     					// remove the medicine from medicine list not in the cnmedicine set
@@ -273,7 +267,6 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     			}
 			}
     		
-    		logger.info("size:" + medicineListByStatisticSorted.size());
     		// fix 
     		if (medicineListByStatisticSorted.contains("党参")) {
     			medicineListByStatisticSorted.remove("党参");
@@ -358,7 +351,9 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     		// the input info is the order number of all records
     		count = Integer.valueOf(countString); // order number
     		count--;
-    		targetRecord = allList.get( count );
+    		if (count < allList.size() && count >= 0) {
+    			targetRecord = allList.get( count );
+			}
     	}
     			
     	if(targetRecord == null){
@@ -373,7 +368,6 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     			orignMedicines.add(c.getNameString());
     		}
     	}
-    	logger.info("orign: " + orignMedicines);		
     	// 6. sort the origin medicines with a fix order
     	List<String> sortedList = new ArrayList<String>();
     			
@@ -386,7 +380,6 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     	}
     	
     	// fix orign medicines
-    	// fix 
 		if (sortedList.contains("党参")) {
 			sortedList.remove("党参");
 			if (!sortedList.contains("党参(太子参)")) {
@@ -406,7 +399,6 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     			
     	//  7.2 predict medicines with machine learning
     	List<String> medicineListByMachine = MachineLearningPredict.predict(inputcode); // the result of machine learning
-    	
     			
     	// 8. calculate the accuracy
     	double statisticsPercent = 0.0; // the accuracy of case-based
@@ -416,36 +408,62 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     			
     	statisticsPercent = 100.0 * orignMedicines.size() / orignMedicines.size(); //accuracy of case-based
     	index = 0;
-    			
-    	for( String s : medicineListByMachine ){
-    		if( sortedList.contains(s) ){
-    			index++;
-    		}
-    	}
+    	if (medicineListByMachine != null) {
+    		for( String s : medicineListByMachine ){
+        		if( sortedList.contains(s) ){
+        			index++;
+        		}
+        	}
+		}		
+    	
     	mechineLearningPercent = 100.0 * index / orignMedicines.size(); // the accuracy of machine learning
     	DecimalFormat df = new DecimalFormat("#.##");
     	
     	// 9. format result
     	Map<String, Object> map = new HashMap<String, Object>();
+    	// orign medicine color map
+    	Map<String, ArrayList<String>> orignColorMap = new HashMap<String, ArrayList<String>>();
+    	ArrayList<String> orignblackList = new ArrayList<String>();
+    	ArrayList<String> orignredList = new ArrayList<String>();
+    	if (sortedList != null) {
+			for (String so : sortedList) {
+				if (medicineListByMachine.contains(so)) {
+					orignblackList.add(so);
+				}else{
+					orignredList.add(so);
+				}
+			}
+		}
+    	orignColorMap.put("black", orignblackList);
+    	orignColorMap.put("red", orignredList);
+    	
+    	// machine learning result color map
     	Map<String, ArrayList<String>> colorMap = new HashMap<String, ArrayList<String>>();
     	ArrayList<String> blackList = new ArrayList<String>();
     	ArrayList<String> redList = new ArrayList<String>();
     	
     	// format machine learning result
-    	for (String med : medicineListByMachine) {
-			if (orignMedicines.contains(med)) {
-				blackList.add(med);
-			}else{
-				redList.add(med);
-			}
+    	if (medicineListByMachine != null) {
+    		for (String med : medicineListByMachine) {
+    			if (sortedList.contains(med)) {
+    				blackList.add(med);
+    			}else{
+    				redList.add(med);
+    			}
+    		}
 		}
+    	
     	colorMap.put("black", blackList);
     	colorMap.put("red", redList);
     	
-    	map.put("orignMedicines", sortedList);
+    	map.put("orignMedicines", orignColorMap);
     	map.put("medicineListByMachine", colorMap);
     	map.put("statisticsPercent", df.format(statisticsPercent));
     	map.put("mechineLearningPercent", df.format(mechineLearningPercent));
+    	
+    	// target record
+    	map.put("targetRecord", targetRecord);
+    	map.put("count", count+1);
     	
     	JSONObject json = JSONObject.fromObject(map);
     	result = json.toString();

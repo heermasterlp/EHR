@@ -1,5 +1,8 @@
 package com.um.ehr.test;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +29,7 @@ public class StatisticsDescriptionKeyWordInRecords {
 		
 		// 2. statistics description keywords
 		int index = 0;
+		String descriptionList = "";
 		for (EHealthRecord eRecord : eHealthRecordsByBatch) {
 			Set<String> descKeywordSet = descKeywordsMap.keySet();// 全部项目
 			String descKeyWords = "";
@@ -40,7 +44,36 @@ public class StatisticsDescriptionKeyWordInRecords {
 			}
 			index++;
 			System.out.println(index + ": " + descKeyWords);
+			descriptionList += descKeyWords;
 		}
+		
+		// fix error 
+		descriptionList = descriptionList.substring(0, descriptionList.length() -1);
+		
+		// statistics description key words
+		String[] descSplits = descriptionList.split(",");
+		List<String> descList = new ArrayList<>();
+		for (String string : descSplits) {
+			descList.add(string);
+		}
+		
+		Set<String> descSet = new HashSet<>();
+		Map<String, Integer> descMap = new HashMap<>();
+		for (String string : descList) {
+			if (descSet.contains(string)) {
+				
+				int value = descMap.get(string);
+				value++;
+				descMap.remove(string);
+				descMap.put(string, value);
+				
+			}else{
+				descMap.put(string, 1);
+				descSet.add(string);
+			}
+		}
+		descMap = DiagMedicineProcess.sortMapByValue(descMap);
+		System.out.println(descMap);
 	}
 
 }

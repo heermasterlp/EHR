@@ -34,6 +34,14 @@
             </result>
       	</action>
       	
+      	<!-- query record information by patient's no  -->
+      	<action name="querybyno" class="com.um.ehr.action.QueryAction" method="queryRecordByNo">
+        <!-- return value type: json -->
+        	<result type="json">
+            	<param name="root">result<!-- result is action return value，and need setter and getter method --></param>
+            </result>
+      	</action>
+      	
       	<!-- query record information by medicines -->
       	<action name="querybymedicine" class="com.um.ehr.action.QueryAction" method="queryRecordByMedicines">
         <!-- return value type: json -->

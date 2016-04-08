@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
-import predictmedicine.PredictMedicine;
 
 import com.mathworks.toolbox.javabuilder.MWClassID;
 import com.mathworks.toolbox.javabuilder.MWComplexity;
@@ -16,6 +16,8 @@ import com.mathworks.toolbox.javabuilder.MWNumericArray;
 import com.um.data.DiagClassifyData;
 import com.um.model.EHealthRecord;
 
+import newpredictum.Predictum;
+
 /**
  *  Machine Learning predict medicines
  * @author heermaster
@@ -23,6 +25,7 @@ import com.um.model.EHealthRecord;
  */
 public class MachineLearningPredict {
 
+	private static Logger logger = Logger.getLogger("com.um.util.MachineLearningPredict"); 
 	/**
 	 *  Predict the medicine based on the input code!
 	 *  
@@ -36,14 +39,14 @@ public class MachineLearningPredict {
 		}
 		List<String> medicineListByMachine = new ArrayList<String>();
 		// Machine learning object
-		PredictMedicine predictum = null;
+		Predictum predictum = null;
 		int predictConditionCount = inputcode.size(); // the number of machine learning input parameters
 		MWNumericArray x = null; /* Array of x values */
 		Object[] y = null;
 		
 		try {
 			// predict bean
-			predictum = new PredictMedicine();
+			predictum = new Predictum();
 			
 			int[] dims1 = { 1, predictConditionCount }; // the x input parameters of machine learning
 			x = MWNumericArray.newInstance(dims1, MWClassID.DOUBLE,MWComplexity.REAL); // x input matrix
@@ -52,7 +55,7 @@ public class MachineLearningPredict {
 				x.set(i, Integer.valueOf(inputcode.get(i-1)));
 			}
 			// machine learning predict medicines
-			y = predictum.predictmedicine(1, x);
+			y = predictum.newpredictum(1, x);
 			if(y == null) return null;
 			
 			MWLogicalArray yy = (MWLogicalArray) y[0];
@@ -113,7 +116,7 @@ public class MachineLearningPredict {
 			for(String s:desSet){
 				ArrayList<String> keywordList = desHashMap.get(s);
 				for(String key: keywordList){
-					if(description.matches(".*" + key + ".*")){
+					if(description.contains(key)){
 						// match
 						valueString = s;
 						break;
@@ -122,7 +125,6 @@ public class MachineLearningPredict {
 			}
 			descriptionCode.put(descString, valueString);
 		}
-		
 		// Sort the result with a fix order
 		List<String> inputcode = new ArrayList<String>(); 
 		String[] sortedcode = DiagClassifyData.sortCode;
@@ -140,38 +142,28 @@ public class MachineLearningPredict {
 	public static List<String> parseDiagAndDescByEhealthRecords( EHealthRecord e){
 		if( e == null ){ return null; }
 		
-		String diag = e.getChinesediagnostics();
-		String description = e.getConditionsdescribed();
+		List<String> titleList = new ArrayList<String>(); // 标题
+		// 2. 诊断关键字
+		List<String> diagnoseKeyWords = getDiagnoseKeywords();
+		titleList.addAll(diagnoseKeyWords);
+		// 3. 描述关键字
+		Map<String, HashMap<String, ArrayList<String>>> descriptionTableMap = getDescriptionMap();
+		titleList.addAll(descriptionTableMap.keySet());
 		
-		// 描述中包含的关键字
-		Map<String, String[]> descKeywordsMap = DiagClassifyData.getDescKeywords();
+		HashMap<String, String> dataMap = new HashMap<String, String>();
 		
-		// 诊断转换
-		String[] diagKeywords = DiagClassifyData.diagKeywords;
-		String targetDiagnose = "";
-		for( String k : diagKeywords ){
-			if(diag.matches(".*" + k + ".*")){
-				targetDiagnose += k + ",";
+		// diagnose 
+		String diagnoseString = e.getChinesediagnostics(); // 中医诊断
+		for(String keyword : diagnoseKeyWords){
+			if(diagnoseString.contains(keyword)){
+				dataMap.put(keyword, "1");
+			}else{
+				dataMap.put(keyword, "0");
 			}
 		}
 		
-		// 检查病例中的描述的关键字是否存在
-		String targetDescription = ""; //目标病例的描述－－－－转变成代码
-		Set<String> descKeywordSet = descKeywordsMap.keySet();// 全部项目
-		for( String d : descKeywordSet){
-			String[] values = descKeywordsMap.get(d);
-			if( DiagMedicineProcess.checkDescriptionMatch(description, values)){
-				//项目符合
-				targetDescription += d + ",";
-			}
-		}
-		
-		String targetInputString = targetDiagnose + targetDescription;
-		
-		Map<String, String> descriptionCode = new HashMap<String, String>();
-		//1， 读取关键字表---<部位 ， < 状态， [k1,k2,k3......] > >
-		Map<String, HashMap<String, ArrayList<String>>> descriptionTableMap = DiagMedicineProcess.getDescriptionMap(DiagClassifyData.machineKeywords); //描述关键字列表
-		// create records input code: 0,1,2,0,1,1.....
+		// description
+		String descriptionString = e.getConditionsdescribed(); // 描述
 		Set<String> project = descriptionTableMap.keySet();
 		HashMap<String, ArrayList<String>> desHashMap = null;
 		for(String descString : project){
@@ -181,21 +173,85 @@ public class MachineLearningPredict {
 			for(String s:desSet){
 				ArrayList<String> keywordList = desHashMap.get(s);
 				for(String key: keywordList){
-					if(targetInputString.matches(".*" + key + ".*")){
+					if(descriptionString.matches(".*" + key + ".*")){
 						// 匹配
 						valueString = s;
 						break;
 					}
 				}
 			}
-			descriptionCode.put(descString, valueString);
+			dataMap.put(descString, valueString);
 		}
-		// sort the input code
-		List<String> inputcode = new ArrayList<String>();
-		String[] sortedcode = DiagClassifyData.sortCode;
-		for(String s : sortedcode){
-			inputcode.add(descriptionCode.get(s));
+				
+		
+		List<String> inputcode = new ArrayList<>();
+		for (String title : titleList) {
+			inputcode.add(dataMap.get(title));
 		}
+
 		return inputcode;
+	}
+	
+	/**
+	 *  获取前60味中药
+	 * @param eRecords
+	 * @return
+	 */
+	public static List<String> getMedicineList(){
+		
+		String[] medicines = DiagClassifyData.statisticsMedicine;
+		List<String> medicinesList = new ArrayList<>();
+		for (String string : medicines) {
+			// add medicines to list
+			medicinesList.add(string);
+		}
+		
+		return medicinesList;
+	}
+	
+	/**
+	 *  初始化描述对比表
+	 * @return
+	 */
+	public static Map<String, HashMap<String, ArrayList<String>>> getDescriptionMap(){
+		String[] descriptionStrings = DiagClassifyData.descriptionKeywords1;
+		Map<String, HashMap<String, ArrayList<String>>> descriptionMap = new HashMap<String, HashMap<String,ArrayList<String>>>();
+		HashMap<String, ArrayList<String>> descHashMap = null;
+		for(String s : descriptionStrings){
+			descHashMap = new HashMap<String, ArrayList<String>>();
+			String[] tmpStrings = s.split("%");  // 0:项目  1:描述
+			String[] descStrings = tmpStrings[1].split("#");
+			for(String ss : descStrings){
+				if(ss.split(":").length == 2){
+					String[] dStrings = ss.split(":");
+					String[] listStrings = dStrings[1].split("\\|");
+					ArrayList<String> list = new ArrayList<String>();
+					for(String sss : listStrings){
+						list.add(sss);
+					}
+					descHashMap.put(dStrings[0], list);
+				}
+			}
+			descriptionMap.put(tmpStrings[0], descHashMap);
+		}
+		return descriptionMap;
+	}
+	
+	
+	/**
+	 *  诊断关键字
+	 * @return
+	 */
+	public static List<String> getDiagnoseKeywords(){
+		List<String> keywordsList = new ArrayList<String>();
+		// 	1. key word of all records 
+		String[] keysList = DiagClassifyData.cnDiagCodeStrings;
+		String[] tmpStrings = null;
+		for(String s : keysList){
+			tmpStrings = s.split("\\|");
+			keywordsList.add(tmpStrings[0]);
+		}
+		
+		return keywordsList;
 	}
 }

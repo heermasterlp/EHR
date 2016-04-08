@@ -129,7 +129,6 @@
 					$('#westernmedicines').html(jsonObject.targetRecord.westernMedicineToString);
 					$('#chinesemedicines').html(jsonObject.targetRecord.chineseMedicineToString);
 					$('#doctor').html(jsonObject.targetRecord.doctor);
-					
 					$("#myModal").modal();
 				}
 			}); 

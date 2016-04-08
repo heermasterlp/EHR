@@ -143,72 +143,307 @@ public class DiagMedicineProcess {
 			return null;
 		}
 		List<EHealthRecord> similarRecords = new ArrayList<EHealthRecord>(); // similar records
-		// 1. split the descriptions
+		
+		/**
+		 *  1. split the descriptions
+		 */
 		String[] descriptionSplits = description.split(",");
 		if( descriptionSplits == null || descriptionSplits.length == 0 ) return null;
 		
-		// 2. built project reference table
-		Map<String, HashMap<String, String>> projectReferenceTable = getProjectReferenceTable();
+		/**
+		 *  2. record match strategy
+		 */
 		
-		final List<String> mainProjectList = new ArrayList<String>();
-		final List<String> secondProjectList = new ArrayList<String>();
-		// main and second project name
-		for (String string : DiagClassifyData.mainProjectStrings) {
-			mainProjectList.add(string.trim());
-		}
-		for (String string : DiagClassifyData.secondProjectStrings) {
-			secondProjectList.add(string.trim());
+		/*
+		 * 2.1 sleep
+		 */
+		List<String> sleepList = new ArrayList<>(); // record id with sleep description
+		String[] sleepBiasArray = {"badsleep","worsesleep","worstsleep","somnolencesleep"};
+		boolean hasSleepDescription = false;
+		for (String string : sleepBiasArray) {
+			if (description.contains(string)) {
+				// description has sleep
+				hasSleepDescription = true;
+				break;
+			}
 		}
 		
-		// 3. input description information format and initial
-		Map<String, String> inputMainInfo = new HashMap<String, String>(); // Main description information
-		Map<String, String> inputSecondInfo = new HashMap<String, String>(); // Second description information
-		int matchOfRange = 0; // number of main description not zero
-		// initial the input code map
-		for (String string : DiagClassifyData.mainProjectStrings) {
-			inputMainInfo.put(string, "0");
+		// search records if it has sleep description key words
+		if (hasSleepDescription) {
+			// find records based on sleep description
+			List<String> descriptionKeywordList = getDesctiptionKeyWordsBasedOnProject(sleepBiasArray); // description key word list
+			
+			// query record in all records based on sleep description
+			sleepList = getRecordRegNOBasedONDescription(descriptionKeywordList, eHealthRecords);
 		}
-		for (String string : DiagClassifyData.secondProjectStrings) {
-			inputSecondInfo.put(string, "0");
+		
+		/*
+		 *  2.2 na
+		 */
+		List<String> naList = new ArrayList<>();// record id with na description
+		String[] naBiasArray = {"badna","anorexiana","worsena"};
+		boolean hasNaDescription = false;
+		for (String string : naBiasArray) {
+			if (description.contains(string)) {
+				hasNaDescription = true;
+				break;
+			}
 		}
-		// create input <project, value> map
-		Set<String> projectKeySet = projectReferenceTable.keySet();
-		for (String desc : descriptionSplits) {
-			for (String project : projectKeySet) {
-				if (mainProjectList.contains(project)) {
-					// main project list
-					HashMap<String, String> valueMap = projectReferenceTable.get(project);
-					if (valueMap.get(desc) != null) {
-						String value = valueMap.get(desc);
-						if (!"0".equals(value)) {
-							matchOfRange++;
+		// search records if it has na description key words
+		if (hasNaDescription) {
+			// find records based on na description 
+			List<String> descriptionKeywordList = getDesctiptionKeyWordsBasedOnProject(naBiasArray);
+			// query record in all records based on na description
+			naList = getRecordRegNOBasedONDescription(descriptionKeywordList, eHealthRecords);
+		}
+		
+		
+		/*
+		 *  2.3 blood sputum
+		 */
+		List<String> bloodSputumList = new ArrayList<>();// record id with blood sputum description
+		String[] bloodSputumBiasArray = {"redlittlesputumcolor","redmuchsputumcolor","redmoresputumcolor"};
+		boolean hasBloodSputumDescription = false;
+		for (String string : bloodSputumBiasArray) {
+			if (description.contains(string)) {
+				hasBloodSputumDescription = true;
+				break;
+			}
+		}
+		// find recods regno based on blood sputum description
+		if (hasBloodSputumDescription) {
+			List<String> descriptionKeywordList = getDesctiptionKeyWordsBasedOnProject(bloodSputumBiasArray);
+			bloodSputumList = getRecordRegNOBasedONDescription(descriptionKeywordList, eHealthRecords);
+		}
+		
+		/*
+		 *  2.4 xiongleitong
+		 */
+		List<String> xiongLeiList = new ArrayList<>();// record id with xiongleitong description
+		String[] xiongLeiBiasArray = {"okxionglei","badxionglei","worsexionglei"};
+		boolean hasXiongLeiDescription = false;
+		// if has xionglei description or not
+		for (String string : xiongLeiBiasArray) {
+			if (description.contains(string)) {
+				hasXiongLeiDescription = true;
+				break;
+			}
+		}
+		// find record based on description
+		if (hasXiongLeiDescription) {
+			List<String> descriptionKeywordList = getDesctiptionKeyWordsBasedOnProject(xiongLeiBiasArray);
+			xiongLeiList = getRecordRegNOBasedONDescription(descriptionKeywordList, eHealthRecords);
+		}
+		/*
+		 *  2.5 qili
+		 */
+		List<String> qiliList = new ArrayList<>();// record id with qili description
+		String[] qiliBiasArray = {"badenergy","worseenergy"};
+		boolean hasQiliDescription = false;
+		for (String string : qiliBiasArray) {
+			if (description.contains(string)) {
+				hasQiliDescription = true;
+				break;
+			}
+		}
+		// find records based on description
+		if (hasQiliDescription) {
+			List<String> descriptionKeywordList = getDesctiptionKeyWordsBasedOnProject(qiliBiasArray);
+			qiliList = getRecordRegNOBasedONDescription(descriptionKeywordList, eHealthRecords);
+		}
+		/*
+		 *  2.6 cough
+		 */
+		List<String> coughList = new ArrayList<>();// record id with cough description
+		String[] coughBiasArray = {"badcough","worsecough","worstcough"};
+		boolean hasCoughDescription = false;
+		for (String string : coughBiasArray) {
+			if (description.contains(string)) {
+				hasCoughDescription = true;
+				break;
+			}
+		}
+		// find records based on description list
+		if (hasCoughDescription) {
+			List<String> descriptionKeywordList = getDesctiptionKeyWordsBasedOnProject(coughBiasArray);
+			coughList = getRecordRegNOBasedONDescription(descriptionKeywordList, eHealthRecords);
+		}
+		/*
+		 *  2.7 defecate
+		 */
+		List<String> defecateList = new ArrayList<>();// record id with defecate description
+		String[] defecateBiasArray = {"okdefecate","baddefecate","worsedefecate","blooddefecate"};
+		boolean hasDefecateDescription = false;
+		for (String string : defecateBiasArray) {
+			if (description.contains(string)) {
+				hasDefecateDescription = true;
+				break;
+			}
+		}
+		// find record based on description
+		if (hasDefecateDescription) {
+			List<String> descriptionKeywordList = getDesctiptionKeyWordsBasedOnProject(defecateBiasArray);
+			defecateList = getRecordRegNOBasedONDescription(descriptionKeywordList, eHealthRecords);
+		}
+		/*
+		 *  2.8 fuxie
+		 */
+		List<String> fuxieList = new ArrayList<>();// record id with fuxie description
+		String[] fuxieBiasArray = {"xiexie"};
+		boolean hasFuXieDescription = false;
+		for (String string : fuxieBiasArray) {
+			if (description.contains(string)) {
+				hasFuXieDescription = true;
+				break;
+			}
+		}
+		// find record based on description
+		if (hasFuXieDescription) {
+			List<String> descriptionKeywordList = getDesctiptionKeyWordsBasedOnProject(fuxieBiasArray);
+			fuxieList = getRecordRegNOBasedONDescription(descriptionKeywordList, eHealthRecords);
+		}
+		
+		/**
+		 *  3. match methods
+		 */
+		List<String> recordsRegnoList = new ArrayList<>(); // all records in 8 description
+		int descriptioncount = 0; // input description count
+		if (sleepList != null) { recordsRegnoList.addAll(sleepList); descriptioncount++;}
+		if (naList != null) { recordsRegnoList.addAll(naList); descriptioncount++;}
+		if (bloodSputumList != null) { recordsRegnoList.addAll(bloodSputumList); descriptioncount++;}
+		if (xiongLeiList != null) { recordsRegnoList.addAll(xiongLeiList); descriptioncount++;}
+		if (qiliList != null) { recordsRegnoList.addAll(qiliList); descriptioncount++;}
+		if (coughList != null) { recordsRegnoList.addAll(coughList); descriptioncount++;}
+		if (defecateList != null) { recordsRegnoList.addAll(defecateList); descriptioncount++;}
+		if (fuxieList != null) { recordsRegnoList.addAll(fuxieList); descriptioncount++;}
+		
+		// statistics records
+		Map<String, Integer> regnoMap = new HashMap<>();
+		Set<String> regnoSet = new HashSet<>();
+		for (String reg : recordsRegnoList) {
+			if (regnoSet.contains(reg)) {
+				
+				int value = regnoMap.get(reg);
+				value++;
+				regnoMap.remove(reg);
+				regnoMap.put(reg, value);
+				
+			}else{
+				regnoMap.put(reg, 1);
+			}
+		}
+		// sort regno map
+		regnoMap = DiagMedicineProcess.sortMapByValue(regnoMap);
+		
+		// find similar records regno not 1 
+		List<String> similarRecordRegnos = new ArrayList<>();
+		if (regnoMap != null) {
+			Set<String> regnoMapKeyset = regnoMap.keySet();
+			if (descriptioncount > 0) {
+				// find similar record regno with max value
+				while(descriptioncount > 1){
+					for (String key : regnoMapKeyset) {
+						// max match value
+						if (regnoMap.get(key) == descriptioncount) {
+							similarRecordRegnos.add(key);
 						}
-						inputMainInfo.remove(project);
-						inputMainInfo.put(project, value);
 					}
-					
-				}else if (secondProjectList.contains(project)) {
-					// second project list
-					HashMap<String, String> valueMap = projectReferenceTable.get(project);
-					if (valueMap.get(desc) != null) {
-						String value = valueMap.get(desc);
-						inputSecondInfo.remove(project);
-						inputSecondInfo.put(project, value);
-					}
+					descriptioncount--;
 				}
 			}
 		}
 		
-		// 4. Search the match record 
-		if (matchOfRange < 2) {
-			similarRecords = getRecordsOnRangeOfMatchNumber(inputMainInfo, inputSecondInfo, eHealthRecords, matchOfRange);
-		}else {
-			while(similarRecords != null && similarRecords.size() == 0 && matchOfRange >= 2){
-				similarRecords = getRecordsOnRangeOfMatchNumber(inputMainInfo, inputSecondInfo, eHealthRecords, matchOfRange);
-				matchOfRange--;
+		// if some records with no same description
+		if (similarRecordRegnos.size() == 0) {
+			// not record with same description, choice one record from each one description list
+			if (sleepList != null && sleepList.size() > 0) { similarRecordRegnos.add(sleepList.get(0));}
+			if (naList != null && naList.size() > 0) { similarRecordRegnos.add(naList.get(0));}
+			if (bloodSputumList != null && bloodSputumList.size() > 0) { similarRecordRegnos.add(bloodSputumList.get(0));}
+			if (xiongLeiList != null && xiongLeiList.size() > 0) { similarRecordRegnos.add(xiongLeiList.get(0));}
+			if (qiliList != null && qiliList.size() > 0) { similarRecordRegnos.add(qiliList.get(0));}
+			if (coughList != null && coughList.size() > 0) { similarRecordRegnos.add(coughList.get(0));}
+			if (defecateList != null && defecateList.size() > 0) { similarRecordRegnos.add(defecateList.get(0));}
+			if (fuxieList != null && fuxieList.size() > 0) { similarRecordRegnos.add(defecateList.get(0));}
+			
+		}
+		
+		// based on regno to find records
+		similarRecords = getRecordsBasedOnRegno(similarRecordRegnos, eHealthRecords);
+		
+		return similarRecords;
+	}
+	
+	/**
+	 * Find records based on registrationno
+	 * @param regnos
+	 * @param eHealthRecords
+	 * @return
+	 */
+	public static List<EHealthRecord> getRecordsBasedOnRegno(List<String> regnos, List<EHealthRecord> eHealthRecords){
+		if (regnos == null || regnos.size() == 0) {
+			return null;
+		}
+		List<EHealthRecord> result = new ArrayList<>();
+		for (EHealthRecord eHealthRecord : eHealthRecords) {
+			if (regnos.contains(eHealthRecord.getRegistrationno())) {
+				result.add(eHealthRecord);
 			}
 		}
-		return similarRecords;
+		return result;
+	}
+	
+	/**
+	 * 
+	 * @param project
+	 * @return
+	 */
+	public static List<String> getDesctiptionKeyWordsBasedOnProject(String[] project){
+		if (project == null || project.length == 0) {
+			return null;
+		}
+		List<String> descriptionKeywordList = new ArrayList<>(); // description key word list
+		for (String pro : project) {
+			// project : contents
+			for (String descKeywords : DiagClassifyData.descKeywords) {
+				if(descKeywords.contains(pro)){
+					String[] splits = descKeywords.split(":");
+					if (splits == null || splits.length != 2) {
+						continue;
+					}
+					String[] contents = splits[1].split("\\|");
+					for (String content : contents) {
+						// add description key words to list
+						descriptionKeywordList.add(content);
+					}
+				}
+			}
+		}
+		return descriptionKeywordList;
+	}
+	
+	/**
+	 * get record no based on description list
+	 * @param descriptions
+	 * @param eHealthRecords
+	 * @return
+	 */
+	public static List<String> getRecordRegNOBasedONDescription(List<String> descriptions, List<EHealthRecord> eHealthRecords){
+		if (descriptions == null || descriptions.size() == 0) {
+			return null;
+		}
+		// find record regno based on descriptions
+		List<String> regnoList = new ArrayList<>();
+		for (EHealthRecord eHealthRecord : eHealthRecords) {
+			// 
+			for (String desc : descriptions) {
+				if (eHealthRecord.getConditionsdescribed().contains(desc)) {
+					regnoList.add(eHealthRecord.getRegistrationno());
+					break;
+				}
+			}
+		}
+		
+		return regnoList;
 	}
 	
 	/**
@@ -448,7 +683,7 @@ public class DiagMedicineProcess {
 			return false;
 		}
 		for( String k : keywords ){
-			if(description.matches(".*" + k + ".*")){
+			if(description.contains(k)){
 				return true;
 			}
 		}

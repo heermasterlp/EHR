@@ -57,10 +57,6 @@
                             
                         </p>
                         <hr>
-                        <p class="text-danger">
-                            机器学习阈值（0～1）：<input id="threshold" type="text" name="threshold" value="0.3" />
-                        </p>
-                        <hr>
                         <p>时间状态</p>
                         <table class="table table-bordered">
                             <tr>
