@@ -158,23 +158,25 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 		 *  4. format result
 		 */
 		Map<String, ArrayList<String>> formattedSimilarRecords = new HashMap<>();
-		for (EHealthRecord eRecord : similarRecords) {
-			String regno = eRecord.getRegistrationno();
-			String recordDescription = eRecord.getConditionsdescribed();
-			// format description
-			String formattedDescription = MedicineByDescription.formattedDescriptionByCount(recordDescription);
-			String formattedMedicines = "";
-			if (eRecord.getChineseMedicines() == null || eRecord.getChineseMedicines().size() == 0) {
-				continue;
+		if (similarRecords != null) {
+			for (EHealthRecord eRecord : similarRecords) {
+				String regno = eRecord.getRegistrationno();
+				String recordDescription = eRecord.getConditionsdescribed();
+				// format description
+				String formattedDescription = MedicineByDescription.formattedDescriptionByCount(recordDescription);
+				String formattedMedicines = "";
+				if (eRecord.getChineseMedicines() == null || eRecord.getChineseMedicines().size() == 0) {
+					continue;
+				}
+				for (ChineseMedicine cMedicine : eRecord.getChineseMedicines()) {
+					formattedMedicines += cMedicine.getNameString() + ",";
+				}
+				// result
+				ArrayList<String> descAndMedicines = new ArrayList<>();
+				descAndMedicines.add(formattedDescription);
+				descAndMedicines.add(formattedMedicines);
+				formattedSimilarRecords.put(regno, descAndMedicines);
 			}
-			for (ChineseMedicine cMedicine : eRecord.getChineseMedicines()) {
-				formattedMedicines += cMedicine.getNameString() + ",";
-			}
-			// result
-			ArrayList<String> descAndMedicines = new ArrayList<>();
-			descAndMedicines.add(formattedDescription);
-			descAndMedicines.add(formattedMedicines);
-			formattedSimilarRecords.put(regno, descAndMedicines);
 		}
 		
 		/*
@@ -222,13 +224,15 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 		Map<String, Object> map = new HashMap<>();
 		
 		Map<String, String> infoMap = new HashMap<>();
-		for (EHealthRecord eHealthRecord : ehealthList) {
-			if (eHealthRecord.getPatientInfo() == null) {
-				continue;
+		if (ehealthList != null) {
+			for (EHealthRecord eHealthRecord : ehealthList) {
+				if (eHealthRecord.getPatientInfo() == null) {
+					continue;
+				}
+				String value = eHealthRecord.getPatientInfo().getName() + "---" + eHealthRecord.getDate();
+				String key = eHealthRecord.getRegistrationno();
+				infoMap.put(key, value);
 			}
-			String value = eHealthRecord.getPatientInfo().getName() + "---" + eHealthRecord.getDate();
-			String key = eHealthRecord.getRegistrationno();
-			infoMap.put(key, value);
 		}
 		
 		map.put("infoMap", infoMap);
@@ -282,13 +286,15 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 		Map<String, Object> map = new HashMap<>();
 				
 		Map<String, String> infoMap = new HashMap<>();
-		for (EHealthRecord eHealthRecord : targetList) {
-			if (eHealthRecord.getPatientInfo() == null) {
-				continue;
+		if (targetList != null) {
+			for (EHealthRecord eHealthRecord : targetList) {
+				if (eHealthRecord.getPatientInfo() == null) {
+					continue;
+				}
+				String value = eHealthRecord.getPatientInfo().getName() + "---" + eHealthRecord.getDate();
+				String key = eHealthRecord.getRegistrationno();
+				infoMap.put(key, value);
 			}
-			String value = eHealthRecord.getPatientInfo().getName() + "---" + eHealthRecord.getDate();
-			String key = eHealthRecord.getRegistrationno();
-			infoMap.put(key, value);
 		}
 				
 		map.put("infoMap", infoMap);
@@ -374,28 +380,31 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 		
 		Map<String, ArrayList<String>> formattedSimilarRecords = new HashMap<>();
 		int count = 0;
-		for (EHealthRecord eRecord : similaryRecords) {
-			if (count > 20) {
-				break;
+		if (similaryRecords != null) {
+			for (EHealthRecord eRecord : similaryRecords) {
+				if (count > 20) {
+					break;
+				}
+				String regno = eRecord.getRegistrationno();
+				String recordDescription = eRecord.getConditionsdescribed();
+				// format description
+				String formattedDescription = MedicineByDescription.formattedDescriptionByCount(recordDescription);
+				String formattedMedicines = "";
+				if (eRecord.getChineseMedicines() == null || eRecord.getChineseMedicines().size() == 0) {
+					continue;
+				}
+				for (ChineseMedicine cMedicine : eRecord.getChineseMedicines()) {
+					formattedMedicines += cMedicine.getNameString() + ",";
+				}
+				// result
+				ArrayList<String> descAndMedicines = new ArrayList<>();
+				descAndMedicines.add(formattedDescription);
+				descAndMedicines.add(formattedMedicines);
+				formattedSimilarRecords.put(regno, descAndMedicines);
+				count++;
 			}
-			String regno = eRecord.getRegistrationno();
-			String recordDescription = eRecord.getConditionsdescribed();
-			// format description
-			String formattedDescription = MedicineByDescription.formattedDescriptionByCount(recordDescription);
-			String formattedMedicines = "";
-			if (eRecord.getChineseMedicines() == null || eRecord.getChineseMedicines().size() == 0) {
-				continue;
-			}
-			for (ChineseMedicine cMedicine : eRecord.getChineseMedicines()) {
-				formattedMedicines += cMedicine.getNameString() + ",";
-			}
-			// result
-			ArrayList<String> descAndMedicines = new ArrayList<>();
-			descAndMedicines.add(formattedDescription);
-			descAndMedicines.add(formattedMedicines);
-			formattedSimilarRecords.put(regno, descAndMedicines);
-			count++;
 		}
+		
 		
 		// output 20
 		map.put("formattedSimilarRecords", formattedSimilarRecords);
@@ -528,23 +537,25 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 		Map<String, Object> map = new HashMap<>();
 		
 		Map<String, ArrayList<String>> formattedSimilarRecords = new HashMap<>();
-		for (EHealthRecord eRecord : targetRecordsList) {
-			String regno = eRecord.getRegistrationno();
-			String recordDescription = eRecord.getConditionsdescribed();
-			// format description
-			String formattedDescription = MedicineByDescription.formattedDescriptionByCount(recordDescription);
-			String formattedMedicines = "";
-			if (eRecord.getChineseMedicines() == null || eRecord.getChineseMedicines().size() == 0) {
-				continue;
+		if (targetRecordsList != null) {
+			for (EHealthRecord eRecord : targetRecordsList) {
+				String regno = eRecord.getRegistrationno();
+				String recordDescription = eRecord.getConditionsdescribed();
+				// format description
+				String formattedDescription = MedicineByDescription.formattedDescriptionByCount(recordDescription);
+				String formattedMedicines = "";
+				if (eRecord.getChineseMedicines() == null || eRecord.getChineseMedicines().size() == 0) {
+					continue;
+				}
+				for (ChineseMedicine cMedicine : eRecord.getChineseMedicines()) {
+					formattedMedicines += cMedicine.getNameString() + ",";
+				}
+				// result
+				ArrayList<String> descAndMedicines = new ArrayList<>();
+				descAndMedicines.add(formattedDescription);
+				descAndMedicines.add(formattedMedicines);
+				formattedSimilarRecords.put(regno, descAndMedicines);
 			}
-			for (ChineseMedicine cMedicine : eRecord.getChineseMedicines()) {
-				formattedMedicines += cMedicine.getNameString() + ",";
-			}
-			// result
-			ArrayList<String> descAndMedicines = new ArrayList<>();
-			descAndMedicines.add(formattedDescription);
-			descAndMedicines.add(formattedMedicines);
-			formattedSimilarRecords.put(regno, descAndMedicines);
 		}
 		
 		map.put("infoMap", formattedSimilarRecords);
