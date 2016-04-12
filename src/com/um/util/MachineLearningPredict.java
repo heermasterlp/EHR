@@ -5,9 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
-
-
 import com.mathworks.toolbox.javabuilder.MWClassID;
 import com.mathworks.toolbox.javabuilder.MWComplexity;
 import com.mathworks.toolbox.javabuilder.MWException;
@@ -25,7 +22,6 @@ import newpredictum.Predictum;
  */
 public class MachineLearningPredict {
 
-	private static Logger logger = Logger.getLogger("com.um.util.MachineLearningPredict"); 
 	/**
 	 *  Predict the medicine based on the input code!
 	 *  

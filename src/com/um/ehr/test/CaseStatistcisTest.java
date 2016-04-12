@@ -1,9 +1,7 @@
 package com.um.ehr.test;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -107,7 +105,7 @@ public class CaseStatistcisTest {
 						count++;
 					}
 				}
-		    	DecimalFormat df = new DecimalFormat("#.##");
+//		    	DecimalFormat df = new DecimalFormat("#.##");
 		    	double percent = 100.0 * count / length;
 		    	totalpercent += percent;
 			}

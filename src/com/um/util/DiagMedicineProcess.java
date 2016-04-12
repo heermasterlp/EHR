@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.logging.Logger;
-
 import com.um.data.DiagClassifyData;
 import com.um.model.ChineseMedicine;
 import com.um.model.EHealthRecord;
@@ -21,7 +19,6 @@ import com.um.mongodb.converter.MedicineStatics;
 
 public class DiagMedicineProcess {
 	
-	private static Logger logger = Logger.getLogger("com.um.util.DiagMedicineProcess");
 	
 	/**
 	 *  根据诊断关键字，对病例进行分类，

@@ -60,41 +60,24 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
 		
 		// 1. parse the request parameters
     	String countString = request.getParameter("count"); // the order number of records
-    	String batch = request.getParameter("batch");	
-    	int count = 0; // record order number
+    	String batch = request.getParameter("batch");
+    	
     	// 2. find all records with batch 2012
     	List<EHealthRecord> allList = MedicineByDescription.getRecordsByBatch(batch);
     	if ("".equals(countString)) { return SUCCESS; }
     	
     	// 3. find the target record based on the conditions
-    	EHealthRecord targetrecord = null;
-    			
-    	if( countString.length() > 4 ){
-    		// the input info is the register number of record
-    		for( EHealthRecord e : allList ){
-    			if( e.getRegistrationno().equals(countString) ){
-    				targetrecord = e;
-    				break;
-    			}
-    			count++;
-    		}
-    	}else{
-    		// the input info is the order number of all records
-    		count = Integer.valueOf(countString); // order number
-    		count--;
-    		if (count < allList.size() && count >= 0) {
-    			targetrecord = allList.get( count );
-			}
-    	}
-    			
-    	if(targetrecord == null){
+    	EHealthRecord record = EhealthUtil.getEHealthRecordByCountOrRegno(allList, countString);
+    	if(record == null){
     		return SUCCESS;
     	}
+    	// record order number
+    	int count = EhealthUtil.getRecordCountBasedRegno(allList, record.getRegistrationno());
 		
     	// 4. format return result
     	Map<String, Object> map = new HashMap<>();
 		
-		targetRecord = EhealthUtil.encryptionRecord(targetrecord);
+		targetRecord = EhealthUtil.encryptionRecord(record);
 		
 		map.put("targetRecord", targetRecord);
 		map.put("count", count+1);
@@ -321,49 +304,10 @@ public class QueryAction extends ActionSupport implements ServletRequestAware{
          */
     	// get parameters
     	String batch = request.getParameter("batch");
-        String timestatus = request.getParameter("timestatus");
-        String xu = request.getParameter("xu");
-        String tanyu = request.getParameter("tanyu");
-        String tanshi = request.getParameter("tanshi");
-        String zhengxing = request.getParameter("zhengxing");
-        String sputumamount = request.getParameter("sputumamount");
-        String sputumcolor = request.getParameter("sputumcolor");
-        String cough = request.getParameter("cough");
-        String pulse = request.getParameter("pulse");
-        String na = request.getParameter("na");
-        String defecate = request.getParameter("defecate");
-        String constipation = request.getParameter("constipation");
-        String urinate = request.getParameter("urinate");
-        String xionglei = request.getParameter("xionglei");
-        String futong = request.getParameter("futong");
-        String tengtong = request.getParameter("tengtong");
-        String bodydiscomfort = request.getParameter("bodydiscomfort");
-        String tonguecolor = request.getParameter("tonguecolor");
-        String coatedtongue = request.getParameter("coatedtongue");
-        String energy = request.getParameter("energy");
-        String sleep = request.getParameter("sleep");
-        String hanre = request.getParameter("hanre");
-        String sweat = request.getParameter("sweat");
-        String thirst = request.getParameter("thirst");
-        String taste = request.getParameter("taste");
         
     	// format diagnose and description
-        String diagnose = "";
-        String description = "";
-        
-        // diagnose
-        diagnose = zhengxing + (tanyu.equals("yes") ? "痰瘀," : "") + (tanshi.equals("yes") ? "痰湿,":"") + xu;
-        logger.info("diagnose: " + diagnose);
-        // description
-        description = timestatus + "," +sputumamount + "," + sputumcolor + "," + cough + "," + na + "," 
-        				+ defecate + "," + urinate + "," + xionglei + ","
-        				+ futong + "," + tonguecolor + "," 
-        				+ coatedtongue + "," + energy + "," + sleep + "," + hanre + ","
-        				+ sweat + "," + thirst + "," + taste;
-        description += pulse.contains(",") ? "," + pulse : "";
-        description += tengtong.contains(",") ? tengtong : "";
-        description += bodydiscomfort.contains(",") ? bodydiscomfort : "";
-        description += constipation == null ? "" : "xiexie";
+        String diagnose = EhealthUtil.getDiagnoseFromHttpRequest(request);
+        String description = EhealthUtil.getDescriptionFromHttpRequest(request);
 		
 		/**
 		 * 2. Case-base statistics to predict medicines

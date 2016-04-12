@@ -88,9 +88,15 @@ public class BasedOnRulePredict {
 		}
 		
 		//5. 厌食 or 食欲减退or纳差--> 炒谷芽 ＋ 山楂
-		if (description.contains("厌食")||description.contains("食欲减退")||description.contains("纳差")) {
+		if (description.contains("厌食")||description.contains("食欲减退")) {
 			medicineSet.add("炒稻芽");
 			medicineSet.add("山楂");
+		}
+		if (description.contains("纳差")) {
+			if (medicineSet.contains("山楂")) {
+				medicineSet.remove("山楂");
+				medicineSet.add("炒谷芽(山楂)");
+			}
 		}
 		
 		// 6. 阴虚 －－》 沙参 ＋ 麦冬
@@ -101,11 +107,15 @@ public class BasedOnRulePredict {
 		// 7. 腹胀 ＋ 便秘 －－》 轻：厚朴 ＋ 枳壳 ；重： 厚朴 ＋ 生大黄
 		if (description.contains("便秘") && (description.contains("重") || description.contains("中"))) {
 			medicineSet.add("厚朴");
-			medicineSet.add("生大黄");
+			medicineSet.add("大黄");
+			medicineSet.add("枳实");
+			medicineSet.add("火麻仁");
+			medicineSet.add("番泻叶");
 		}
 		if (description.contains("便秘") && description.contains("轻")) {
 			medicineSet.add("厚朴");
 			medicineSet.add("枳壳");
+			medicineSet.add("郁李仁");
 		}
 		// 8. 睡眠差 －－ 》 酸枣仁 ＋ 磁石
 		if (description.contains("失眠") && (description.contains("中") || description.contains("重"))) {
@@ -124,12 +134,28 @@ public class BasedOnRulePredict {
 		}
 		
 		// 11. 腹泻 泄泻－－ 》 石榴皮，五味子，补骨脂， 淮山药
-		if (description.contains("泄泻")) {
+		if (description.contains("腹泻")) {
 			medicineSet.add("石榴皮");
 			medicineSet.add("五味子");
 			medicineSet.add("补骨脂");
 			medicineSet.add("淮山药");
+			medicineSet.add("葶苈子");
 		}
+		
+		//12. 头晕
+		if (description.contains("头晕")) {
+			medicineSet.add("天麻");
+			medicineSet.add("槐花");
+			medicineSet.add("磁石");
+		}
+		// 13. 乏力
+		if (description.contains("气力差") || description.contains("气力特差")) {
+			medicineSet.add("黄芪");
+			medicineSet.add("黄精");
+			medicineSet.add("桑葚");
+			medicineSet.add("肉桂蓉");
+		}
+		
 		medicineList.addAll(medicineSet);
 		
 		List<String> medicineListByStatisticSorted = new ArrayList<String>();

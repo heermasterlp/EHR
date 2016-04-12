@@ -3,7 +3,6 @@ package com.um.ehr.action;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,7 +15,6 @@ import net.sf.json.JSONObject;
 import org.apache.struts2.interceptor.ServletRequestAware;
 
 import com.opensymphony.xwork2.ActionSupport;
-import com.um.data.DiagClassifyData;
 import com.um.model.ChineseMedicine;
 import com.um.model.EHealthRecord;
 import com.um.util.BasedOnRulePredict;
@@ -44,51 +42,12 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
             /**
              * 1. Parse request parameters
              */
-        	String batch = request.getParameter("batch");
-            String timestatus = request.getParameter("timestatus");
-            String xu = request.getParameter("xu");
-            String tanyu = request.getParameter("tanyu");
-            String tanshi = request.getParameter("tanshi");
-            String zhengxing = request.getParameter("zhengxing");
-            String sputumamount = request.getParameter("sputumamount");
-            String sputumcolor = request.getParameter("sputumcolor");
-            String cough = request.getParameter("cough");
-            String pulse = request.getParameter("pulse");
-            String na = request.getParameter("na");
-            String defecate = request.getParameter("defecate");
-            String constipation = request.getParameter("constipation");
-            String urinate = request.getParameter("urinate");
-            String xionglei = request.getParameter("xionglei");
-            String futong = request.getParameter("futong");
-            String tengtong = request.getParameter("tengtong");
-            String bodydiscomfort = request.getParameter("bodydiscomfort");
-            String tonguecolor = request.getParameter("tonguecolor");
-            String coatedtongue = request.getParameter("coatedtongue");
-            String energy = request.getParameter("energy");
-            String sleep = request.getParameter("sleep");
-            String hanre = request.getParameter("hanre");
-            String sweat = request.getParameter("sweat");
-            String thirst = request.getParameter("thirst");
-            String taste = request.getParameter("taste");
+        	// 1.1 batch
+        	String batch = request.getParameter("batch"); 
             
-        	// format diagnose and description
-            String diagnose = "";
-            String description = "";
-            
-            // diagnose
-            diagnose = zhengxing + (tanyu.equals("yes") ? "痰瘀," : "") + (tanshi.equals("yes") ? "痰湿,":"") + xu;
-            // description
-            description = timestatus + "," +sputumamount + "," + sputumcolor + "," + cough + "," + na + "," 
-            				+ defecate + "," + urinate + "," + xionglei + ","
-            				+ futong + "," + tonguecolor + "," 
-            				+ coatedtongue + "," + energy + "," + sleep + "," + hanre + ","
-            				+ sweat + "," + thirst + "," + taste;
-            description += pulse.contains(",") ? "," + pulse : "";
-            description += tengtong.contains(",") ? tengtong : "";
-            description += bodydiscomfort.contains(",") ? bodydiscomfort : "";
-            description += constipation == null ? "" : ",xiexie";
-            //fix error
-            if (description.contains(",,")) { description.replace(",,", ","); }
+        	// 1.2 get diagnose and description from request
+            String diagnose = EhealthUtil.getDiagnoseFromHttpRequest(request);
+            String description = EhealthUtil.getDescriptionFromHttpRequest(request);
             
             // 1.3 formatted the description to output
     		String descconvertString = MedicineByDescription.getFormatedDescirption(description);
@@ -142,12 +101,7 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     		}
     		
     		// 2.7 Sort the medicine with same order with machine learning result
-    		List<String> medicineListByStatisticSorted = new ArrayList<String>();
-    		for( String s : DiagClassifyData.statisticsMedicine ){
-    			if (medicineListByStatis.contains(s)) {
-    				medicineListByStatisticSorted.add(s);
-    			}
-    		}
+    		List<String> medicineListByStatisticSorted = EhealthUtil.sortMedicineList(medicineListByStatis);
             
             /**
              * 3. Predict medicines based on machine learning method
@@ -166,34 +120,13 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
              * 5. Return result
              */
     		List<String> medicineList = new ArrayList<>(); // compensive result with statistics, machine learning and rules
-    		
-    		Set<String> union = new HashSet<>();
-    		union.addAll(medicineListByStatisticSorted); union.addAll(medicineListByMachine); union.addAll(medicineListByRules);
-    		
-    		Map<String, String> uninomap = new HashMap<>();
     		// check medicines and count in those list
-    		for (String un : union) {
-				if (medicineListByStatisticSorted.contains(un) && medicineListByMachine.contains(un) && medicineListByRules.contains(un)) {
-					// all in three list
-					uninomap.put(un, "3");
-				}
-				if (!medicineListByStatisticSorted.contains(un) && medicineListByMachine.contains(un) && medicineListByRules.contains(un) ||
-						medicineListByStatisticSorted.contains(un) && !medicineListByMachine.contains(un) && medicineListByRules.contains(un) ||
-						medicineListByStatisticSorted.contains(un) && medicineListByMachine.contains(un) && !medicineListByRules.contains(un)) {
-					// in 2 list
-					uninomap.put(un, "2");
-				}
-				if (!medicineListByStatisticSorted.contains(un) && !medicineListByMachine.contains(un) && medicineListByRules.contains(un) ||
-						!medicineListByStatisticSorted.contains(un) && medicineListByMachine.contains(un) && !medicineListByRules.contains(un) ||
-						medicineListByStatisticSorted.contains(un) && !medicineListByMachine.contains(un) && !medicineListByRules.contains(un)) {
-					// only in 1 list
-					uninomap.put(un, "1");
-				}
-			}
+    		Map<String, String> uninomap = EhealthUtil.getUnionMapFromPredictMethod(medicineListByStatisticSorted, medicineListByMachine, medicineListByRules);
+    		
     		// result not enough, add medicines in 2 list
-    		Set<String> unionKeyset = uninomap.keySet();
+    		Set<String> unionMapKeyset = uninomap.keySet();
     		// add medicines in 3 list
-    		for (String un : unionKeyset) {
+    		for (String un : unionMapKeyset) {
 				if (uninomap.get(un).equals("3")) {
 					medicineList.add(un);
 				}
@@ -201,7 +134,7 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     		
     		// add medicines in 2 list
     		if (medicineList.size() < OUTPUTNUMBER) {
-    			for (String un : unionKeyset) {
+    			for (String un : unionMapKeyset) {
     				if (uninomap.get(un).equals("2") && medicineList.size() < OUTPUTNUMBER) {
     					medicineList.add(un);
     				}
@@ -210,7 +143,7 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     		
     		// add medicines only in 1 list
     		if (medicineList.size() < OUTPUTNUMBER) {
-    			for (String un : unionKeyset) {
+    			for (String un : unionMapKeyset) {
     				if (uninomap.get(un).equals("1") && medicineList.size() < OUTPUTNUMBER) {
     					medicineList.add(un);
     				}
@@ -218,68 +151,16 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
 			}
     		
     		// sorted
-    		List<String> medicineListSorted = new ArrayList<String>();
-    		for( String s : DiagClassifyData.statisticsMedicine ){
-    			if (medicineList.contains(s)) {
-    				medicineListSorted.add(s);
-    			}
-    		}
+    		List<String> medicineListSorted = EhealthUtil.sortMedicineList(medicineList);
     		
-    		// fix medicinelist
-    		if (medicineListSorted.contains("党参")) {
-    			medicineListSorted.remove("党参");
-    			if (!medicineListSorted.contains("党参(太子参)")) {
-    				medicineListSorted.add("党参(太子参)");
-				}
-			}
-    		if (medicineListSorted.contains("太子参")) {
-    			medicineListSorted.remove("太子参");
-    			if (!medicineListSorted.contains("党参(太子参)")) {
-    				medicineListSorted.add("党参(太子参)");
-				}
-			}
+    		// fix medicinelist, change dangshen or taizishen to dangshen(taizishen)
+    		medicineListSorted = EhealthUtil.fixMedicineList(medicineListSorted);
     		
     		// Format similiary records result
-    		Map<String, ArrayList<String>> formattedSimilarRecords = new HashMap<>();
-    		int index = 0;
-    		if (similaryRecords != null) {
-    			for (EHealthRecord eRecord : similaryRecords) {
-    				String regno = eRecord.getRegistrationno();
-    				String recordDescription = eRecord.getConditionsdescribed();
-    				// format description
-    				String formattedDescription = MedicineByDescription.formattedDescriptionByCount(recordDescription);
-    				String formattedMedicines = "";
-    				if (eRecord.getChineseMedicines() == null || eRecord.getChineseMedicines().size() == 0) {
-    					continue;
-    				}
-    				for (ChineseMedicine cMedicine : eRecord.getChineseMedicines()) {
-    					formattedMedicines += cMedicine.getNameString() + ",";
-    				}
-    				// result
-    				ArrayList<String> descAndMedicines = new ArrayList<>();
-    				descAndMedicines.add(formattedDescription);
-    				descAndMedicines.add(formattedMedicines);
-    				formattedSimilarRecords.put(regno, descAndMedicines);
-    				if (index > SIMILARRECORDSIZE) {
-    					break;
-    				}
-    				index++;
-    			}
-			}
+    		Map<String, ArrayList<String>> formattedSimilarRecords = EhealthUtil.formatSimilarRecordAsReturn(similaryRecords, SIMILARRECORDSIZE);
     		
     		// fix 
-    		if (medicineListByStatisticSorted.contains("党参")) {
-    			medicineListByStatisticSorted.remove("党参");
-    			if (!medicineListByStatisticSorted.contains("党参(太子参)")) {
-    				medicineListByStatisticSorted.add("党参(太子参)");
-				}
-			}
-    		if (medicineListByStatisticSorted.contains("太子参")) {
-    			medicineListByStatisticSorted.remove("太子参");
-    			if (!medicineListByStatisticSorted.contains("党参(太子参)")) {
-    				medicineListByStatisticSorted.add("党参(太子参)");
-				}
-			}
+    		medicineListByStatisticSorted = EhealthUtil.fixMedicineList(medicineListByStatisticSorted);
     		
     		/*
     		 * Format return records result with color
@@ -318,6 +199,7 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
         return SUCCESS;
     }
     
+    
     /**
      *  Predict by case
      * @return
@@ -329,37 +211,16 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     	// 1. get the input parameters
     	String countString = request.getParameter("count"); // the order number of records
     			
-    	int count = 0; // record order number
     	// 2. find all records with batch 2012
     	List<EHealthRecord> allList = MedicineByDescription.getRecordsByBatch("2012");
     	if ("".equals(countString)) {
     		return SUCCESS;
     	}
     	// 3. find the target record based on the conditions
-    	EHealthRecord targetRecord = null;
-    			
-    	if( countString.length() > 4 ){
-    		// the input info is the register number of record
-    		for( EHealthRecord e : allList ){
-    			if( e.getRegistrationno().equals(countString) ){
-    				targetRecord = e;
-    				break;
-    			}
-    			count++;
-    		}
-    	}else{
-    		// the input info is the order number of all records
-    		count = Integer.valueOf(countString); // order number
-    		count--;
-    		if (count < allList.size() && count >= 0) {
-    			targetRecord = allList.get( count );
-			}
-    	}
-    			
-    	if(targetRecord == null){
-    		return SUCCESS;
-    	}
-    	//4. the diagnose and description info of target record
+    	EHealthRecord targetRecord = EhealthUtil.getEHealthRecordByCountOrRegno(allList, countString);
+    	if(targetRecord == null){ return SUCCESS; }
+    	// record order number
+    	int count = EhealthUtil.getRecordCountBasedRegno(allList, targetRecord.getRegistrationno());
     	
     	// 5. the origin medicines in target record            
     	List<String> orignMedicines = new ArrayList<String>();
@@ -369,29 +230,10 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     		}
     	}
     	// 6. sort the origin medicines with a fix order
-    	List<String> sortedList = new ArrayList<String>();
-    			
-    	for( String s : DiagClassifyData.statisticsMedicine ){
-    		for( String o : orignMedicines ){
-    			if( s == o || s.equals(o) ){
-    				sortedList.add(s);
-    			}
-    		}
-    	}
+    	List<String> orignMedicinesSorted = EhealthUtil.sortMedicineList(orignMedicines);
     	
     	// fix orign medicines
-		if (sortedList.contains("党参")) {
-			sortedList.remove("党参");
-			if (!sortedList.contains("党参(太子参)")) {
-				sortedList.add("党参(太子参)");
-			}
-		}
-		if (sortedList.contains("太子参")) {
-			sortedList.remove("太子参");
-			if (!sortedList.contains("党参(太子参)")) {
-				sortedList.add("党参(太子参)");
-			}
-		}
+    	orignMedicinesSorted = EhealthUtil.fixMedicineList(orignMedicinesSorted);
     			
     	// 7. predict medicines with machine learning 
     	//  7.1 initial input parameters of machine learning
@@ -404,20 +246,10 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     	double statisticsPercent = 0.0; // the accuracy of case-based
     	double mechineLearningPercent = 0.0;  // the accuracy of machine learning
     			
-    	int index = 0;
-    			
-    	statisticsPercent = 100.0 * orignMedicines.size() / orignMedicines.size(); //accuracy of case-based
-    	index = 0;
-    	if (medicineListByMachine != null) {
-    		for( String s : medicineListByMachine ){
-        		if( sortedList.contains(s) ){
-        			index++;
-        		}
-        	}
-		}		
+    	statisticsPercent = 100.0 * orignMedicinesSorted.size() / orignMedicinesSorted.size(); //accuracy of case-based
     	
-    	mechineLearningPercent = 100.0 * index / orignMedicines.size(); // the accuracy of machine learning
-    	DecimalFormat df = new DecimalFormat("#.##");
+    	int countOfMachineLearning = EhealthUtil.getNumberOfMedicinesInOrignAndMachieResult(orignMedicinesSorted, medicineListByMachine);
+    	mechineLearningPercent = 100.0 * countOfMachineLearning / orignMedicines.size(); // the accuracy of machine learning
     	
     	// 9. format result
     	Map<String, Object> map = new HashMap<String, Object>();
@@ -425,8 +257,8 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     	Map<String, ArrayList<String>> orignColorMap = new HashMap<String, ArrayList<String>>();
     	ArrayList<String> orignblackList = new ArrayList<String>();
     	ArrayList<String> orignredList = new ArrayList<String>();
-    	if (sortedList != null) {
-			for (String so : sortedList) {
+    	if (orignMedicinesSorted != null) {
+			for (String so : orignMedicinesSorted) {
 				if (medicineListByMachine.contains(so)) {
 					orignblackList.add(so);
 				}else{
@@ -445,7 +277,7 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     	// format machine learning result
     	if (medicineListByMachine != null) {
     		for (String med : medicineListByMachine) {
-    			if (sortedList.contains(med)) {
+    			if (orignMedicinesSorted.contains(med)) {
     				blackList.add(med);
     			}else{
     				redList.add(med);
@@ -456,6 +288,7 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     	colorMap.put("black", blackList);
     	colorMap.put("red", redList);
     	
+    	DecimalFormat df = new DecimalFormat("#.##");
     	map.put("orignMedicines", orignColorMap);
     	map.put("medicineListByMachine", colorMap);
     	map.put("statisticsPercent", df.format(statisticsPercent));

@@ -13,6 +13,7 @@
         </interceptors>
 		<action name="login" class="com.um.ehr.action.LoginAction" method="login">
 			<result name="success">/findRecordsByCondition.jsp</result>
+			<result name="guest">/guestindex.jsp</result>
 			<result name="error">/index.jsp</result>
 		</action>
 		<action name="logout" class="com.um.ehr.action.LoginAction" method="logout">

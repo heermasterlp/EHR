@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.bson.Document;
@@ -26,7 +24,6 @@ import com.um.mongodb.converter.EhealthRecordConverter;
 
 public class MedicineByDescription {
 	
-	private static Logger logger = Logger.getLogger("com.um.util.MedicineByDescription");
 	/**
 	 * 	Predict medicines based on the diagnose and description info
 	 * 

@@ -53,6 +53,7 @@ public class LoginAction extends ActionSupport implements SessionAware {
 			MongoCollection<Document> collection = db.getCollection(DataBaseSetting.infocollection);
 		     
 	        String passString = "";
+	        String roleString = "";
 	         
 	        FindIterable<Document> iterable = collection.find(new BasicDBObject("doctorinfo.username",username));
 	         
@@ -64,6 +65,7 @@ public class LoginAction extends ActionSupport implements SessionAware {
 	         
 	        if(document != null){
 	        	 passString = document.getString("password");
+	        	 roleString = document.getString("role");
 	        }
 	        
 	        //close database
@@ -72,9 +74,17 @@ public class LoginAction extends ActionSupport implements SessionAware {
 			if(!"".equals(passString) && password.equals(passString)){
 				
 				// add userName to the session
-	            sessionMap.put("userName", username);
-	            
-				return SUCCESS;
+				sessionMap.put("userName", username);
+				
+				if (!roleString.equals("")) {
+					if (roleString.equals("admin")) {
+						// admin
+						return SUCCESS;
+					}else if (roleString.equals("guest")) {
+						// guest
+						return "guest";
+					}
+				}
 			}
 		}
 		return ERROR;
