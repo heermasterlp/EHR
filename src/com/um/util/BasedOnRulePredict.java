@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import com.um.data.DiagClassifyData;
-
 public class BasedOnRulePredict {
 	
 	
@@ -26,9 +24,10 @@ public class BasedOnRulePredict {
 		// 1. 4 石见穿,白花蛇舌草,炒薏仁,龙葵－－必然出现
 		medicineSet.add("石见穿");
 		medicineSet.add("白花蛇舌草");
-		medicineSet.add("炒薏苡仁");
+		medicineSet.add("薏苡仁");
 		medicineSet.add("龙葵");
 		medicineSet.add("茅莓根");
+		medicineSet.add("红豆杉");
 		
 		// 2. 化疗后｜纯中药治疗 －－ 莪术,山慈菇,红豆杉,蛇沧簕 4选2，若有血痰则不选莪术
 		if (description.contains("单纯中医药治疗") || description.contains("化疗后")||
@@ -156,16 +155,16 @@ public class BasedOnRulePredict {
 			medicineSet.add("肉桂蓉");
 		}
 		
-		medicineList.addAll(medicineSet);
-		
-		List<String> medicineListByStatisticSorted = new ArrayList<String>();
-		for( String s : DiagClassifyData.machineMedicine ){
-			for( String o : medicineList ){
-				if( s == o || s.equals(o) ){
-					medicineListByStatisticSorted.add(s);
-				}
-			}
+		// 14. 咳嗽
+		if (description.contains("咳嗽轻") || description.contains("咳嗽中") || description.contains("咳嗽重")) {
+			medicineSet.add("白茅根");
 		}
+		
+		medicineList.addAll(medicineSet);
+		// fix dangshen and taizishen
+		medicineList = EhealthUtil.fixMedicineList(medicineList);
+		// sorted medicines list
+		List<String> medicineListByStatisticSorted = EhealthUtil.sortMedicineList(medicineList);
 		
 		return medicineListByStatisticSorted;
 	}

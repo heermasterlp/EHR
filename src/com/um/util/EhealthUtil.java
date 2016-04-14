@@ -308,7 +308,7 @@ public class EhealthUtil {
 	 */
 	public static List<String> sortMedicineList(List<String> list){
 		if (list == null) {
-			
+			return null;
 		}
 		// sorted
 		List<String> listSorted = new ArrayList<String>();
