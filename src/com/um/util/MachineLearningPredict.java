@@ -188,22 +188,6 @@ public class MachineLearningPredict {
 		return inputcode;
 	}
 	
-	/**
-	 *  获取前60味中药
-	 * @param eRecords
-	 * @return
-	 */
-	public static List<String> getMedicineList(){
-		
-		String[] medicines = DiagClassifyData.statisticsMedicine;
-		List<String> medicinesList = new ArrayList<>();
-		for (String string : medicines) {
-			// add medicines to list
-			medicinesList.add(string);
-		}
-		
-		return medicinesList;
-	}
 	
 	/**
 	 *  初始化描述对比表

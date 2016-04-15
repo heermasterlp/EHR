@@ -1,9 +1,3 @@
-<%-- 
-    Document   : query
-    Created on : Feb 14, 2015, 12:28:38 PM
-    Author     : lp
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="com.um.model.EHealthRecord,java.util.List,java.util.ArrayList,com.um.model.*" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>

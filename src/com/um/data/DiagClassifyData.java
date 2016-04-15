@@ -1,6 +1,8 @@
 package com.um.data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DiagClassifyData {
@@ -825,7 +827,7 @@ public class DiagClassifyData {
 					+ "#3:痰血加重",
 					
 			"咳嗽%0:现无咳嗽咯痰，|咳嗽正常|已无咳嗽|咳嗽已止#1:现咳嗽痰血减轻，|现咳嗽痰血少作，|现少咳咯白痰，|现咽痒少咳，|现少咳痰白，|现干咳减轻|现咳嗽痰血少，|咳嗽少作，|现咳嗽痰多缓解，|现少咳痰血|现偶有干咳|，少咳|现少咳有痰色黄|少许咳嗽|咳嗽稍好转|咳嗽缓解|偶有干咳|偶咳嗽|偶咯痰|咳嗽少作|咳嗽好转|咳嗽少|偶有痰血|偶有咳嗽|咳嗽减少|偶咳少痰|偶咳|。现偶咳嗽，"
-					+ "#2:：咳嗽，|现咳嗽稀痰，|咽痒咳嗽痰粘，|，咽痒咳嗽，|现咽痒咳嗽，|，咳嗽咯痰，|现咳嗽，|，咳嗽，|现仍咳嗽血痰|，干咳|，饮水呛咳|，咽痒咳嗽|时咳嗽咯痰|咳嗽痰多|咳嗽咽痒|咳嗽少气|咳嗽无痰|少咳痰粘|咳嗽痰少|咯少量血痰|咳嗽痰色白|痰血减少|咯黄白痰|痰白可咯|少痰难咯|黄痰难咯|咯黄白色稀痰|咯痰|咳嗽胸闷|痰难咯|咯白痰|咯血痰|咳嗽痰白|咯黄色稀痰|咯黄痰|咯黄白粘痰"
+					+ "#2:：咳嗽，|现咳嗽稀痰，|咽痒咳嗽痰粘，|，咽痒咳嗽，|现咽痒咳嗽，|，咳嗽咯痰，|现咳嗽，|，咳嗽，|现仍咳嗽血痰|，干咳|，饮水呛咳|，咽痒咳嗽|时咳嗽咯痰|咳嗽痰多|咳嗽咽痒|咳嗽少气|咳嗽无痰|少咳痰粘|咳嗽痰少|咯少量血痰|咳嗽痰色白|痰血减少|咯黄白痰|痰白可咯|少痰难咯|黄痰难咯|咯黄白色稀痰|咳嗽胸闷|痰难咯|咯白痰|咯血痰|咳嗽痰白|咯黄色稀痰|咯黄痰|咯黄白粘痰"
 					+ "#3:咳嗽频繁|咳嗽反复|咳嗽痰血，|现咳嗽痰血加重，|咳嗽加重|咳嗽较剧",
 					
 			"眠%0:纳寐可|纳眠可|纳差眠可|纳改善眠可#1:纳可眠改善，|纳眠尚可|纳眠一般|纳可眠一般|纳可眠稍差|纳差眠好转|纳可眠好转|眠差改善|纳差眠改善|纳欠佳眠一般|纳眠欠佳|纳差眠欠佳|纳眠好转|纳眠稍差#2:纳可眠差|纳眠差|纳一般眠差|纳眠俱差|眠差梦多"
@@ -1245,7 +1247,7 @@ public class DiagClassifyData {
 		"bittertaste:，口苦，",
 		"okcough:现无咳嗽咯痰，|咳嗽正常|已无咳嗽|咳嗽已止",
 		"badcough:现咳嗽痰血减轻，|现咳嗽痰血少作，|现少咳咯白痰，|现咽痒少咳，|现少咳痰白，|现干咳减轻|现咳嗽痰血少，|咳嗽少作，|现咳嗽痰多缓解，|现少咳痰血|现偶有干咳|，少咳|现少咳有痰色黄|少许咳嗽|咳嗽稍好转|咳嗽缓解|偶有干咳|偶咳嗽|偶咯痰|咳嗽少作|咳嗽好转|咳嗽少|偶有痰血|偶有咳嗽|咳嗽减少|偶咳少痰|偶咳|。现偶咳嗽，",
-		"worsecough:：咳嗽，|现咳嗽稀痰，|咽痒咳嗽痰粘，|，咽痒咳嗽，|现咽痒咳嗽，|，咳嗽咯痰，|现咳嗽，|，咳嗽，|现仍咳嗽血痰|，干咳|，饮水呛咳|，咽痒咳嗽|时咳嗽咯痰|咳嗽痰多|咳嗽咽痒|咳嗽少气|咳嗽无痰|少咳痰粘|咳嗽痰少|咯少量血痰|咳嗽痰色白|痰血减少|咯黄白痰|痰白可咯|少痰难咯|黄痰难咯|咯黄白色稀痰|咯痰|咳嗽胸闷|痰难咯|咯白痰|咯血痰|咳嗽痰白|咯黄色稀痰|咯黄痰|咯黄白粘痰",
+		"worsecough:：咳嗽，|现咳嗽稀痰，|咽痒咳嗽痰粘，|，咽痒咳嗽，|现咽痒咳嗽，|，咳嗽咯痰，|现咳嗽，|，咳嗽，|现仍咳嗽血痰|，干咳|，饮水呛咳|，咽痒咳嗽|时咳嗽咯痰|咳嗽痰多|咳嗽咽痒|咳嗽少气|咳嗽无痰|少咳痰粘|咳嗽痰少|咯少量血痰|咳嗽痰色白|痰血减少|咯黄白痰|痰白可咯|少痰难咯|黄痰难咯|咯黄白色稀痰|咳嗽胸闷|痰难咯|咯白痰|咯血痰|咳嗽痰白|咯黄色稀痰|咯黄痰|咯黄白粘痰",
 		"worstcough:咳嗽频繁|咳嗽反复|咳嗽痰血，|现咳嗽痰血加重，|咳嗽加重|咳嗽较剧"
 	};
 	
@@ -1408,4 +1410,81 @@ public class DiagClassifyData {
 	 * The diagnose key words
 	 */
 	public final static String[] diagKeywords = {"气虚","痰瘀","互结","阻络","气阴两虚","脾虚","痰湿","热结",	"湿瘀",	"夹热",	"瘀热",	"湿阻"};
+	
+	/**
+	 * 8 main description key words
+	 */
+	public final static String[] sleepBiasArray = {"badsleep","worsesleep","worstsleep","somnolencesleep"};
+	//
+	public static List<String> getSleepBiasArray(){
+		List<String> list = new ArrayList<String>();
+		for (String string : sleepBiasArray) {
+			list.add(string);
+		}
+		return list;
+	}
+	public final static String[] naBiasArray = {"badna","anorexiana","worsena"};
+	//
+	public static List<String> getNaBiasArray(){
+		List<String> list = new ArrayList<String>();
+		for (String string : naBiasArray) {
+			list.add(string);
+		}
+		return list;
+	}
+	public final static String[] bloodSputumBiasArray = {"redlittlesputumcolor","redmuchsputumcolor","redmoresputumcolor"};
+	//
+	public static List<String> getBloodSputumBiasArray(){
+		List<String> list = new ArrayList<String>();
+		for (String string : bloodSputumBiasArray) {
+			list.add(string);
+		}
+		return list;
+	}
+	public final static String[] xiongLeiBiasArray = {"okxionglei","badxionglei","worsexionglei"};
+	//
+	public static List<String> getXiongLeiBiasArray(){
+		List<String> list = new ArrayList<String>();
+		for (String string : xiongLeiBiasArray) {
+			list.add(string);
+		}
+		return list;
+	}
+	public final static String[] qiliBiasArray = {"badenergy","worseenergy"};
+	//
+	public static List<String> getQiliBiasArray(){
+		List<String> list = new ArrayList<String>();
+		for (String string : qiliBiasArray) {
+			list.add(string);
+		}
+		return list;
+	}
+	public final static String[] coughBiasArray = {"badcough","worsecough","worstcough"};
+	//
+	public static List<String> getCoughBiasArray(){
+		List<String> list = new ArrayList<String>();
+		for (String string : coughBiasArray) {
+			list.add(string);
+		}
+		return list;
+	}
+	public final static String[] defecateBiasArray = {"okdefecate","baddefecate","worsedefecate","blooddefecate"};
+	//
+	public static List<String> getDefecateBiasArray(){
+		List<String> list = new ArrayList<String>();
+		for (String string : defecateBiasArray) {
+			list.add(string);
+		}
+		return list;
+	}
+	public final static String[] fuxieBiasArray = {"xiexie"};
+	//
+	public static List<String> getFuxieBiasArray(){
+		List<String> list = new ArrayList<String>();
+		for (String string : fuxieBiasArray) {
+			list.add(string);
+		}
+		return list;
+	}
+
 }

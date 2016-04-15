@@ -15,6 +15,7 @@ import net.sf.json.JSONObject;
 import org.apache.struts2.interceptor.ServletRequestAware;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.um.data.DiagClassifyData;
 import com.um.model.ChineseMedicine;
 import com.um.model.EHealthRecord;
 import com.um.util.BasedOnRulePredict;
@@ -151,10 +152,17 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
 			}
     		
     		// sorted
-    		List<String> medicineListSorted = EhealthUtil.sortMedicineList(medicineList);
+    		List<String> medicineListSorted = new ArrayList<String>();
     		
     		// fix medicinelist, change dangshen or taizishen to dangshen(taizishen)
-    		medicineListSorted = EhealthUtil.fixMedicineList(medicineListSorted);
+    		medicineList = EhealthUtil.fixMedicineList(medicineList);
+    		
+    		// sorted
+    		for (String med : DiagClassifyData.machineMedicine) {
+				if (medicineList.contains(med)) {
+					medicineListSorted.add(med);
+				}
+			}
     		
     		// Format similiary records result
     		Map<String, ArrayList<String>> formattedSimilarRecords = EhealthUtil.formatSimilarRecordAsReturn(similaryRecords, SIMILARRECORDSIZE);
@@ -295,7 +303,7 @@ public class PredictAciton extends ActionSupport implements ServletRequestAware{
     	map.put("mechineLearningPercent", df.format(mechineLearningPercent));
     	
     	// target record
-    	map.put("targetRecord", targetRecord);
+    	map.put("targetRecord", EhealthUtil.encryptionRecord(targetRecord));
     	map.put("count", count+1);
     	
     	JSONObject json = JSONObject.fromObject(map);

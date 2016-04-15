@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.bson.Document;
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
@@ -24,117 +23,6 @@ import com.um.mongodb.converter.EhealthRecordConverter;
 
 public class MedicineByDescription {
 	
-	/**
-	 * 	Predict medicines based on the diagnose and description info
-	 * 
-	 * @param batch
-	 * @param diagnose
-	 * @param description
-	 * @return medicines
-	 */
-	public static List<String> getMedicineByDiagAndDesc(String batch,String diagnose,String description){
-		if("".equals(diagnose) || "".equals(description)) return null;
-		
-		List<String> medicineList = new ArrayList<String>(); // predict medicines result
-		
-		int outputnumber = 15; // the number of output
-
-		/**
-		 * 1. statistics all records to choice the percent of medicines large than 90% as predict result
-		 */
-		// 1.1 get all records with same batch
-		List<EHealthRecord> eHealthRecordsByBatch = MedicineByDescription.getRecordsByBatch(batch); // all record with same batch
-		
-		// 1.3 statistics name and number of medicines in this batch records
-		Map<String, Integer> allMedicineMap = DiagMedicineProcess.statisEhealthMedicine(eHealthRecordsByBatch);
-		
-		// 1.4  find the medicines with percent large than 90% 
-		int allRecordsNum = eHealthRecordsByBatch.size(); // the number of this batch records
-		double percent = 0.9; // the percent 
-		
-		List<String> medicineWithInevitable = DiagMedicineProcess.statisMedicineWithPercent(allMedicineMap, allRecordsNum, percent);
-		if(medicineWithInevitable != null && medicineWithInevitable.size() > 0){
-			medicineList.addAll(medicineWithInevitable); //the medicine with percent large than 90%
-		}
-		
-		// 1.5 remove the chock medicine to avoid repeating 
-		allMedicineMap = DiagMedicineProcess.removeMapInList(allMedicineMap, medicineWithInevitable);
-		
-		// 1.6 return with enough numbers of medicines
-		if(medicineList.size() > outputnumber) return medicineList;
-		
-		/**
-		 * 2. statistics based on the diagnose and description info to get medicines
-		 */
-		// 2.1 split the diagnose
-		String[] diagkeywords = diagnose.split(" ");
-		if( diagkeywords.length == 0 ){
-			return medicineList; // return with no diagnose
-		}
-		
-		// 2.2 classify the records based on the diagnose info
-		List<EHealthRecord> classifiedRecords = DiagMedicineProcess.getRecordsByDiagnose(diagkeywords, eHealthRecordsByBatch);
-		
-		// 2.3 statistics medicines based on the description info
-		Set<String> cnmedicineSet = DiagMedicineProcess.getMedicinesByDescription(description, classifiedRecords);
-		
-		// 2.4 add the statistics result to the final result
-		if(cnmedicineSet != null && cnmedicineSet.size() > 0){
-			for(String s : cnmedicineSet){
-				if(!medicineList.contains(s)){
-					medicineList.add(s);
-				}
-			}
-		}
-		// return with enough number of medicines
-		if(medicineList.size() > outputnumber){
-			return medicineList.subList(0, 15);
-		}
-		
-		/**
-		 * 3. other statistics and analysis methods when no enough numbers of medicines
-		 */
-		return medicineList;
-	}
-	
-	
-	/**
-	 *  Get the similar EHR records based the batch, diagnose and description info
-	 * @param batch
-	 * @param diagnosehwo
-	 * @param description
-	 * @return
-	 */
-	public static List<EHealthRecord> getSimilaryEHealthRecords(String batch,String diagnose,String description){
-		if("".equals(batch)||"".equals(diagnose)||"".equals(description)) return null;
-		
-		// 1.1 get all records of this batch
-		List<EHealthRecord> eHealthRecordsByBatch = getRecordsByBatch(batch);
-		
-		// 1.2 split the diagnose
-		String[] diagkeywords = diagnose.split(" ");
-		if(diagkeywords.length == 0 || diagkeywords == null){
-			return null; 
-		}
-		// 1.3 classify the records based on diagnose info
-		List<EHealthRecord> classifiedRecords = DiagMedicineProcess.getRecordsByDiagnose(diagkeywords, eHealthRecordsByBatch);
-		
-		// 1.4 get the similar records based on the description info
-		List<EHealthRecord> similarRecords = DiagMedicineProcess.getEhealthRecordByDescription(description, classifiedRecords);
-		
-		// 1.5 remove the repeat records
-		Set<EHealthRecord> eSet = new HashSet<EHealthRecord>();
-		
-		if( similarRecords != null && similarRecords.size() > 0 ){
-			for( EHealthRecord e : similarRecords ){
-				eSet.add(e);
-			}
-		}
-		// 1.6 return the similar records
-		List<EHealthRecord> result = new ArrayList<EHealthRecord>();
-		result.addAll(eSet);
-		return result;
-	}
 	
 	/**
 	 * Get all similar records based on the description
@@ -175,19 +63,6 @@ public class MedicineByDescription {
 		
 		// Time status
 		String timeStatusString = request.getParameter("timestatus").trim();
-//		System.out.println(timeStatusString);
-//		String timeStatus = "";
-//		if (timeStatusString.equals("cmtreat")) {
-//			timeStatus = "单纯中医药治疗";
-//		}
-//		if (timeStatusString.equals("shuqian")){timeStatus = "术前";}
-//		if (timeStatusString.equals("shuhou")){timeStatus = "术后";}
-//		if (timeStatusString.equals("zhiliaozhong")){timeStatus = "放疗中";}
-//		if (timeStatusString.equals("zhiliaohou")){timeStatus = "放疗后";}
-//		if (timeStatusString.equals("hualiaozhong")){timeStatus = "化疗中";}
-//		if (timeStatusString.equals("hualiaohou")){timeStatus = "化疗后";}
-//		if (timeStatusString.equals("fenzi")){timeStatus = "分子靶向药物";}
-//		if (timeStatusString.equals("mianyi")){timeStatus = "免疫治疗";}
 		// 2. diagnose 
 		String diagnoseString = "";
 		String xuString = request.getParameter("xu").trim();
@@ -241,7 +116,6 @@ public class MedicineByDescription {
 		resultMap.put("batch", batch); 
 		resultMap.put("diagnose", diagnoseString);
 		resultMap.put("description", descriptionString);
-//		resultMap.put("timeStatus", timeStatus);
 		return resultMap;
 	}
 	
@@ -435,37 +309,6 @@ public class MedicineByDescription {
 		return eHealthRecords;
 	}
 	
-	/**
-	 * Query records by condition
-	 * @param condition
-	 * @return
-	 */
-	public static List<EHealthRecord> getRecordsByCondition(BasicDBObject condition){
-		
-		final List<EHealthRecord> eHealthRecords = new ArrayList<EHealthRecord>();
-		
-		MongoClient client = new MongoClient(DataBaseSetting.host,DataBaseSetting.port);
-		MongoDatabase db = client.getDatabase(DataBaseSetting.database);
-		MongoCollection<Document> ehealthRecordCollection = db.getCollection(DataBaseSetting.ehealthcollection);
-		
-		FindIterable<Document> iterable = ehealthRecordCollection.find(condition);
-		
-		iterable.forEach(new Block<Document>() {
-
-			@Override
-			public void apply(Document document) {
-				// TODO Auto-generated method stub
-				EHealthRecord eHealthRecord = EhealthRecordConverter.toEHealthRecord(document);
-	        	
-	        	if(eHealthRecord != null){
-	        		eHealthRecords.add(eHealthRecord);
-	        	}
-			}
-		});
-		
-		client.close();
-		return eHealthRecords;
-	}
 	
 	/**
 	 *  格式化病症描述

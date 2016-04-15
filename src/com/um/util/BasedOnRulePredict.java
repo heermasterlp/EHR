@@ -75,6 +75,20 @@ public class BasedOnRulePredict {
 			medicineSet.add("甘草");
 		}
 		
+		// 脾虚
+		if (description.contains("脾虚")) {
+			Random random = new Random();
+			String[] medicines = {"太子参","党参"};
+			int low = 0;
+			int high = 2;
+			int result = random.nextInt(high - low) + low;
+			medicineSet.add(medicines[result]);
+			medicineSet.add("白术");
+			medicineSet.add("炙黄芪");
+			medicineSet.add("甘草");
+			medicineSet.add("山药");
+		}
+		
 		//4. 胸肋痛----延胡索，，，牛蒡子OR 木蝴蝶
 		if (description.contains("胸肋痛")) {
 			medicineSet.add("延胡索");
@@ -104,17 +118,13 @@ public class BasedOnRulePredict {
 			medicineSet.add("麦冬");
 		}
 		// 7. 腹胀 ＋ 便秘 －－》 轻：厚朴 ＋ 枳壳 ；重： 厚朴 ＋ 生大黄
-		if (description.contains("便秘") && (description.contains("重") || description.contains("中"))) {
-			medicineSet.add("厚朴");
-			medicineSet.add("大黄");
+		if (description.contains("便秘") && (description.contains("重") )) {
+			medicineSet.add("番泻叶");
+			
+		}
+		if (description.contains("便秘") && description.contains("轻") || description.contains("中")) {
 			medicineSet.add("枳实");
 			medicineSet.add("火麻仁");
-			medicineSet.add("番泻叶");
-		}
-		if (description.contains("便秘") && description.contains("轻")) {
-			medicineSet.add("厚朴");
-			medicineSet.add("枳壳");
-			medicineSet.add("郁李仁");
 		}
 		// 8. 睡眠差 －－ 》 酸枣仁 ＋ 磁石
 		if (description.contains("失眠") && (description.contains("中") || description.contains("重"))) {
@@ -137,7 +147,7 @@ public class BasedOnRulePredict {
 			medicineSet.add("石榴皮");
 			medicineSet.add("五味子");
 			medicineSet.add("补骨脂");
-			medicineSet.add("淮山药");
+			medicineSet.add("山药");
 			medicineSet.add("葶苈子");
 		}
 		
