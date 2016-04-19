@@ -111,7 +111,6 @@ public class BasedOnRulePredict {
 		// 13. 头晕
 		if (description.contains("头晕")) {
 			medicineSet.add("天麻");
-			medicineSet.add("槐花");
 			medicineSet.add("磁石");
 		}
 		// 14. 乏力
