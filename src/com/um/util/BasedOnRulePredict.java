@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import com.um.data.DiagClassifyData;
+
 public class BasedOnRulePredict {
 	
 	
@@ -29,60 +31,17 @@ public class BasedOnRulePredict {
 		medicineSet.add("茅莓根");
 		medicineSet.add("红豆杉");
 		
-		// 2. 化疗后｜纯中药治疗 －－ 莪术,山慈菇,红豆杉,蛇沧簕 4选2，若有血痰则不选莪术
-		if (description.contains("单纯中医药治疗") || description.contains("化疗后")||
-				description.contains("术前")||description.contains("术后")||
-				description.contains("放疗中")||description.contains("放疗后")||
-				description.contains("化疗中")||description.contains("分子靶向药物")||
-				description.contains("免疫治疗")) {
-			String[] medines = {"莪术","山慈菇","红豆杉","蛇泡勒"};
-			Random r = new Random();
-			if (description.contains("红血痰")) {
-				int low = 1;
-				int high = 4;
-				int frist = r.nextInt(high-low) + low;
-				medicineSet.add(medines[frist]);
-				// choice 2 from 3
-				int second = r.nextInt(high-low) + low;
-				while (second == frist) {
-					second = r.nextInt(high-low) + low;
-				}
-				medicineSet.add(medines[second]);
-			}else {
-				int low = 0;
-				int high = 4;
-				int first = r.nextInt(high-low) + low;
-				medicineSet.add(medines[first]);
-				int second = r.nextInt(high-low) + low;
-				// choice 2 from 4
-				while (second == first) {
-					second = r.nextInt(high-low) + low;
-				}
-				medicineSet.add(medines[second]);
-			}
-		}
-		
 		//3. 气虚－－－太子参 or 党参, 白朮, 黄芪 ＋ 甘草
 		if (description.contains("气虚")) {
-			Random random = new Random();
-			String[] medicines = {"太子参","党参"};
-			int low = 0;
-			int high = 2;
-			int result = random.nextInt(high - low) + low;
-			medicineSet.add(medicines[result]);
+			medicineSet.add("党参");
 			medicineSet.add("白术");
-			medicineSet.add("炙黄芪");
+			medicineSet.add("黄芪");
 			medicineSet.add("甘草");
 		}
 		
 		// 脾虚
 		if (description.contains("脾虚")) {
-			Random random = new Random();
-			String[] medicines = {"太子参","党参"};
-			int low = 0;
-			int high = 2;
-			int result = random.nextInt(high - low) + low;
-			medicineSet.add(medicines[result]);
+			medicineSet.add("党参");
 			medicineSet.add("白术");
 			medicineSet.add("炙黄芪");
 			medicineSet.add("甘草");
@@ -114,15 +73,19 @@ public class BasedOnRulePredict {
 		
 		// 6. 阴虚 －－》 沙参 ＋ 麦冬
 		if (description.contains("气阴两虚")) {
-			medicineSet.add("沙参");
+			medicineSet.add("北沙参");
 			medicineSet.add("麦冬");
+			medicineSet.add("党参");
+			medicineSet.add("白术");
+			medicineSet.add("黄芪");
+			medicineSet.add("甘草");
 		}
 		// 7. 腹胀 ＋ 便秘 －－》 轻：厚朴 ＋ 枳壳 ；重： 厚朴 ＋ 生大黄
 		if (description.contains("便秘") && (description.contains("重") )) {
 			medicineSet.add("番泻叶");
 			
 		}
-		if (description.contains("便秘") && description.contains("轻") || description.contains("中")) {
+		if (description.contains("便秘") && (description.contains("轻") || description.contains("中"))) {
 			medicineSet.add("枳实");
 			medicineSet.add("火麻仁");
 		}
@@ -173,8 +136,13 @@ public class BasedOnRulePredict {
 		medicineList.addAll(medicineSet);
 		// fix dangshen and taizishen
 		medicineList = EhealthUtil.fixMedicineList(medicineList);
-		// sorted medicines list
-		List<String> medicineListByStatisticSorted = EhealthUtil.sortMedicineList(medicineList);
+		// sorted
+		List<String> medicineListByStatisticSorted = new ArrayList<String>();
+		for( String s : DiagClassifyData.machineMedicine ){
+			if (medicineList.contains(s)) {
+				medicineListByStatisticSorted.add(s);
+			}
+		}
 		
 		return medicineListByStatisticSorted;
 	}
