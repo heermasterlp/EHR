@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import com.um.data.DiagClassifyData;
-
 public class BasedOnRulePredict {
 	
 	
@@ -31,21 +29,54 @@ public class BasedOnRulePredict {
 		medicineSet.add("茅莓根");
 		medicineSet.add("红豆杉");
 		
-		//3. 气虚－－－太子参 or 党参, 白朮, 黄芪 ＋ 甘草
-		if (description.contains("气虚")) {
-			medicineSet.add("党参");
-			medicineSet.add("白术");
-			medicineSet.add("黄芪");
-			medicineSet.add("甘草");
+		// 2. 化疗后｜纯中药治疗 －－ 莪术,山慈菇,红豆杉,蛇沧簕 4选2，若有血痰则不选莪术
+		if (description.contains("单纯中医药治疗") || description.contains("化疗后")||
+				description.contains("术前")||description.contains("术后")||
+				description.contains("放疗中")||description.contains("放疗后")||
+				description.contains("化疗中")||description.contains("分子靶向药物")||
+				description.contains("免疫治疗")) {
+			String[] medines = {"莪术","山慈菇","红豆杉","蛇泡勒"};
+			Random r = new Random();
+			if (description.contains("红血痰")) {
+				int low = 1;
+				int high = 4;
+				int frist = r.nextInt(high-low) + low;
+				medicineSet.add(medines[frist]);
+				// choice 2 from 3
+				int second = r.nextInt(high-low) + low;
+				while (second == frist) {
+					second = r.nextInt(high-low) + low;
+					
+					
+					
+					
+				}
+				medicineSet.add(medines[second]);
+			}else {
+				int low = 0;
+				int high = 4;
+				int first = r.nextInt(high-low) + low;
+				medicineSet.add(medines[first]);
+				int second = r.nextInt(high-low) + low;
+				// choice 2 from 4
+				while (second == first) {
+					second = r.nextInt(high-low) + low;
+				}
+				medicineSet.add(medines[second]);
+			}
 		}
 		
-		// 脾虚
-		if (description.contains("脾虚")) {
-			medicineSet.add("党参");
+		//3. 气虚－－－太子参 or 党参, 白朮, 黄芪 ＋ 甘草
+		if (description.contains("气虚")) {
+			Random random = new Random();
+			String[] medicines = {"太子参","党参"};
+			int low = 0;
+			int high = 2;
+			int result = random.nextInt(high - low) + low;
+			medicineSet.add(medicines[result]);
 			medicineSet.add("白术");
 			medicineSet.add("炙黄芪");
 			medicineSet.add("甘草");
-			medicineSet.add("山药");
 		}
 		
 		//4. 胸肋痛----延胡索，，，牛蒡子OR 木蝴蝶
@@ -73,21 +104,21 @@ public class BasedOnRulePredict {
 		
 		// 6. 阴虚 －－》 沙参 ＋ 麦冬
 		if (description.contains("气阴两虚")) {
-			medicineSet.add("北沙参");
+			medicineSet.add("沙参");
 			medicineSet.add("麦冬");
-			medicineSet.add("党参");
-			medicineSet.add("白术");
-			medicineSet.add("黄芪");
-			medicineSet.add("甘草");
 		}
 		// 7. 腹胀 ＋ 便秘 －－》 轻：厚朴 ＋ 枳壳 ；重： 厚朴 ＋ 生大黄
-		if (description.contains("便秘") && (description.contains("重") )) {
-			medicineSet.add("番泻叶");
-			
-		}
-		if (description.contains("便秘") && (description.contains("轻") || description.contains("中"))) {
+		if (description.contains("便秘") && (description.contains("重") || description.contains("中"))) {
+			medicineSet.add("厚朴");
+			medicineSet.add("大黄");
 			medicineSet.add("枳实");
 			medicineSet.add("火麻仁");
+			medicineSet.add("番泻叶");
+		}
+		if (description.contains("便秘") && description.contains("轻")) {
+			medicineSet.add("厚朴");
+			medicineSet.add("枳壳");
+			medicineSet.add("郁李仁");
 		}
 		// 8. 睡眠差 －－ 》 酸枣仁 ＋ 磁石
 		if (description.contains("失眠") && (description.contains("中") || description.contains("重"))) {
@@ -110,7 +141,7 @@ public class BasedOnRulePredict {
 			medicineSet.add("石榴皮");
 			medicineSet.add("五味子");
 			medicineSet.add("补骨脂");
-			medicineSet.add("山药");
+			medicineSet.add("淮山药");
 			medicineSet.add("葶苈子");
 		}
 		
@@ -128,21 +159,11 @@ public class BasedOnRulePredict {
 			medicineSet.add("肉桂蓉");
 		}
 		
-		// 14. 咳嗽
-		if (description.contains("咳嗽轻") || description.contains("咳嗽中") || description.contains("咳嗽重")) {
-			medicineSet.add("白茅根");
-		}
-		
 		medicineList.addAll(medicineSet);
 		// fix dangshen and taizishen
 		medicineList = EhealthUtil.fixMedicineList(medicineList);
-		// sorted
-		List<String> medicineListByStatisticSorted = new ArrayList<String>();
-		for( String s : DiagClassifyData.machineMedicine ){
-			if (medicineList.contains(s)) {
-				medicineListByStatisticSorted.add(s);
-			}
-		}
+		// sorted medicines list
+		List<String> medicineListByStatisticSorted = EhealthUtil.sortMedicineList(medicineList);
 		
 		return medicineListByStatisticSorted;
 	}
